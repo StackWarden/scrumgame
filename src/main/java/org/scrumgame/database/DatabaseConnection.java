@@ -27,26 +27,23 @@ public class DatabaseConnection {
 
         try (Connection adminConn = DriverManager.getConnection(adminUrl, user, password);
              Statement adminStmt = adminConn.createStatement()) {
-
             adminStmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
-
         } catch (SQLException e) {
             System.err.println("Fout bij aanmaken database: " + e.getMessage());
             return;
         }
 
         try (Connection conn = getConnection()) {
-
-            if (!tableExists(conn, "Role")) {
-                System.out.println("Tabellen nog niet aanwezig — initialiseren...");
-                runSqlScript(conn, "");
+            int tableCount = countTables(conn);
+            if (tableCount == 0) {
+                System.out.println("Nog geen tabellen — initialiseren...");
+                runSqlScript(conn, ""); // geef hier je SQL script op
             } else {
-                System.out.println("Tabellen al aanwezig");
+                System.out.println("Er zijn al " + tableCount + " tabellen");
             }
 
         } catch (Exception e) {
             System.err.println("Fout bij database-initialisatie: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
