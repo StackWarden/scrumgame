@@ -1,13 +1,11 @@
-package org.scrumgame.screens;
+package scrumgame.screens;
 
-import org.scrumgame.ScreenManager;
-import org.scrumgame.abstracts.Screen;
-import org.scrumgame.enums.ScreenType;
+import scrumgame.ScreenManager;
+import scrumgame.abstracts.Screen;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.scrumgame.ScreenManager.clearScreen;
+import static scrumgame.ScreenManager.clearScreen;
 
 public class StartScreen extends Screen {
 

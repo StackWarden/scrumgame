@@ -1,7 +1,7 @@
-package org.scrumgame.screens;
+package scrumgame.screens;
 
-import org.scrumgame.ScreenManager;
-import org.scrumgame.abstracts.Screen;
+import scrumgame.ScreenManager;
+import scrumgame.abstracts.Screen;
 
 import java.util.Scanner;
 
