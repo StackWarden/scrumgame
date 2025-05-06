@@ -1,4 +1,4 @@
-package scrumgame.enums;
+package org.scrumgame.enums;
 
 public enum ScreenType {
     START_SCREEN

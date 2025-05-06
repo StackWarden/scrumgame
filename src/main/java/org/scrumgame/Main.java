@@ -1,6 +1,6 @@
-package scrumgame;
+package org.scrumgame;
 
-import scrumgame.enums.ScreenType;
+import org.scrumgame.enums.ScreenType;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,8 +1,8 @@
-package scrumgame;
+package org.scrumgame;
 
-import scrumgame.abstracts.Screen;
-import scrumgame.enums.ScreenType;
-import scrumgame.screens.StartScreen;
+import org.scrumgame.abstracts.Screen;
+import org.scrumgame.enums.ScreenType;
+import org.scrumgame.screens.StartScreen;
 
 import java.util.HashMap;
 import java.util.Map;

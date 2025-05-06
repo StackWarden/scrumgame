@@ -1,4 +1,4 @@
-package scrumgame.database;
+package org.scrumgame.database;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
