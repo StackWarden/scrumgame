@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   mysql:
     image: mysql:latest
-    container_name: chauffeursync-db-container
+    container_name: scrumgame
     env_file:
       - .env
     environment:
@@ -12,13 +10,13 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - ${DOCKER_PORT}
     volumes:
       - ./db/data:/var/lib/mysql
     networks:
-      - chauffeursync-network
+      - scrumgame-network
     restart: always
 
 networks:
-  chauffeursync-network:
+  scrumgame-network:
     driver: bridge
