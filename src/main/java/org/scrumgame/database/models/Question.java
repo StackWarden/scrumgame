@@ -1,4 +1,4 @@
 package org.scrumgame.database.models;
 
-public class Questions {
+public class Question {
 }
