@@ -42,3 +42,5 @@ build/
 /.idea/.gitignore
 /.idea/encodings.xml
 /.idea/vcs.xml
+
+db/
