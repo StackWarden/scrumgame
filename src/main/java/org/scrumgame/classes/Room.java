@@ -1,5 +1,8 @@
 package org.scrumgame.classes;
 
+import org.scrumgame.services.LogService;
+import org.scrumgame.strategies.RoomLogStrategy;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
@@ -11,6 +14,13 @@ public class Room extends Level {
     }
 
     @Override
+    public LogService getLogService() {
+        RoomLogStrategy roomLogStrategy = new RoomLogStrategy();
+        LogService logService = new LogService();
+        logService.setStrategy(roomLogStrategy);
+        return logService;
+    }
+
     public List<Question> getQuestions() {
         return List.of();
     }

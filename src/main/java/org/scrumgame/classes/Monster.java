@@ -1,5 +1,8 @@
 package org.scrumgame.classes;
 
+import org.scrumgame.services.LogService;
+import org.scrumgame.strategies.MonsterLogStrategy;
+
 import java.util.AbstractMap;
 import java.util.List;
 
@@ -14,8 +17,11 @@ public class Monster extends Level {
     }
 
     @Override
-    public List<Question> getQuestions() {
-        return List.of();
+    public LogService getLogService() {
+        MonsterLogStrategy monsterLogStrategy = new MonsterLogStrategy();
+        LogService logService = new LogService();
+        logService.setStrategy(monsterLogStrategy);
+        return logService;
     }
 
     @Override

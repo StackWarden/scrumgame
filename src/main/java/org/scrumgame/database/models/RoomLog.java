@@ -1,11 +1,12 @@
 package org.scrumgame.database.models;
 
+import org.scrumgame.classes.GameLog;
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 
 import java.sql.*;
 
-public class RoomLog {
+public class RoomLog implements GameLog {
     private int id;
     private int sessionId;
     private Question question;
@@ -15,6 +16,22 @@ public class RoomLog {
         this.sessionId = sessionId;
         this.question = question;
         this.completed = completed;
+    }
+
+    public int getSessionId() {
+        return sessionId;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public static void createRoom() {
@@ -43,9 +60,9 @@ public class RoomLog {
             Question question = new Question(correctId, text, correctAnswer);
 
             // print all the data
-            System.out.println("ID: " + question.id());
-            System.out.println("Question: " + question.text());
-            System.out.println("Correct Answer: " + question.correctAnswer());
+            System.out.println("ID: " + question.getId());
+            System.out.println("Question: " + question.getQuestion());
+            System.out.println("Correct Answer: " + question.getAnswer());
 
             // Close the statement and resultset from the database so we don't keep using resources and don't get a memory leak
             correctRs.close();
