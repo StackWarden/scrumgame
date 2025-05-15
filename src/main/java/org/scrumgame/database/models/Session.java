@@ -1,5 +1,11 @@
 package org.scrumgame.database.models;
 
+import org.scrumgame.database.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Session {
     private int id;
     private int playerId;
@@ -25,7 +31,18 @@ public class Session {
         this.id = id;
     }
 
+    public Session() {
+        this.id = id;
+    }
+
     public int getId() {
+        String sql = "SELECT id FROM sessions WHERE player_id = ?";
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
+
+             stmt.setInt(1, getCurrentId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return id;
     }
 
@@ -47,5 +64,8 @@ public class Session {
 
     public int getPlayerId() {
         return playerId;
+    }
+    public int getCurrentId() {
+        return id;
     }
 }
