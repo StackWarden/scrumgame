@@ -65,6 +65,7 @@ public class Session {
     public int getPlayerId() {
         return playerId;
     }
+
     public int getCurrentId() {
         return id;
     }

@@ -12,6 +12,6 @@ public class Status {
     @ShellMethod(key = "status", value = "Show the status of the game")
     public String status() {
         Player player = new Player();
-        return "You are in room " + player.getStatus() + " / 10";
+        return player.getName() + " is in room " + player.getStatus() + " / 10";
     }
 }
