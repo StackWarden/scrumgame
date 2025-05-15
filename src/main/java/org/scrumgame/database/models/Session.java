@@ -36,10 +36,12 @@ public class Session {
     }
 
     public int getId() {
-        String sql = "SELECT id FROM sessions WHERE player_id = ?";
+        String sql = "SELECT id, playerId FROM sessions WHERE player_id = ?";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
 
              stmt.setInt(1, getCurrentId());
+             stmt.setInt(2, getPlayerId());
+             stmt.executeQuery();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

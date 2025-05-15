@@ -53,7 +53,6 @@ public class Start {
                 ║                                              ║
                 ╚══════════════════════════════════════════════╝
                 """);
-
     }
 
     @ShellMethod (key = {"begin", "1"}, value = "Start de game")
@@ -81,11 +80,23 @@ public class Start {
 
         voegSpelerToe(name);
         player.setName(name);  // Set the name in the Player instance
-        return "Placeholder";
+        return """
+                ╔══════════════════════════════════════════════╗
+                ║                                              ║
+                ║                 Placeholder                  ║
+                ║                                              ║
+                ╚══════════════════════════════════════════════╝
+                """;
     }
 
     @ShellMethod (key = {"load", "2"}, value = "Load de Save")
     public String load() {
-        return "Placeholder";
+        return """
+                ╔══════════════════════════════════════════════╗
+                ║                                              ║
+                ║                 Placeholder                  ║
+                ║                                              ║
+                ╚══════════════════════════════════════════════╝
+                """;
     }
 }

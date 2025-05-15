@@ -17,7 +17,7 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
+/*use scrumgame;*/
 DROP TABLE IF EXISTS `level_log`;
 CREATE TABLE `level_log` (
                              `id` int NOT NULL AUTO_INCREMENT,
