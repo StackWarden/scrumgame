@@ -60,9 +60,9 @@ public class RoomLog implements GameLog {
             Question question = new Question(correctId, text, correctAnswer);
 
             // print all the data
-            System.out.println("ID: " + question.id());
-            System.out.println("Question: " + question.text());
-            System.out.println("Correct Answer: " + question.correctAnswer());
+            System.out.println("ID: " + question.getId());
+            System.out.println("Question: " + question.getQuestion());
+            System.out.println("Correct Answer: " + question.getAnswer());
 
             // Close the statement and resultset from the database so we don't keep using resources and don't get a memory leak
             correctRs.close();
