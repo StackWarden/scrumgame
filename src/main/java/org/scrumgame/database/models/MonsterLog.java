@@ -1,9 +1,9 @@
 package org.scrumgame.database.models;
 
-import org.scrumgame.classes.Game;
 import org.scrumgame.classes.GameLog;
 import org.scrumgame.classes.Question;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MonsterLog implements GameLog {
@@ -14,7 +14,7 @@ public class MonsterLog implements GameLog {
 
     public MonsterLog(int sessionId, List<Question> questions, boolean defeated) {
         this.sessionId = sessionId;
-        this.questions = questions;
+        this.questions = questions != null ? questions : new ArrayList<>();
         this.defeated = defeated;
     }
 

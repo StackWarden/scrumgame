@@ -24,6 +24,10 @@ public class Question {
         this.id = id;
     }
 
+    public boolean checkAnswer(String givenAnswer) {
+        return answer.trim().equalsIgnoreCase(givenAnswer.trim());
+    }
+
     public String getQuestion() {
         return question;
     }

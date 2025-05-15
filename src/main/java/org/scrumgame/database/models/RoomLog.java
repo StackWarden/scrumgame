@@ -5,6 +5,8 @@ import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 
 import java.sql.*;
+import java.util.Collections;
+import java.util.List;
 
 public class RoomLog implements GameLog {
     private int id;
@@ -22,8 +24,8 @@ public class RoomLog implements GameLog {
         return sessionId;
     }
 
-    public Question getQuestion() {
-        return question;
+    public List<Question> getQuestions() {
+        return Collections.singletonList(question);
     }
 
     public boolean isCompleted() {

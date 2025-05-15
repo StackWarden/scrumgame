@@ -9,4 +9,5 @@ import java.util.List;
 public interface LogStrategy {
     void log(Session session, Level level);
     List<? extends GameLog> getLogs(Session session);
+    void markCurrentLogCompleted(Session session);
 }

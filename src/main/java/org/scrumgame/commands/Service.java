@@ -1,9 +1,13 @@
 package org.scrumgame.commands;
 
 import org.scrumgame.classes.GameLog;
+import org.scrumgame.classes.Level;
+import org.scrumgame.classes.Monster;
+import org.scrumgame.classes.Question;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.services.LogService;
+import org.scrumgame.services.QuestionService;
 import org.scrumgame.strategies.MonsterLogStrategy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -46,6 +50,33 @@ public class Service {
             output.append(" - Defeated: ").append(log.isDefeated())
                     .append(" | Questions: ").append(log.getQuestions().size())
                     .append("\n");
+        }
+
+        return output.toString();
+    }
+
+
+    @ShellMethod(key = "test-level-questions", value = "Create unique questions for a Level based on session")
+    public String testLevelQuestions(
+            @ShellOption(help = "Session ID") int sessionId,
+            @ShellOption(help = "Amount of questions") int amount
+    ) {
+        Session session = Session.getSessionById(sessionId);
+        if (session == null) {
+            return "Session with ID " + sessionId + " not found.";
+        }
+
+        Level level = new Monster();
+        List<Question> questions = QuestionService.generateQuestions(session, amount);
+        level.setQuestions(questions);
+
+        if (questions.isEmpty()) {
+            return "No questions available (all previously used or none in DB).";
+        }
+
+        StringBuilder output = new StringBuilder("Made questions for session " + sessionId + ":\n");
+        for (Question q : questions) {
+            output.append("- [").append(q.getId()).append("] ").append(q.getQuestion()).append("\n");
         }
 
         return output.toString();
