@@ -12,10 +12,15 @@ services:
     ports:
       - ${DOCKER_PORT}
     volumes:
-      - ./db/data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+      - ./src/main/java/org/scrumgame/database/tables/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - scrumgame-network
     restart: always
+
+
+volumes:
+  mysql_data:
 
 networks:
   scrumgame-network:

@@ -95,3 +95,42 @@ CREATE TABLE `session` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- ... [same DROP/CREATE statements as before] ...
+
+-- Seed: players
+INSERT INTO `player` (`name`) VALUES
+                                  ('Alice'),
+                                  ('Bob'),
+                                  ('Charlie');
+
+-- Seed: questions
+INSERT INTO `question` (`text`, `correct_answer`) VALUES
+                                                      ('What is the capital of France?', 'Paris'),
+                                                      ('2 + 2 = ?', '4'),
+                                                      ('What color is the sky?', 'Blue');
+
+-- Seed: sessions
+INSERT INTO `session` (`player_id`, `score`, `monster_encounters`, `gameover`)
+VALUES
+    (1, 0, 0, 0),
+    (2, 0, 0, 0);
+
+-- Seed: level_log
+INSERT INTO `level_log` (`session_id`, `question_id`, `completed`)
+VALUES
+    (1, 1, 0),
+    (1, 2, 1),
+    (2, 3, 0);
+
+-- Seed: monster_log
+INSERT INTO `monster_log` (`session_id`, `defeated`)
+VALUES
+    (1, 1),
+    (2, 0);
+
+-- Seed: monster_log_questions
+INSERT INTO `monster_log_questions` (`monster_log_id`, `question_id`)
+VALUES
+    (1, 1),
+    (2, 2);
