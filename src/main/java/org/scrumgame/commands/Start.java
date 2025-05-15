@@ -69,7 +69,14 @@ public class Start {
     String name = scanner.nextLine();
 
         if (naamBestaat(name)) {
-                return "Je kan niet meer dan 1 keer met dezelfde naam de game starten.";
+                return """
+                ╔══════════════════════════════════════════════╗
+                ║                                              ║
+                ║       Je kan niet meer dan 1 keer met        ║
+                ║        dezelfde naam de game starten.        ║
+                ║                                              ║
+                ╚══════════════════════════════════════════════╝
+                """;
         }
 
         voegSpelerToe(name);
