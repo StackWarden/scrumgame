@@ -1,5 +1,9 @@
 package org.scrumgame.commands;
 
+import org.scrumgame.classes.Monster;
+import org.scrumgame.database.models.MonsterLog;
+import org.scrumgame.services.LogService;
+import org.scrumgame.strategies.MonsterLogStrategy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;

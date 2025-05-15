@@ -1,8 +1,11 @@
 package org.scrumgame.services;
 
+import org.scrumgame.classes.GameLog;
 import org.scrumgame.classes.Level;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.strategies.LogStrategy;
+
+import java.util.List;
 
 public class LogService {
     private LogStrategy strategy;
@@ -12,8 +15,16 @@ public class LogService {
     }
 
     public void executeLog(Session session, Level level) {
-        if (strategy != null) {
-            strategy.log(session, level);
+        if (strategy == null) {
+            throw new IllegalStateException("No strategy set.");
         }
+        strategy.log(session, level);
+    }
+
+    public List<? extends GameLog> getLogs(Session session) {
+        if (strategy == null) {
+            throw new IllegalStateException("No strategy set.");
+        }
+        return strategy.getLogs(session);
     }
 }
