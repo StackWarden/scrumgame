@@ -66,21 +66,12 @@ public class Session {
             e.printStackTrace();
         }
 
-
         return null;
     }
 
     // Getters
     public int getId() {
-        String sql = "SELECT id FROM session WHERE player_id = ?";
-        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
-
-             stmt.setInt(1, getCurrentId());
-             stmt.executeQuery();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return id;
+        return this.id;
     }
 
     public int getPlayerId() {
@@ -103,9 +94,15 @@ public class Session {
         return gameOver;
     }
 
+    public int getSessionFromDb() {
+        String sql = "SELECT id from session WHERE id = ?";
 
-
-    public int getCurrentId() {
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, this.id);
+            ResultSet rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return id;
     }
 }
