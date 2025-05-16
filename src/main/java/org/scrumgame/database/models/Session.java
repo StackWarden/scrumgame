@@ -4,6 +4,12 @@ import org.scrumgame.database.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import org.scrumgame.database.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,6 +29,9 @@ public class Session {
         this.score = score;
         this.monstersEncountered = monstersEncountered;
         this.gameOver = gameOver;
+    }
+    public Session() {
+        this.id = id;
     }
 
     public Session(boolean gameOver, int monstersEncountered, int score, int currentLevel, int playerId) {
@@ -62,7 +71,7 @@ public class Session {
 
     // Getters
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public int getPlayerId() {
@@ -83,5 +92,17 @@ public class Session {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public int getSessionFromDb() {
+        String sql = "SELECT id from session WHERE id = ?";
+
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, this.id);
+            ResultSet rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
     }
 }
