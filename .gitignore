@@ -9,6 +9,7 @@ target/
 .idea/compiler.xml
 .idea/libraries/
 .idea/misc.xml
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -44,3 +45,5 @@ build/
 /.idea/vcs.xml
 
 db/
+
+spring-shell.log
