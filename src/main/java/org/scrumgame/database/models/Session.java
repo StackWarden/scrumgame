@@ -29,6 +29,9 @@ public class Session {
         this.monsterEncounters = monsterEncounters;
         this.gameOver = gameOver;
     }
+    public Session(int id) {
+        this.id = id;
+    }
 
     public Session() {
 
