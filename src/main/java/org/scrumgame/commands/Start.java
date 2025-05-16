@@ -40,7 +40,7 @@ public class Start {
     }
 
 
-    @ShellMethod (key = "start", value = "Launch the game")
+//    @ShellMethod (key = "start", value = "Launch the game")
     public String start() {
         return ("""
                 ╔══════════════════════════════════════════════╗
@@ -90,7 +90,7 @@ public class Start {
                 """;
     }
 
-@ShellMethod(key = {"load", "2"}, value = "Load de Save")
+//@ShellMethod(key = {"load", "2"}, value = "Load de Save")
 public String load() {
     String sql = "SELECT id, name FROM player ORDER BY id DESC LIMIT 1";
     

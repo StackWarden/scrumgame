@@ -1,9 +1,16 @@
 package org.scrumgame.classes;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Question {
     private int id;
     private String question;
     private String answer;
+    private static final String SELECT_QUESTION_BY_ID_SQL =
+            "SELECT id, text, correct_answer FROM question WHERE id = ?";
 
     public Question(int id, String question, String answer) {
         this.id = id;
@@ -24,6 +31,10 @@ public class Question {
         this.id = id;
     }
 
+    public boolean checkAnswer(String givenAnswer) {
+        return answer.trim().equalsIgnoreCase(givenAnswer.trim());
+    }
+
     public String getQuestion() {
         return question;
     }
@@ -38,5 +49,22 @@ public class Question {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
+            stmt.setInt(1, questionId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Question(
+                        rs.getInt("id"),
+                        rs.getString("text"),
+                        rs.getString("correct_answer")
+                );
+            } else {
+                throw new SQLException("Question not found for ID: " + questionId);
+            }
+        }
     }
 }

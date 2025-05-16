@@ -26,8 +26,7 @@ public class Player {
     }
 
     public int getStatus() {
-        Session session = new Session();
-        return session.getSessionFromDb();
+        return 1;
     }
 
     public String setName(String name) {

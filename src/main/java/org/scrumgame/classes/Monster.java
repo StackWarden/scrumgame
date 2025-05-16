@@ -1,36 +1,67 @@
 package org.scrumgame.classes;
 
+import org.scrumgame.database.models.Session;
 import org.scrumgame.services.LogService;
+import org.scrumgame.strategies.LogStrategy;
 import org.scrumgame.strategies.MonsterLogStrategy;
 
-import java.util.AbstractMap;
-import java.util.List;
-
 public class Monster extends Level {
-    public List<Question> questions;
+    private final String name;
+    private final String question;
+    private final String answer;
+    private boolean defeated;
+    private Question questionObject;
 
-    public void gameOver() {
-
+    public Monster(Question question) {
+        this.questionObject = question;
+        this.name = question.getQuestion();
+        this.question = question.getQuestion();
+        this.answer = question.getAnswer();
+        this.defeated = false;
     }
+
+    public String getName() {
+        return name;
+    }
+
     public boolean isDefeated() {
-        return false;
+        return defeated;
+    }
+
+    public void setDefeated(boolean defeated) {
+        this.defeated = defeated;
+    }
+
+    public Question getQuestionObject() {
+        return questionObject;
     }
 
     @Override
-    public LogService getLogService() {
-        MonsterLogStrategy monsterLogStrategy = new MonsterLogStrategy();
-        LogService logService = new LogService();
-        logService.setStrategy(monsterLogStrategy);
-        return logService;
+    public String getPrompt() {
+        return question;
     }
 
     @Override
-    public Room nextLevel() {
-        return null;
+    public boolean checkAnswer(String userAnswer) {
+        if (userAnswer == null || answer == null) return false;
+        String trimmed = userAnswer.trim();
+        if (trimmed.isEmpty()) return false;
+        try {
+            double expected = Double.parseDouble(answer);
+            double actual = Double.parseDouble(trimmed);
+            return Math.abs(expected - actual) < 1e-9;
+        } catch (NumberFormatException e) {
+            return answer.equalsIgnoreCase(trimmed);
+        }
     }
 
     @Override
-    public List<AbstractMap.SimpleEntry<Question, Boolean>> checkAnswers(List<AbstractMap.SimpleEntry<Question, String>> answers) {
-        return List.of();
+    public String getAnswer() {
+        return answer;
+    }
+
+    @Override
+    public Question getQuestion() {
+        return new Question(-1, question, answer);
     }
 }

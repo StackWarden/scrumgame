@@ -1,37 +1,44 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.services.LogService;
-import org.scrumgame.strategies.RoomLogStrategy;
+import org.scrumgame.database.models.Session;
+import org.scrumgame.services.QuestionService;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 public class Room extends Level {
-    public Question question;
+    private Question question;
 
-    public Monster spawnMonster() {
-        return null;
+    public Room(Question question) {
+        super();
+        this.question = question;
+    }
+
+    public static Room createRoom(Session session) {
+        List<Question> questions = QuestionService.generateQuestions(session, 1);
+        if (questions.isEmpty()) {
+            throw new IllegalStateException("No questions available for new room.");
+        }
+        Question question = questions.getFirst();
+        return new Room(question);
     }
 
     @Override
-    public LogService getLogService() {
-        RoomLogStrategy roomLogStrategy = new RoomLogStrategy();
-        LogService logService = new LogService();
-        logService.setStrategy(roomLogStrategy);
-        return logService;
-    }
-
-    public List<Question> getQuestions() {
-        return List.of();
+    public String getPrompt() {
+        return question != null ? question.getQuestion() : "Room already cleared.";
     }
 
     @Override
-    public Room nextLevel() {
-        return null;
+    public boolean checkAnswer(String answer) {
+        return question != null && question.checkAnswer(answer);
     }
 
     @Override
-    public List<SimpleEntry<Question, Boolean>> checkAnswers(List<SimpleEntry<Question, String>> answers) {
-        return List.of();
+    public String getAnswer() {
+        return question != null ? question.getAnswer() : "";
+    }
+
+    @Override
+    public Question getQuestion() {
+        return question != null ? question : null;
     }
 }
