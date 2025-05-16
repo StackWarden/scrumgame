@@ -30,6 +30,9 @@ public class Session {
         this.monstersEncountered = monstersEncountered;
         this.gameOver = gameOver;
     }
+    public Session() {
+        this.id = id;
+    }
 
     public Session(boolean gameOver, int monstersEncountered, int score, int currentLevel, int playerId) {
         this(0, playerId, currentLevel, score, monstersEncountered, gameOver);
@@ -63,20 +66,16 @@ public class Session {
             e.printStackTrace();
         }
 
-    public Session() {
-        this.id = id;
-    }
 
         return null;
     }
 
     // Getters
     public int getId() {
-        String sql = "SELECT id, playerId FROM sessions WHERE player_id = ?";
+        String sql = "SELECT id FROM session WHERE player_id = ?";
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
 
              stmt.setInt(1, getCurrentId());
-             stmt.setInt(2, getPlayerId());
              stmt.executeQuery();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -104,21 +103,7 @@ public class Session {
         return gameOver;
     }
 
-    public int getMonstersEncountered() {
-        return monstersEncountered;
-    }
 
-    public int getScore() {
-        return score;
-    }
-
-    public int getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
 
     public int getCurrentId() {
         return id;

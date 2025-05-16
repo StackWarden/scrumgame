@@ -80,6 +80,7 @@ public class Start {
 
         voegSpelerToe(name);
         player.setName(name);  // Set the name in the Player instance
+        player.setCurrentPlayer(player);
         return """
                 ╔══════════════════════════════════════════════╗
                 ║                                              ║
@@ -89,14 +90,35 @@ public class Start {
                 """;
     }
 
-    @ShellMethod (key = {"load", "2"}, value = "Load de Save")
-    public String load() {
-        return """
-                ╔══════════════════════════════════════════════╗
-                ║                                              ║
-                ║                 Placeholder                  ║
-                ║                                              ║
-                ╚══════════════════════════════════════════════╝
-                """;
+@ShellMethod(key = {"load", "2"}, value = "Load de Save")
+public String load() {
+    String sql = "SELECT id, name FROM player ORDER BY id DESC LIMIT 1";
+    
+    try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            int playerId = rs.getInt("id");
+            player.loadFromDatabase(playerId);
+            player.setCurrentPlayer(player);
+            return String.format("""
+            ╔══════════════════════════════════════════════════════════╗
+            ║                                                          ║
+            ║      Welkom terug, %s!                                   ║
+            ║                                                          ║
+            ╚══════════════════════════════════════════════════════════╝
+            """, player.getName());
+        } else {
+            return """
+            ╔══════════════════════════════════════════════╗
+            ║                                              ║
+            ║        Er zijn nog geen spelers.             ║
+            ║        Start eerst een nieuwe game.          ║
+            ║                                              ║
+            ╚══════════════════════════════════════════════╝
+            """;
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException("Fout bij laden speler: " + e.getMessage(), e);
     }
+}
 }

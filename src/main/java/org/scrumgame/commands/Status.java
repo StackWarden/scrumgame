@@ -7,11 +7,9 @@ import org.springframework.shell.standard.ShellMethod;
 @ShellComponent
 public class Status {
 
-    private Player player;
-
     @ShellMethod(key = "status", value = "Show the status of the game")
     public String status() {
-        Player player = new Player();
-        return player.getName() + " is in room " + player.getStatus() + " / 10";
+        Player currentPlayer = Player.getCurrentPlayer();
+        return currentPlayer.getName() + " is in room " + currentPlayer.getStatus() + " / 10 met een score van";
     }
 }
