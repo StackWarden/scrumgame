@@ -9,12 +9,21 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Level {
-    public abstract LogService getLogService();
+    public abstract String getPrompt();
+    public abstract boolean checkAnswer(String answer);
+    public abstract String getAnswer();
 
-    public abstract LogStrategy getLogStrategy();
-    public abstract Room nextLevel(Session session);
-    public abstract void setQuestions(List<Question> questions);
-    public abstract List<Map.Entry<Question, Boolean>> checkAnswers(
-            List<Map.Entry<Question, String>> answers
-    );
+    private int logId = -1;
+
+    public int getLogId() {
+        return logId;
+    }
+
+    public void setLogId(int logId) {
+        this.logId = logId;
+    }
+
+    public Question getQuestion() {
+        return null;
+    }
 }

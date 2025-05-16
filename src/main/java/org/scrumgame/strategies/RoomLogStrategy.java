@@ -17,36 +17,39 @@ public class RoomLogStrategy implements LogStrategy {
             "INSERT INTO level_log (session_id, question_id, completed) VALUES (?, ?, ?)";
     private static final String SELECT_ROOM_LOGS_SQL =
             "SELECT id, question_id, completed FROM level_log WHERE session_id = ?";
-    private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer FROM question WHERE id = ?";
     private int lastInsertedLogId = -1;
 
 
     @Override
-    public void log(Session session, Level level) {
+    public Level log(Session session, Level level) {
         Room room = (Room) level;
         Question question = room.getQuestion();
 
         if (question == null) {
-            throw new IllegalStateException("No questions available to log for this room.");
+            throw new IllegalStateException("No question to log.");
         }
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(INSERT_ROOM_LOG_SQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(
+                     "INSERT INTO level_log (session_id, question_id, completed) VALUES (?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, session.getId());
             stmt.setInt(2, question.getId());
-            stmt.setBoolean(3, true);
+            stmt.setBoolean(3, false);
             stmt.executeUpdate();
 
             ResultSet keys = stmt.getGeneratedKeys();
             if (keys.next()) {
-                lastInsertedLogId = keys.getInt(1);
+                int logId = keys.getInt(1);
+                room.setLogId(logId);
             }
+            return room;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class RoomLogStrategy implements LogStrategy {
             while (result.next()) {
                 int questionId = result.getInt("question_id");
                 boolean completed = result.getBoolean("completed");
-                Question question = fetchQuestionById(connection, questionId);
+                Question question = Question.fetchQuestionById(connection, questionId);
 
                 RoomLog log = new RoomLog(session.getId(), question, completed);
                 roomLogs.add(log);
@@ -81,28 +84,47 @@ public class RoomLogStrategy implements LogStrategy {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, session.getCurrentLevel());
+            stmt.setInt(1, session.getCurrentRoomId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
-            stmt.setInt(1, questionId);
+    @Override
+    public String getPromptByLogId(int logId) {
+        String sql = "SELECT question_id FROM level_log WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, logId);
             ResultSet rs = stmt.executeQuery();
-
             if (rs.next()) {
-                return new Question(
-                        rs.getInt("id"),
-                        rs.getString("text"),
-                        rs.getString("correct_answer")
-                );
-            } else {
-                throw new SQLException("Question not found for ID: " + questionId);
+                int qId = rs.getInt("question_id");
+                Question q = Question.fetchQuestionById(conn, qId);
+                return q.getQuestion();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return "No prompt found.";
+    }
+
+    @Override
+    public Level loadByLogId(int logId) {
+        String sql = "SELECT question_id FROM level_log WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, logId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int qId = rs.getInt("question_id");
+                Question q = Question.fetchQuestionById(conn, qId);
+                return new Room(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public int getLastInsertedLogId() {

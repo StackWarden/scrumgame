@@ -12,7 +12,8 @@ public class MonsterLog implements GameLog {
     private List<Question> questions;
     private boolean defeated;
 
-    public MonsterLog(int sessionId, List<Question> questions, boolean defeated) {
+    public MonsterLog(int id, int sessionId, List<Question> questions, boolean defeated) {
+        this.id = id;
         this.sessionId = sessionId;
         this.questions = questions != null ? questions : new ArrayList<>();
         this.defeated = defeated;

@@ -5,14 +5,24 @@ import org.scrumgame.services.LogService;
 import org.scrumgame.strategies.LogStrategy;
 import org.scrumgame.strategies.MonsterLogStrategy;
 
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class Monster extends Level {
-    private List<Question> questions;
+    private final String name;
+    private final String question;
+    private final String answer;
     private boolean defeated;
+    private Question questionObject;
+
+    public Monster(Question question) {
+        this.questionObject = question;
+        this.name = question.getQuestion();
+        this.question = question.getQuestion();
+        this.answer = question.getAnswer();
+        this.defeated = false;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public boolean isDefeated() {
         return defeated;
@@ -22,47 +32,36 @@ public class Monster extends Level {
         this.defeated = defeated;
     }
 
-    @Override
-    public LogService getLogService() {
-        LogService logService = new LogService();
-        logService.setStrategy(new MonsterLogStrategy());
-        return logService;
+    public Question getQuestionObject() {
+        return questionObject;
     }
 
     @Override
-    public LogStrategy getLogStrategy() {
-        return new MonsterLogStrategy();
+    public String getPrompt() {
+        return question;
     }
 
     @Override
-    public Room nextLevel(Session session) {
-        return new Room().nextLevel(session);
+    public boolean checkAnswer(String userAnswer) {
+        if (userAnswer == null || answer == null) return false;
+        String trimmed = userAnswer.trim();
+        if (trimmed.isEmpty()) return false;
+        try {
+            double expected = Double.parseDouble(answer);
+            double actual = Double.parseDouble(trimmed);
+            return Math.abs(expected - actual) < 1e-9;
+        } catch (NumberFormatException e) {
+            return answer.equalsIgnoreCase(trimmed);
+        }
     }
 
     @Override
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
+    public String getAnswer() {
+        return answer;
     }
 
     @Override
-    public List<Map.Entry<Question, Boolean>> checkAnswers(List<Map.Entry<Question, String>> answers) {
-        return questions.stream()
-                .map(q -> {
-                    String provided = answers.stream()
-                            .filter(e -> e.getKey().getId() == q.getId())
-                            .map(Map.Entry::getValue)
-                            .findFirst()
-                            .orElse("");
-
-                    System.out.println("Monster: checking QID " + q.getId());
-                    System.out.println(" - Provided: '" + provided + "' | Expected: '" + q.getAnswer() + "'");
-
-                    return Map.entry(q, q.checkAnswer(provided));
-                })
-                .toList();
+    public Question getQuestion() {
+        return new Question(-1, question, answer);
     }
 }

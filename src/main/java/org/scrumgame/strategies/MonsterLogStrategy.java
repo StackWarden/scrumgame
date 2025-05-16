@@ -29,10 +29,15 @@ public class MonsterLogStrategy implements LogStrategy {
 
 
     @Override
-    public void log(Session session, Level level) {
+    public Level log(Session session, Level level) {
         Monster monster = (Monster) level;
-        List<Question> questions = monster.getQuestions();
-        boolean defeated = monster.isDefeated(); // of false als je dat zelf bepaalt
+        Question question = monster.getQuestionObject();
+        boolean defeated = monster.isDefeated();
+
+        if (question == null || question.getId() <= 0) {
+            System.err.println("[ERROR] Cannot log monster: question is invalid or not stored in DB.");
+            return monster;
+        }
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             String insertLog = "INSERT INTO monster_log (session_id, defeated) VALUES (?, ?)";
@@ -41,24 +46,24 @@ public class MonsterLogStrategy implements LogStrategy {
                 stmt.setBoolean(2, defeated);
                 stmt.executeUpdate();
 
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    lastInsertedLogId = generatedKeys.getInt(1); // ← Save it
+                ResultSet keys = stmt.getGeneratedKeys();
+                if (keys.next()) {
+                    int logId = keys.getInt(1);
+                    monster.setLogId(logId);
                 }
 
-                String insertQuestions = "INSERT INTO monster_log_questions (monster_log_id, question_id) VALUES (?, ?)";
-                try (PreparedStatement qStmt = conn.prepareStatement(insertQuestions)) {
-                    for (Question question : questions) {
-                        qStmt.setInt(1, lastInsertedLogId);
-                        qStmt.setInt(2, question.getId());
-                        qStmt.addBatch();
-                    }
-                    qStmt.executeBatch();
+                String insertQuestion = "INSERT INTO monster_log_questions (monster_log_id, question_id) VALUES (?, ?)";
+                try (PreparedStatement qStmt = conn.prepareStatement(insertQuestion)) {
+                    qStmt.setInt(1, monster.getLogId());
+                    qStmt.setInt(2, question.getId());
+                    qStmt.executeUpdate();
                 }
+                return monster;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
@@ -75,7 +80,7 @@ public class MonsterLogStrategy implements LogStrategy {
                 int logId = logResults.getInt("id");
                 boolean defeated = logResults.getBoolean("defeated");
                 List<Question> questions = getQuestionsForLog(conn, logId);
-                monsterLogs.add(new MonsterLog(session.getId(), questions, defeated));
+                monsterLogs.add(new MonsterLog(logId, session.getId(), questions, defeated));
             }
 
         } catch (SQLException e) {
@@ -91,7 +96,7 @@ public class MonsterLogStrategy implements LogStrategy {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, session.getCurrentMonsterId()); // assumes session holds the current monster log ID
+            stmt.setInt(1, session.getCurrentRoomId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -129,6 +134,42 @@ public class MonsterLogStrategy implements LogStrategy {
 
             throw new SQLException("Question not found for ID: " + questionId);
         }
+    }
+
+    @Override
+    public String getPromptByLogId(int logId) {
+        String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(qSql)) {
+            stmt.setInt(1, logId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int qId = rs.getInt("question_id");
+                Question q = fetchQuestionById(conn, qId);
+                return q.getQuestion();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "No monster prompt found.";
+    }
+
+    @Override
+    public Level loadByLogId(int logId) {
+        String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(qSql)) {
+            stmt.setInt(1, logId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int questionId = rs.getInt("question_id");
+                Question q = Question.fetchQuestionById(conn, questionId);
+                return new Monster(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public int getLastInsertedLogId() {
