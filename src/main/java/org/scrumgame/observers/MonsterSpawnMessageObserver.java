@@ -26,7 +26,7 @@ public class MonsterSpawnMessageObserver implements MonsterSpawnObserver {
                 .map(Monster::getPrompt)
                 .collect(Collectors.joining(", "));
 
-        lastMessage = "Wrong! You've awakened " + spawnedMonsters.size() + " monsters!\nMonsters appear: " + monstersList;
+        lastMessage = "Wrong, monsters appear: " + monstersList;
     }
     // inform the player of their impending doom (that monsters will spawn)
     public String getLastMessage() {
