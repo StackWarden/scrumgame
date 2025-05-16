@@ -3,7 +3,9 @@ package org.scrumgame.game;
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.models.Session;
+import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.services.LogService;
+import org.scrumgame.services.MonsterSpawner;
 import org.scrumgame.strategies.MonsterLogStrategy;
 import org.scrumgame.strategies.RoomLogStrategy;
 import org.slf4j.Logger;
@@ -19,15 +21,22 @@ public class GameService {
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameContext context;
     private final LogService logService;
-
-    @Autowired
-    public GameService(GameContext context) {
-        this.context = context;
-        this.logService = new LogService();
-    }
+    // the subject and the observer to react to monster spawning
+    private final MonsterSpawner monsterSpawner;
+    private final MonsterSpawnMessageObserver messageObserver;
 
     private boolean inGame = false;
     private Session session;
+
+
+    @Autowired
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver) {
+        this.context = context;
+        this.logService = new LogService();
+        // inject both the subject and observer via spring
+        this.monsterSpawner = monsterSpawner;
+        this.messageObserver = messageObserver;
+    }
 
     public boolean isInGame() {
         return inGame;
@@ -37,12 +46,9 @@ public class GameService {
         Session session = Session.createNew(1);
         Room room = Room.createRoom(session);
 
-        LogService localLogService = this.logService;
-        localLogService.setStrategy(new RoomLogStrategy());
+        logService.setStrategy(new RoomLogStrategy());
+        room = (Room) logService.executeLog(session, room);
 
-        room = (Room) localLogService.executeLog(session, room);
-
-        assert session != null;
         session.setCurrentRoomId(room.getLogId());
 
         this.session = session;
@@ -52,21 +58,19 @@ public class GameService {
 
     public Session loadSession(int sessionId) {
         Session session = Session.loadById(sessionId);
-
+        this.session = session;
         return session;
     }
 
     public String getCurrentPrompt() {
-        LogService localLogService = this.logService;
-        localLogService.setStrategy(new RoomLogStrategy());
-
-        return session.getCurrentPrompt(localLogService);
+        logService.setStrategy(new RoomLogStrategy());
+        return session.getCurrentPrompt(logService);
     }
 
     public String submitAnswer(String answer) {
         List<Monster> activeMonsters = logService.getActiveMonsters(session);
         if (!activeMonsters.isEmpty()) {
-            Monster currentMonster = activeMonsters.getFirst();
+            Monster currentMonster = activeMonsters.get(0);
             currentMonster.setLogId(session.getCurrentMonsterLogId());
 
             boolean correct = currentMonster.checkAnswer(answer);
@@ -76,7 +80,7 @@ public class GameService {
                 // Check for remaining monsters
                 List<Monster> remaining = logService.getActiveMonsters(session);
                 if (!remaining.isEmpty()) {
-                    Monster next = remaining.getFirst();
+                    Monster next = remaining.get(0);
                     session.setCurrentMonsterLogId(next.getLogId());
                     session.save();
                     return "Correct! Next monster: " + next.getPrompt();
@@ -100,9 +104,15 @@ public class GameService {
             logService.markCurrentLogCompleted(room);
             session.setCurrentRoomId(null);
             session.save();
-            return "Good Answer!\n U may proceed to the next room with 'next'.";
+            return "Good Answer!\nYou may proceed to the next room with 'next'.";
         } else {
-            List<Monster> monsters = context.spawnMonstersForRoom(session, room);
+            // Use the injected MonsterSpawner and Observer
+            // clear previous message before any handlings
+            messageObserver.clear();
+            monsterSpawner.addObserver(messageObserver);
+
+            List<Monster> monsters = monsterSpawner.spawnMonstersForRoom(session, room);
+            // log each monster so they're persisted and can be referenced (for fighting) later on
             for (Monster monster : monsters) {
                 logService.setStrategy(new MonsterLogStrategy());
                 Monster logged = (Monster) logService.executeLog(session, monster);
@@ -110,16 +120,17 @@ public class GameService {
                     monster.setLogId(logged.getLogId());
                 }
             }
-
+            // set the current monster to the first active
             List<Monster> active = logService.getActiveMonsters(session);
             if (!active.isEmpty()) {
-                Monster first = active.getFirst();
+                Monster first = active.get(0);
                 session.setCurrentMonsterLogId(first.getLogId());
                 session.save();
-                return "Wrong! You've awakened "+ active.size() + " monsters!\nMonster appears: " + first.getPrompt();
-            } else {
-                return "Failed to spawn monsters.";
             }
+            // detach observer
+            monsterSpawner.removeObserver(messageObserver);
+            // retrieve the message from the observer (decoupled, built by the observer)
+            return messageObserver.getLastMessage();
         }
     }
 
