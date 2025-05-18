@@ -113,6 +113,13 @@ public class GameService {
         return player != null;
     }
 
+    public void saveSession(int sessionId) {
+        if (session == null || session.getId() != sessionId) {
+            throw new IllegalArgumentException("No active session with the given ID.");
+        }
+        session.save(); // Calls the save method in the Session class
+    }
+
     public String getCurrentPrompt() {
         List<Monster> activeMonsters = logService.getActiveMonsters(session);
         if (!activeMonsters.isEmpty()) {
