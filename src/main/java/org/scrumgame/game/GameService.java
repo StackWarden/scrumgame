@@ -62,6 +62,13 @@ public class GameService {
         return session;
     }
 
+    public void saveSession(int sessionId) {
+        if (session == null || session.getId() != sessionId) {
+            throw new IllegalArgumentException("No active session with the given ID.");
+        }
+        session.save(); // Calls the save method in the Session class
+    }
+
     public String getCurrentPrompt() {
         logService.setStrategy(new RoomLogStrategy());
         return session.getCurrentPrompt(logService);

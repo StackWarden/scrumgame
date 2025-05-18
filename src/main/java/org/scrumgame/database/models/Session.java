@@ -1,14 +1,9 @@
 package org.scrumgame.database.models;
 
-import org.scrumgame.classes.Level;
-import org.scrumgame.classes.Room;
-import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.services.LogService;
-import org.scrumgame.strategies.RoomLogStrategy;
 
 import java.sql.*;
-import java.util.Optional;
 
 public class Session {
     private int id;
@@ -93,7 +88,7 @@ public class Session {
         return null;
     }
 
-    public void save() {
+    public Session save() {
         String sql = """
         UPDATE session
         SET current_level_log_id = ?, current_monster_log_id = ?,
@@ -125,6 +120,7 @@ public class Session {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public int getId() {

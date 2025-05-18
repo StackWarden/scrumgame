@@ -36,6 +36,15 @@ public class Game{
         return "Game started.";
     }
 
+    @ShellMethod(key = "save-game", value = "Saves the current game session.")
+    public String saveGame(@ShellOption(help = "Your savefile") int saveSlot) {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+        gameService.saveSession(saveSlot);
+        return "Game saved.";
+    }
+
     @ShellMethod(key = "prompt", value = "Show current question or monster prompt.")
     public String getCurrentPrompt() {
         if (!gameService.isInGame()) {
