@@ -59,7 +59,12 @@ public class RoomLog implements GameLog {
             // from the correct_answer column get the value from the column and set it to correctAnswer
             String correctAnswer = correctRs.getString("correct_answer");
             // create a question with type Question which holds the id, text and correctAnswer from the query
-            Question question = new Question(correctId, text, correctAnswer);
+            Question question = new Question(correctId, text, correctAnswer) {
+                @Override
+                protected boolean checkAnswer(String givenAnswer) {
+                    return false;
+                }
+            };
 
             // print all the data
             System.out.println("ID: " + question.getId());

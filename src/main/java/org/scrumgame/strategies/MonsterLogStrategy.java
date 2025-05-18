@@ -129,7 +129,12 @@ public class MonsterLogStrategy implements LogStrategy {
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer")
-                );
+                ) {
+                    @Override
+                    protected boolean checkAnswer(String givenAnswer) {
+                        return false;
+                    }
+                };
             }
 
             throw new SQLException("Question not found for ID: " + questionId);

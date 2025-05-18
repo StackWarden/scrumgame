@@ -62,6 +62,11 @@ public class Monster extends Level {
 
     @Override
     public Question getQuestion() {
-        return new Question(-1, question, answer);
+        return new Question(-1, question, answer) {
+            @Override
+            protected boolean checkAnswer(String givenAnswer) {
+                return false;
+            }
+        };
     }
 }
