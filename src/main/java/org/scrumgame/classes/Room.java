@@ -16,7 +16,7 @@ public class Room extends Level {
     public static Room createRoom(Session session) {
         List<Question> questions = QuestionService.generateQuestions(session, 1);
         if (questions.isEmpty()) {
-            throw new IllegalStateException("No questions available for new room.");
+            throw new IllegalStateException("No questions available for random room.");
         }
         Question question = questions.getFirst();
         return new Room(question);
