@@ -6,14 +6,15 @@ import org.scrumgame.database.models.Session;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
-import org.scrumgame.strategies.MonsterLogStrategy;
-import org.scrumgame.strategies.RoomLogStrategy;
+import org.scrumgame.strategies.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 @Service
 public class GameService {
@@ -165,6 +166,31 @@ public class GameService {
         // TODO: Display current room, score, monster info, etc.
         return "";
     }
+
+    public String getHint() {
+        if (session == null) {
+            return "No session active.";
+        }
+
+        if (session.getCurrentMonsterLogId() != -1) {
+            Monster monster = getCurrentMonster(session.getCurrentMonsterLogId());
+            String answer = monster.getAnswer();
+            String hint = monster.getHint();
+
+            HintContext hintContext = new HintContext();
+
+            if (hint != null && !hint.isBlank()) {
+                hintContext.setStrategy(new PredefinedHintStrategy());
+            } else {
+                hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
+            }
+
+            return hintContext.getHint(answer, hint);
+        }
+
+        return "You can only get hints for monsters!";
+    }
+
 
     public void endGame() {
         // TODO: Clean up session and reset game state

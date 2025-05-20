@@ -6,16 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Question {
+    private String hint;
     private int id;
     private String question;
     private String answer;
     private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer FROM question WHERE id = ?";
+            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
-    public Question(int id, String question, String answer) {
+    public Question(int id, String question, String answer, String hint) {
         this.id = id;
         this.question = question;
         this.answer = answer;
+        this.hint = hint;
     }
 
     public Question(String question, String answer) {
@@ -51,6 +53,14 @@ public class Question {
         this.answer = answer;
     }
 
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
     public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);
@@ -60,7 +70,8 @@ public class Question {
                 return new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer")
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
                 );
             } else {
                 throw new SQLException("Question not found for ID: " + questionId);

@@ -64,7 +64,15 @@ public class Game{
         return "Game ended.";
     }
 
+    @ShellMethod(key = "hint", value = "Get a hint for the current question.")
+    public String getHint() {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+        return gameService.getHint();
+    }
     @ShellMethod(key = "help", value = "List available game commands.")
+
     public String showHelp() {
         return """
             Available commands:

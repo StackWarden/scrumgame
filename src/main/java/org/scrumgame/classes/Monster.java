@@ -1,19 +1,16 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.database.models.Session;
-import org.scrumgame.services.LogService;
-import org.scrumgame.strategies.LogStrategy;
-import org.scrumgame.strategies.MonsterLogStrategy;
-
 public class Monster extends Level {
     private final String name;
     private final String question;
     private final String answer;
+    private final String hint;
     private boolean defeated;
     private Question questionObject;
 
     public Monster(Question question) {
         this.questionObject = question;
+        this.hint = question.getHint();
         this.name = question.getQuestion();
         this.question = question.getQuestion();
         this.answer = question.getAnswer();
@@ -22,6 +19,10 @@ public class Monster extends Level {
 
     public String getName() {
         return name;
+    }
+
+    public String getHint() {
+        return hint;
     }
 
     public boolean isDefeated() {
@@ -62,6 +63,6 @@ public class Monster extends Level {
 
     @Override
     public Question getQuestion() {
-        return new Question(-1, question, answer);
+        return new Question(-1, question, answer, hint);
     }
 }
