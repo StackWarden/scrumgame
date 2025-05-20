@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class GameService {
@@ -166,6 +167,25 @@ public class GameService {
         return "";
     }
 
+    private String obfuscateAnswer(String answer) {
+        Random random = new Random();
+        StringBuilder obfuscated = new StringBuilder();
+
+        for (char c : answer.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                if (random.nextDouble() < 0.3) {
+                    obfuscated.append(c);
+                } else {
+                    obfuscated.append("_");
+                }
+            } else {
+                obfuscated.append(c);
+            }
+        }
+
+        return obfuscated.toString();
+    }
+
     public String getHint() {
         if (session == null) {
             return "No session active.";
@@ -173,7 +193,13 @@ public class GameService {
 
         if (session.getCurrentMonsterLogId() != -1) {
             Monster monster = getCurrentMonster(session.getCurrentMonsterLogId());
-            return monster.getHint();
+            String hint = monster.getHint();
+
+            if (hint == null || hint.isBlank()) {
+                return obfuscateAnswer(monster.getAnswer());
+            }
+
+            return hint;
         }
 
         return "You can only get hints for monsters!";
