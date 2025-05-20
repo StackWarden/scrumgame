@@ -1,11 +1,11 @@
 package org.scrumgame.commands;
 
-import org.scrumgame.classes.Question;
-import org.scrumgame.database.models.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellMethodAvailability;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.Availability;
 import org.scrumgame.game.GameService;
 
 @ShellComponent
@@ -18,25 +18,8 @@ public class Game{
         this.gameService = gameService;
     }
 
-    @ShellMethod(key = "start", value = "Start a new game session.")
-    public String startNewGame() {
-        if (gameService.isInGame()) {
-            return "A game is already running.";
-        }
-        gameService.startNewSession();
-        return "Game started. Question: " + gameService.getCurrentPrompt();
-    }
-
-    @ShellMethod(key = "load-game", value = "Loads an existing game session.")
-    public String loadGame(@ShellOption(help = "Your savefile") int saveSlot) {
-        if (gameService.isInGame()) {
-            return "A game is already running.";
-        }
-        gameService.loadSession(saveSlot); // TODO: Initialize session and first room
-        return "Game started.";
-    }
-
     @ShellMethod(key = "prompt", value = "Show current question or monster prompt.")
+    @ShellMethodAvailability("gameAvailable")
     public String getCurrentPrompt() {
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
@@ -45,6 +28,7 @@ public class Game{
     }
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")
+    @ShellMethodAvailability("gameAvailable")
     public String submitAnswer(@ShellOption(help = "Your answer") String answer) {
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
@@ -53,6 +37,7 @@ public class Game{
     }
 
     @ShellMethod(key = "next", value = "Go to the next room if possible.")
+    @ShellMethodAvailability("gameAvailable")
     public String goToNextRoom() {
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
@@ -61,6 +46,7 @@ public class Game{
     }
 
     @ShellMethod(key = "status", value = "Show current game status.")
+    @ShellMethodAvailability("gameAvailable")
     public String getStatus() {
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
@@ -69,6 +55,7 @@ public class Game{
     }
 
     @ShellMethod(key = "quit", value = "End the current game.")
+    @ShellMethodAvailability("gameAvailable")
     public String quitGame() {
         if (!gameService.isInGame()) {
             return "No game session to quit.";
@@ -77,7 +64,7 @@ public class Game{
         return "Game ended.";
     }
 
-    @ShellMethod(key = "help-game", value = "List available game commands.")
+    @ShellMethod(key = "help", value = "List available game commands.")
     public String showHelp() {
         return """
             Available commands:
@@ -89,5 +76,11 @@ public class Game{
             - status      → View game state
             - quit        → End the current game
         """;
+    }
+
+    public Availability gameAvailable() {
+        return gameService.isInGame()
+                ? Availability.available()
+                : Availability.unavailable("You are not in a game. Type 'start' to begin.");
     }
 }
