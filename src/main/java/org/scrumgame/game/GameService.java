@@ -166,6 +166,20 @@ public class GameService {
         return "";
     }
 
+    public String getHint() {
+        if (session == null) {
+            return "No session active.";
+        }
+
+        if (session.getCurrentMonsterLogId() != -1) {
+            Monster monster = getCurrentMonster(session.getCurrentMonsterLogId());
+            return monster.getHint();
+        }
+
+        return "You can only get hints for monsters!";
+    }
+
+
     public void endGame() {
         // TODO: Clean up session and reset game state
         inGame = false;
