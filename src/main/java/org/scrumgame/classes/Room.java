@@ -41,4 +41,8 @@ public class Room extends Level {
     public Question getQuestion() {
         return question != null ? question : null;
     }
+
+    public void getRoomInfo() {
+        
+    }
 }

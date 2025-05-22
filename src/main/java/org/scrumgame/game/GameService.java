@@ -3,6 +3,7 @@ package org.scrumgame.game;
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.models.Session;
+import org.scrumgame.factories.ItemSpawner;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
@@ -25,17 +26,20 @@ public class GameService {
     private final MonsterSpawner monsterSpawner;
     private final MonsterSpawnMessageObserver messageObserver;
 
+    private final ItemSpawner itemSpawner;
+
     private boolean inGame = false;
     private Session session;
 
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner) {
         this.context = context;
         this.logService = new LogService();
         // inject both the subject and observer via spring
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;
+        this.itemSpawner = itemSpawner;
     }
 
     public boolean isInGame() {
@@ -157,6 +161,8 @@ public class GameService {
         // Set new room in session
         session.setCurrentRoomId(newRoom.getLogId());
         session.save();
+
+        itemSpawner.spawnItems(session.getCurrentRoomId(), 3);
 
         return "New room entered.\nQuestion: " + newRoom.getPrompt();
     }

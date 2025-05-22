@@ -1,10 +1,5 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.database.models.Session;
-import org.scrumgame.services.LogService;
-import org.scrumgame.strategies.LogStrategy;
-import org.scrumgame.strategies.MonsterLogStrategy;
-
 public class Monster extends Level {
     private final String name;
     private final String question;

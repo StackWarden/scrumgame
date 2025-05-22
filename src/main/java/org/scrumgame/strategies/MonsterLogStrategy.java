@@ -6,7 +6,7 @@ import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
-import org.scrumgame.services.QuestionService;
+import org.scrumgame.interfaces.LogStrategy;
 
 import java.sql.*;
 import java.util.ArrayList;
