@@ -32,6 +32,14 @@ public class Session {
 
     }
 
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
     public static Session createNew(int playerId) {
         String sql = """
             INSERT INTO session (player_id, score, monster_encounters, gameover)

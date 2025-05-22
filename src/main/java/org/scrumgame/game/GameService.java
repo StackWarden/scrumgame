@@ -2,9 +2,11 @@ package org.scrumgame.game;
 
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Room;
+import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
+import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
 import org.scrumgame.strategies.MonsterLogStrategy;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -27,19 +30,21 @@ public class GameService {
     private final MonsterSpawnMessageObserver messageObserver;
 
     private final ItemSpawner itemSpawner;
+    private final Inventory inventory;
 
     private boolean inGame = false;
     private Session session;
 
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
         this.context = context;
         this.logService = new LogService();
         // inject both the subject and observer via spring
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;
         this.itemSpawner = itemSpawner;
+        this.inventory = inventory;
     }
 
     public boolean isInGame() {
@@ -53,6 +58,7 @@ public class GameService {
         logService.setStrategy(new RoomLogStrategy());
         room = (Room) logService.executeLog(session, room);
 
+        assert session != null;
         session.setCurrentRoomId(room.getLogId());
 
         this.session = session;
@@ -175,6 +181,33 @@ public class GameService {
     public void endGame() {
         // TODO: Clean up session and reset game state
         inGame = false;
+    }
+
+    public String getRoomItems() {
+        int logId = session.getCurrentRoomId();
+        if (logId == -1) return "No active room.";
+        List<Item> items = inventory.getAvailableItemsInRoom(logId);
+        if (items.isEmpty()) return "No items available in this room.";
+        return items.stream()
+                .map(item -> "Item ID: " + item.getId() + " - " + item.getName())
+                .collect(Collectors.joining("\n"));
+    }
+
+    public String pickUpItem(int itemId) {
+        return inventory.pickUpItem(itemId, session);
+    }
+
+    public String viewPlayerInventory() {
+        int playerId = session.getPlayerId();
+        List<Item> items = inventory.getInventoryItems(playerId, session.getId());
+
+        if (items.isEmpty()) {
+            return "You are not carrying any items.";
+        }
+
+        return items.stream()
+                .map(item -> "- " + item.getName() + " (ID: " + item.getId() + ")")
+                .collect(Collectors.joining("\n"));
     }
 
     public Room getCurrentRoom(int logId) {

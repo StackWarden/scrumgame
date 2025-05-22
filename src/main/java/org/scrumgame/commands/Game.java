@@ -55,6 +55,34 @@ public class Game{
         return gameService.getStatus(); // TODO: Display room, score, and monster count
     }
 
+    @ShellMethod(key = "items", value = "List available items in the current room.")
+    @ShellMethodAvailability("gameAvailable")
+    public String listRoomItems() {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+        return gameService.getRoomItems();
+    }
+
+    @ShellMethod(key = "pickup", value = "Pick up an item by its ID.")
+    @ShellMethodAvailability("gameAvailable")
+    public String pickUpItem(@ShellOption(help = "Item ID to pick up") int itemId) {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+        return gameService.pickUpItem(itemId);
+    }
+
+    @ShellMethod(key = "inventory", value = "View all items currently held by the player.")
+    @ShellMethodAvailability("gameAvailable")
+    public String viewInventory() {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+
+        return gameService.viewPlayerInventory();
+    }
+
     @ShellMethod(key = "quit", value = "End the current game.")
     @ShellMethodAvailability("gameAvailable")
     public String quitGame() {
@@ -68,14 +96,25 @@ public class Game{
     @ShellMethod(key = "help", value = "List available game commands.")
     public String showHelp() {
         return """
-            Available commands:
-            - start       → Start a new game
-            - load-game   → Loads an existing game
-            - prompt      → Show current question or monster
-            - answer x    → Submit answer x
-            - next        → Move to the next room
-            - status      → View game state
-            - quit        → End the current game
+        === Scrum Game Commands ===
+
+        General:
+        - start               → Start a new game session
+        - load-game           → Load an existing saved game
+        - quit                → End the current game session
+
+        Gameplay:
+        - prompt              → Show the current question or monster prompt
+        - answer <x>          → Submit your answer to the current challenge
+        - next                → Proceed to the next room if eligible
+        - status              → View current game status
+
+        Inventory:
+        - items               → View available items in the current room
+        - inventory           → View your currently held items
+        - pickup <itemId>     → Pick up an item from the current room
+
+        Use 'help' anytime to redisplay this list.
         """;
     }
 

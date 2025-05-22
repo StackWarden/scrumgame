@@ -5,15 +5,15 @@ import org.scrumgame.interfaces.GameItem;
 public class Sword implements GameItem {
 
     @Override
-    public void pickUp(Runnable onComplete) {
-        System.out.println("You picked up a" + getName().toUpperCase());
+    public String  pickUp(Runnable onComplete) {
         onComplete.run();
+        return "You picked up a " + getName().toUpperCase();
     }
 
     @Override
-    public void drop(Runnable onComplete) {
-        System.out.println("You dropped your " + getName().toUpperCase());
+    public String drop(Runnable onComplete) {
         onComplete.run();
+        return "You dropped your " + getName().toUpperCase();
     }
 
     @Override
@@ -22,8 +22,8 @@ public class Sword implements GameItem {
     }
 
     @Override
-    public void use(Runnable onComplete) {
-        System.out.println("You used a " + getName().toUpperCase());
+    public String use(Runnable onComplete) {
         onComplete.run();
+        return "You used a " + getName().toUpperCase();
     }
 }
