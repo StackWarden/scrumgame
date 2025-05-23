@@ -3,7 +3,7 @@ package org.scrumgame.services;
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.models.Session;
-import org.scrumgame.observers.MonsterSpawnObserver;
+import org.scrumgame.interfaces.MonsterSpawnObserver;
 import org.scrumgame.game.GameContext;
 
 import org.springframework.stereotype.Service;

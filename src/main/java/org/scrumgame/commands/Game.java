@@ -1,5 +1,6 @@
 package org.scrumgame.commands;
 
+import org.scrumgame.factories.ItemSpawner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -29,11 +30,12 @@ public class Game{
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")
     @ShellMethodAvailability("gameAvailable")
-    public String submitAnswer(@ShellOption(help = "Your answer") String answer) {
+    public void submitAnswer(@ShellOption(help = "Your answer") String answer) {
         if (!gameService.isInGame()) {
-            return "You are not in a game. Type 'start' to begin.";
+            System.out.println("You are not in a game. Type 'start' to begin.");
+            return;
         }
-        return gameService.submitAnswer(answer);
+         gameService.submitAnswer(answer);
     }
 
     @ShellMethod(key = "next", value = "Go to the next room if possible.")
@@ -54,14 +56,58 @@ public class Game{
         return gameService.getStatus(); // TODO: Display room, score, and monster count
     }
 
+    @ShellMethod(key = "items", value = "List available items in the current room.")
+    @ShellMethodAvailability("gameAvailable")
+    public String listRoomItems() {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+        return gameService.getRoomItems();
+    }
+
+    @ShellMethod(key = "pickup", value = "Pick up an item by its ID.")
+    @ShellMethodAvailability("gameAvailable")
+    public void pickUpItem(@ShellOption(help = "Item ID to pick up") int itemId) {
+        if (!gameService.isInGame()) {
+            System.out.println("You are not in a game. Type 'start' to begin.");
+        }
+        gameService.pickUpItem(itemId);
+    }
+
+    @ShellMethod(key = "inventory", value = "View all items currently held by the player.")
+    @ShellMethodAvailability("gameAvailable")
+    public String viewInventory() {
+        if (!gameService.isInGame()) {
+            return "You are not in a game. Type 'start' to begin.";
+        }
+
+        return gameService.viewPlayerInventory();
+    }
+
     @ShellMethod(key = "quit", value = "End the current game.")
     @ShellMethodAvailability("gameAvailable")
     public String quitGame() {
         if (!gameService.isInGame()) {
             return "No game session to quit.";
         }
-        gameService.endGame(); // TODO: Clear session state and mark game as ended
+        gameService.endGame();
         return "Game ended.";
+    }
+
+    @ShellMethod(key = "use-item", value = "Use an item from your inventory.")
+    @ShellMethodAvailability("gameAvailable")
+    public void useItem(@ShellOption(help = "ID of the item to use") int itemId) {
+        if (!gameService.isInGame()) {
+            System.out.println("You are not in a game. Type 'start' to begin.");
+            return;
+        }
+        gameService.useItem(itemId);
+    }
+
+    @ShellMethod(key = "drop-item", value = "Drop an item from your inventory.")
+    @ShellMethodAvailability("gameAvailable")
+    public void dropItem(@ShellOption(help = "The item ID to drop") int itemId) {
+        gameService.dropItem(itemId);
     }
 
     @ShellMethod(key = "hint", value = "Get a hint for the current question.")
@@ -71,18 +117,31 @@ public class Game{
         }
         return gameService.getHint();
     }
-    @ShellMethod(key = "help", value = "List available game commands.")
 
+    @ShellMethod(key = "help", value = "List available game commands.")
     public String showHelp() {
         return """
-            Available commands:
-            - start       → Start a new game
-            - load-game   → Loads an existing game
-            - prompt      → Show current question or monster
-            - answer x    → Submit answer x
-            - next        → Move to the next room
-            - status      → View game state
-            - quit        → End the current game
+        === Scrum Game Commands ===
+
+        General:
+        - start               → Start a new game session
+        - load-game           → Load an existing saved game
+        - quit                → End the current game session
+
+        Gameplay:
+        - prompt              → Show the current question or monster prompt
+        - answer <x>          → Submit your answer to the current challenge
+        - next                → Proceed to the next room if eligible
+        - status              → View current game status
+
+        Inventory:
+        - items               → View available items in the current room
+        - inventory           → View your currently held items
+        - pickup <itemId>     → Pick up an item from the current room
+        - use-item <itemId>   → Use an item out of your inventory
+        - drop-item <itemId>  → Drops an item out of your inventory
+
+        Use 'help' anytime to redisplay this list.
         """;
     }
 

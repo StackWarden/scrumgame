@@ -1,6 +1,5 @@
-package org.scrumgame.strategies;
+package org.scrumgame.interfaces;
 
-import org.scrumgame.classes.GameLog;
 import org.scrumgame.classes.Level;
 import org.scrumgame.database.models.Session;
 
