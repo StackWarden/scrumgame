@@ -4,7 +4,8 @@ import org.scrumgame.classes.*;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
-import org.scrumgame.strategies.LogStrategy;
+import org.scrumgame.interfaces.GameLog;
+import org.scrumgame.interfaces.LogStrategy;
 import org.scrumgame.strategies.MonsterLogStrategy;
 
 import java.sql.Connection;

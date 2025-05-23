@@ -21,6 +21,14 @@ public class Player {
         return name;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
@@ -33,7 +41,7 @@ public class Player {
         this.name = name;
 
         try {
-            String sql = "UPDATE players SET name = ? WHERE id = ?";
+            String sql = "UPDATE player SET name = ? WHERE id = ?";
             try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, name);
                 stmt.setInt(2, this.id);

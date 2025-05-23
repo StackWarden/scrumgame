@@ -41,6 +41,22 @@ CREATE TABLE `monster_log` (
                                CONSTRAINT `monster_log_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `item`;
+CREATE TABLE `item` (
+                            `id` BIGINT NOT NULL AUTO_INCREMENT,
+                            `name` VARCHAR(100) NOT NULL,
+                            `level_log_id` INT NOT NULL,
+                            `used` TINYINT(1) NOT NULL DEFAULT 0,
+                            `player_id` INT DEFAULT NULL,
+                            `session_id` INT DEFAULT NULL,
+                            PRIMARY KEY (`id`),
+                            KEY `level_log_id` (`level_log_id`),
+                            KEY `player_id` (`player_id`),
+                            CONSTRAINT `item_ibfk_1` FOREIGN KEY (`level_log_id`) REFERENCES `level_log` (`id`) ON DELETE CASCADE,
+                            CONSTRAINT `item_ibfk_2` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE SET NULL,
+                            CONSTRAINT `item_ibfk_3` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `monster_log_questions`;
 CREATE TABLE `monster_log_questions` (
                                          `id` int NOT NULL AUTO_INCREMENT,

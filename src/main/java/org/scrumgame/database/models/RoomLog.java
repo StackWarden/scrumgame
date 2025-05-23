@@ -1,6 +1,6 @@
 package org.scrumgame.database.models;
 
-import org.scrumgame.classes.GameLog;
+import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 

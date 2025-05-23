@@ -1,4 +1,6 @@
-package org.scrumgame.classes;
+package org.scrumgame.interfaces;
+
+import org.scrumgame.classes.Question;
 
 import java.util.List;
 

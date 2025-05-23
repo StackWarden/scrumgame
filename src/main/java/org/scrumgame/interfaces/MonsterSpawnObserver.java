@@ -1,4 +1,4 @@
-package org.scrumgame.observers;
+package org.scrumgame.interfaces;
 
 import org.scrumgame.classes.Monster;
 

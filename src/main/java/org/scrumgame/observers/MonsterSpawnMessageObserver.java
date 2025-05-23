@@ -5,6 +5,7 @@ import org.scrumgame.classes.Monster;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.scrumgame.interfaces.MonsterSpawnObserver;
 import org.springframework.stereotype.Component;
 
 // mark the class as a spring component

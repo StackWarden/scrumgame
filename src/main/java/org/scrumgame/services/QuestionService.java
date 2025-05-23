@@ -7,7 +7,7 @@ import org.scrumgame.database.models.RoomLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.strategies.MonsterLogStrategy;
 import org.scrumgame.strategies.RoomLogStrategy;
-import org.scrumgame.classes.GameLog;
+import org.scrumgame.interfaces.GameLog;
 
 import java.sql.*;
 import java.util.*;

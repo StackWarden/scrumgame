@@ -6,6 +6,7 @@ import org.scrumgame.classes.Room;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.RoomLog;
 import org.scrumgame.database.models.Session;
+import org.scrumgame.interfaces.LogStrategy;
 
 import java.sql.*;
 import java.util.ArrayList;
