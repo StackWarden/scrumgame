@@ -34,7 +34,7 @@ public abstract class Question {
     // Template method
     public final boolean validateAnswer(String givenAnswer) {
         if (givenAnswer == null || answer == null) return false;
-        preProcessAnswer(givenAnswer);
+        givenAnswer = preProcessAnswer(givenAnswer);
         boolean result = checkAnswer(givenAnswer);
         postProcessAnswer(result);
         return result;
@@ -44,8 +44,9 @@ public abstract class Question {
     protected abstract boolean checkAnswer(String givenAnswer);
 
     // Hook methods that can be overridden by subclasses
-    protected void preProcessAnswer(String givenAnswer) {
+    protected String preProcessAnswer(String givenAnswer) {
         // Default implementation does nothing
+        return givenAnswer;
     }
 
     protected void postProcessAnswer(boolean result) {

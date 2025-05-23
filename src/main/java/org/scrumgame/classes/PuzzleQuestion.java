@@ -18,9 +18,10 @@ public class PuzzleQuestion extends Question {
     }
 
     @Override
-    protected void preProcessAnswer(String givenAnswer) {
+    protected String preProcessAnswer(String givenAnswer) {
         // Remove any special characters or spaces from puzzle answers
         givenAnswer = givenAnswer.replaceAll("[^a-zA-Z0-9]", "");
+        return givenAnswer;
     }
 
     private String formatPuzzleAnswer(String answer) {

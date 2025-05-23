@@ -16,8 +16,9 @@ public class OpenQuestion extends Question {
     }
 
     @Override
-    protected void preProcessAnswer(String givenAnswer) {
+    protected String preProcessAnswer(String givenAnswer) {
         // Remove extra whitespace from open answers
         givenAnswer = givenAnswer.trim();
+        return givenAnswer;
     }
 }
