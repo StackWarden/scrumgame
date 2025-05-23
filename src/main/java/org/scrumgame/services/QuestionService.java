@@ -84,7 +84,12 @@ public class QuestionService {
                         rs.getString("text"),
                         rs.getString("correct_answer"),
                         rs.getString("hint")
-                ));
+                ) {
+                    @Override
+                    protected boolean checkAnswer(String givenAnswer) {
+                        return false;
+                    }
+                });
             }
 
         } catch (SQLException e) {
