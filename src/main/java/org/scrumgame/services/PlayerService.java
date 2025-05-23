@@ -28,7 +28,7 @@ public class PlayerService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Replace with proper logging in production
+            System.out.println(e.getMessage());
         }
         return null;
     }
