@@ -56,8 +56,29 @@ public class Inventory {
         item.drop(() -> observers.forEach(o -> o.onItemDropped(item, playerId)));
     }
 
-    public void use(GameItem item, int playerId) {
-        item.use(() -> observers.forEach(o -> o.onItemUsed(item, playerId)));
+    public void use(int itemId, int playerId, int sessionId) {
+        List<Item> items = Item.getItemsByPlayerAndSession(playerId, sessionId);
+        Item item = items.stream()
+                .filter(i -> i.getId() == itemId)
+                .findFirst()
+                .orElse(null);
+
+        if (item == null) {
+            System.out.println("Item not found in your inventory.");
+            return;
+        }
+
+        GameItem gameItem = resolveGameItem(item.getName());
+        if (gameItem == null) {
+            System.out.println("Invalid item.");
+            return;
+        }
+
+        gameItem.use(() -> {
+            item.setUsed(true);
+            item.save();
+            observers.forEach(o -> o.onItemUsed(gameItem, playerId));
+        });
     }
 
     private GameItem resolveGameItem(String name) {

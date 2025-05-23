@@ -30,11 +30,12 @@ public class Game{
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")
     @ShellMethodAvailability("gameAvailable")
-    public String submitAnswer(@ShellOption(help = "Your answer") String answer) {
+    public void submitAnswer(@ShellOption(help = "Your answer") String answer) {
         if (!gameService.isInGame()) {
-            return "You are not in a game. Type 'start' to begin.";
+            System.out.println("You are not in a game. Type 'start' to begin.");
+            return;
         }
-        return gameService.submitAnswer(answer);
+         gameService.submitAnswer(answer);
     }
 
     @ShellMethod(key = "next", value = "Go to the next room if possible.")
@@ -89,8 +90,18 @@ public class Game{
         if (!gameService.isInGame()) {
             return "No game session to quit.";
         }
-        gameService.endGame(); // TODO: Clear session state and mark game as ended
+        gameService.endGame();
         return "Game ended.";
+    }
+
+    @ShellMethod(key = "use", value = "Use an item from your inventory.")
+    @ShellMethodAvailability("gameAvailable")
+    public void useItem(@ShellOption(help = "ID of the item to use") int itemId) {
+        if (!gameService.isInGame()) {
+            System.out.println("You are not in a game. Type 'start' to begin.");
+            return;
+        }
+        gameService.useItem(itemId);
     }
 
     @ShellMethod(key = "help", value = "List available game commands.")
@@ -113,6 +124,7 @@ public class Game{
         - items               → View available items in the current room
         - inventory           → View your currently held items
         - pickup <itemId>     → Pick up an item from the current room
+        - use <itemId>        → Use an item out of your inventory
 
         Use 'help' anytime to redisplay this list.
         """;
