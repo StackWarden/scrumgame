@@ -23,7 +23,7 @@ public class MonsterLogStrategy implements LogStrategy {
     private static final String SELECT_LOG_QUESTION_IDS_SQL =
             "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
     private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer FROM question WHERE id = ?";
+            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
     private int lastInsertedLogId = -1;
 
@@ -128,13 +128,9 @@ public class MonsterLogStrategy implements LogStrategy {
                 return new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer")
-                ) {
-                    @Override
-                    protected boolean checkAnswer(String givenAnswer) {
-                        return false;
-                    }
-                };
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
+                );
             }
 
             throw new SQLException("Question not found for ID: " + questionId);

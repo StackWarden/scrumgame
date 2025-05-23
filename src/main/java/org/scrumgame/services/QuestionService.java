@@ -59,7 +59,7 @@ public class QuestionService {
     private static List<Question> getUnusedQuestions(Set<Integer> excludeIds, int limit) {
         List<Question> results = new ArrayList<>();
 
-        StringBuilder query = new StringBuilder("SELECT id, text, correct_answer FROM question");
+        StringBuilder query = new StringBuilder("SELECT id, text, correct_answer, hint FROM question");
 
         if (!excludeIds.isEmpty()) {
             String placeholders = excludeIds.stream().map(id -> "?").collect(Collectors.joining(", "));
@@ -83,13 +83,9 @@ public class QuestionService {
                 results.add(new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer")
-                ) {
-                    @Override
-                    protected boolean checkAnswer(String givenAnswer) {
-                        return false;
-                    }
-                });
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
+                ));
             }
 
         } catch (SQLException e) {

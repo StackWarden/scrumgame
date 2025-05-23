@@ -6,16 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class Question {
+    private String hint;
     protected int id;
     protected String question;
     protected String answer;
     private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer FROM question WHERE id = ?";
+            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
-    public Question(int id, String question, String answer) {
+    public Question(int id, String question, String answer, String hint) {
         this.id = id;
         this.question = question;
         this.answer = answer;
+        this.hint = hint;
     }
 
     public Question(String question, String answer) {
@@ -69,6 +71,14 @@ public abstract class Question {
         this.answer = answer;
     }
 
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
     public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT id, text, correct_answer, type FROM question WHERE id = ?")) {
@@ -76,12 +86,12 @@ public abstract class Question {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String type = rs.getString("type");
-                int id = rs.getInt("id");
-                String text = rs.getString("text");
-                String correctAnswer = rs.getString("correct_answer");
-
-                return createQuestion(type != null ? type : "open", id, text, correctAnswer);
+                return new Question(
+                        rs.getInt("id"),
+                        rs.getString("text"),
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
+               );
             } else {
                 throw new SQLException("Question not found for ID: " + questionId);
             }

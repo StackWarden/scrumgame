@@ -1,14 +1,7 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.database.models.Session;
-import org.scrumgame.services.LogService;
-import org.scrumgame.strategies.LogStrategy;
-
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map;
-
 public abstract class Level {
+    public int scoreRequirement = 0;
     public abstract String getPrompt();
     public abstract boolean checkAnswer(String answer);
     public abstract String getAnswer();
@@ -17,6 +10,14 @@ public abstract class Level {
 
     public int getLogId() {
         return logId;
+    }
+
+    public void setScoreRequirement(int scoreRequirement) {
+        this.scoreRequirement = scoreRequirement;
+    }
+
+    public int getScoreRequirement() {
+        return scoreRequirement;
     }
 
     public void setLogId(int logId) {
