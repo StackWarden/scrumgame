@@ -36,16 +36,16 @@ public class GameService {
     private Session session;
 
 
-    @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
-        this.context = context;
-        this.logService = new LogService();
-        // inject both the subject and observer via spring
-        this.monsterSpawner = monsterSpawner;
-        this.messageObserver = messageObserver;
-        this.itemSpawner = itemSpawner;
-        this.inventory = inventory;
-    }
+        @Autowired
+        public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
+            this.context = context;
+            this.logService = new LogService();
+            // inject both the subject and observer via spring
+            this.monsterSpawner = monsterSpawner;
+            this.messageObserver = messageObserver;
+            this.itemSpawner = itemSpawner;
+            this.inventory = inventory;
+        }
 
     public boolean isInGame() {
         return inGame;
@@ -193,8 +193,8 @@ public class GameService {
                 .collect(Collectors.joining("\n"));
     }
 
-    public String pickUpItem(int itemId) {
-        return inventory.pickUpItem(itemId, session);
+    public void pickUpItem(int itemId) {
+            inventory.pickUpItem(itemId, session);
     }
 
     public String viewPlayerInventory() {

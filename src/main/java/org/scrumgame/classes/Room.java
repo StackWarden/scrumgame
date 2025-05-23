@@ -43,6 +43,6 @@ public class Room extends Level {
     }
 
     public void getRoomInfo() {
-        
+
     }
 }

@@ -66,11 +66,11 @@ public class Game{
 
     @ShellMethod(key = "pickup", value = "Pick up an item by its ID.")
     @ShellMethodAvailability("gameAvailable")
-    public String pickUpItem(@ShellOption(help = "Item ID to pick up") int itemId) {
+    public void pickUpItem(@ShellOption(help = "Item ID to pick up") int itemId) {
         if (!gameService.isInGame()) {
-            return "You are not in a game. Type 'start' to begin.";
+            System.out.println("You are not in a game. Type 'start' to begin.");
         }
-        return gameService.pickUpItem(itemId);
+        gameService.pickUpItem(itemId);
     }
 
     @ShellMethod(key = "inventory", value = "View all items currently held by the player.")

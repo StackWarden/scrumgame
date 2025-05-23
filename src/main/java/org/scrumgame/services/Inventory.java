@@ -6,6 +6,7 @@ import org.scrumgame.interfaces.GameItem;
 import org.scrumgame.interfaces.ItemObserver;
 import org.scrumgame.items.Sword;
 import org.scrumgame.items.Totem;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,23 +16,33 @@ public class Inventory {
     private final List<ItemObserver> observers = new ArrayList<>();
     private final Map<Integer, GameItem> itemCache = new HashMap<>();
 
-    public void registerObserver(ItemObserver observer) {
-        observers.add(observer);
+    @Autowired
+    public Inventory(List<ItemObserver> itemObservers) {
+        this.observers.addAll(itemObservers);
     }
 
     public List<Item> getAvailableItemsInRoom(int levelLogId) {
         return Item.getUnpickedItemsForRoom(levelLogId);
     }
 
-    public String pickUpItem(int itemId, Session session) {
+    public void pickUpItem(int itemId, Session session) {
         Item item = Item.loadById(itemId);
-        if (item == null || item.getLevel_log_id() != session.getCurrentRoomId()) return "Item not found.";
-        if (item.getPlayer_id() != null) return "This item is already picked up.";
+        if (item == null || item.getLevel_log_id() != session.getCurrentRoomId()) {
+            System.out.println("Item not found.");
+            return;
+        }
+        if (item.getPlayer_id() != null) {
+            System.out.println("This item is already picked up.");
+            return;
+        }
 
         GameItem gameItem = resolveGameItem(item.getName());
-        if (gameItem == null) return "Unknown item type.";
+        if (gameItem == null) {
+            System.out.println("Unknown item type.");
+            return;
+        }
 
-        String returnStatement = gameItem.pickUp(() -> {
+        gameItem.pickUp(() -> {
             item.setPlayer_id(session.getPlayerId());
             item.setSession_id(session.getId());
             item.save();
@@ -39,7 +50,6 @@ public class Inventory {
         });
 
         itemCache.put(item.getId(), gameItem);
-        return returnStatement;
     }
 
     public void drop(GameItem item, int playerId) {

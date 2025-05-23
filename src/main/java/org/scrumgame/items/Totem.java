@@ -9,20 +9,17 @@ public class Totem implements GameItem {
     }
 
     @Override
-    public String use(Runnable onComplete) {
+    public void use(Runnable onComplete) {
         onComplete.run();
-        return "You used a " + getName().toUpperCase();
     }
 
     @Override
-    public String pickUp(Runnable onComplete) {
+    public void pickUp(Runnable onComplete) {
         onComplete.run();
-        return "You picked up " + getName().toUpperCase();
     }
 
     @Override
-    public String drop(Runnable onComplete) {
+    public void drop(Runnable onComplete) {
         onComplete.run();
-        return "You dropped a " + getName().toUpperCase();
     }
 }
