@@ -5,7 +5,6 @@ import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.RoomLog;
 import org.scrumgame.database.models.Session;
-import org.scrumgame.services.LogService;
 import org.scrumgame.strategies.MonsterLogStrategy;
 import org.scrumgame.strategies.RoomLogStrategy;
 import org.scrumgame.classes.GameLog;
@@ -83,9 +82,13 @@ public class QuestionService {
                 results.add(new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer"),
-                        rs.getString("hint")
-                ));
+                        rs.getString("correct_answer")
+                ) {
+                    @Override
+                    protected boolean checkAnswer(String givenAnswer) {
+                        return false;
+                    }
+                });
             }
 
         } catch (SQLException e) {

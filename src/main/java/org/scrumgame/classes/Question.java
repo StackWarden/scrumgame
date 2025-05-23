@@ -13,7 +13,7 @@ public abstract class Question {
     private static final String SELECT_QUESTION_BY_ID_SQL =
             "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
-    public Question(int id, String question, String answer, String hint) {
+    public Question(int id, String question, String answer) {
         this.id = id;
         this.question = question;
         this.answer = answer;
@@ -89,9 +89,13 @@ public abstract class Question {
                 return new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer"),
-                        rs.getString("hint")
-               );
+                        rs.getString("correct_answer")
+                ) {
+                    @Override
+                    protected boolean checkAnswer(String givenAnswer) {
+                        return false;
+                    }
+                };
             } else {
                 throw new SQLException("Question not found for ID: " + questionId);
             }

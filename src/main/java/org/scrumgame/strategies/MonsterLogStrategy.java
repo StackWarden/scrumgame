@@ -6,7 +6,6 @@ import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
-import org.scrumgame.services.QuestionService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -128,9 +127,13 @@ public class MonsterLogStrategy implements LogStrategy {
                 return new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer"),
-                        rs.getString("hint")
-                );
+                        rs.getString("correct_answer")
+                ) {
+                    @Override
+                    protected boolean checkAnswer(String givenAnswer) {
+                        return false;
+                    }
+                };
             }
 
             throw new SQLException("Question not found for ID: " + questionId);
