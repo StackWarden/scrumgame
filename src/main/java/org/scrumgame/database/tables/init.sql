@@ -81,6 +81,7 @@ CREATE TABLE `question` (
                             `id` int NOT NULL AUTO_INCREMENT,
                             `text` text NOT NULL,
                             `correct_answer` varchar(255) NOT NULL,
+                            `hint` varchar(255),
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
