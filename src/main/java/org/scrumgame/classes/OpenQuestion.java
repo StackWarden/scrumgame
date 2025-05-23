@@ -2,8 +2,8 @@ package org.scrumgame.classes;
 
 public class OpenQuestion extends Question {
     
-    public OpenQuestion(int id, String question, String answer) {
-        super(id, question, answer);
+    public OpenQuestion(int id, String question, String answer, String hint) {
+        super(id, question, answer, hint);
     }
 
     public OpenQuestion(String question, String answer) {

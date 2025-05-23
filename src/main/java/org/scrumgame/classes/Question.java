@@ -13,7 +13,7 @@ public abstract class Question {
     private static final String SELECT_QUESTION_BY_ID_SQL =
             "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
-    public Question(int id, String question, String answer) {
+    public Question(int id, String question, String answer, String hint) {
         this.id = id;
         this.question = question;
         this.answer = answer;
@@ -89,7 +89,8 @@ public abstract class Question {
                 return new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer")
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
                 ) {
                     @Override
                     protected boolean checkAnswer(String givenAnswer) {
@@ -103,11 +104,11 @@ public abstract class Question {
     }
 
     // Factory method to create specific question types
-    public static Question createQuestion(String type, int id, String question, String answer) {
+    public static Question createQuestion(String type, int id, String question, String answer, String hint) {
         return switch (type.toLowerCase()) {
-            case "puzzle" -> new PuzzleQuestion(id, question, answer);
-            case "multiple" -> new MultipleChoiceQuestion(id, question, answer);
-            case "open" -> new OpenQuestion(id, question, answer);
+            case "puzzle" -> new PuzzleQuestion(id, question, answer, hint);
+            case "multiple" -> new MultipleChoiceQuestion(id, question, answer, hint);
+            case "open" -> new OpenQuestion(id, question, answer, hint);
             default -> throw new IllegalArgumentException("Unknown question type: " + type);
         };
     }

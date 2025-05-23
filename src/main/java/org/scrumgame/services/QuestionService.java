@@ -82,7 +82,8 @@ public class QuestionService {
                 results.add(new Question(
                         rs.getInt("id"),
                         rs.getString("text"),
-                        rs.getString("correct_answer")
+                        rs.getString("correct_answer"),
+                        rs.getString("hint")
                 ) {
                     @Override
                     protected boolean checkAnswer(String givenAnswer) {
