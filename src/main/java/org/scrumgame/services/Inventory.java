@@ -52,8 +52,29 @@ public class Inventory {
         itemCache.put(item.getId(), gameItem);
     }
 
-    public void drop(GameItem item, int playerId) {
-        item.drop(() -> observers.forEach(o -> o.onItemDropped(item, playerId)));
+    public void drop(int itemId, Session session) {
+        Item item = Item.loadById(itemId);
+        if (item == null) {
+            System.out.println("Item not found.");
+            return;
+        }
+
+        if (session.getPlayerId() != item.getPlayer_id()) {
+            System.out.println("You don’t own this item.");
+            return;
+        }
+
+        GameItem gameItem = resolveGameItem(item.getName());
+        if (gameItem == null) {
+            System.out.println("Unknown item type.");
+            return;
+        }
+
+        gameItem.drop(() -> {
+            item.setPlayer_id(null);
+            item.save();
+            observers.forEach(o -> o.onItemDropped(gameItem, session.getPlayerId()));
+        });
     }
 
     public void use(int itemId, int playerId, int sessionId) {

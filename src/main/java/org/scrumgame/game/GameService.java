@@ -277,4 +277,7 @@ public class GameService {
         monsterSpawner.removeObserver(messageObserver);
         System.out.println(messageObserver.getLastMessage());
     }
+    public void dropItem(int itemId) {
+        inventory.drop(itemId, session);
+    }
 }

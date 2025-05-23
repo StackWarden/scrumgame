@@ -32,7 +32,6 @@ public class ItemEventLogger implements ItemObserver {
         System.out.println("You used a " + item.getName());
 
         if ("sword".equalsIgnoreCase(item.getName())) {
-            System.out.println("Here you are");
             gameService.defeatCurrentMonster();
         }
     }
