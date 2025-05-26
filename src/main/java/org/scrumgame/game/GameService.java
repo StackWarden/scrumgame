@@ -177,7 +177,7 @@ public class GameService {
         inventory.use(itemId, session.getPlayerId(), session.getId());
     }
 
-    public void defeatCurrentMonster() {
+    public void defeatCurrentMonster(String killMethod) {
         Monster monster = getCurrentActiveMonster();
         if (monster == null) {
             System.out.println("No monster to defeat.");
@@ -191,7 +191,7 @@ public class GameService {
             Monster next = remaining.getFirst();
             session.setCurrentMonsterLogId(next.getLogId());
             session.save();
-            System.out.println("Monster defeated using item! Next monster: " + next.getPrompt());
+            System.out.println("Monster defeated using "+ killMethod + "! " + next.getPrompt());
             return;
         }
 
