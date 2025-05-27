@@ -11,31 +11,24 @@ public class RoomLogHelper {
     public static Integer getCurrentRoomNumber(Session session) {
         if (session == null) return null;
 
-        int logId = session.getCurrentRoomId();
+        int id = session.getId();
+
+        System.out.println(id);
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt;
-
-            if (logId > 0) {
-                stmt = conn.prepareStatement(
-                        "SELECT question_id FROM level_log WHERE id = ?");
-                stmt.setInt(1, logId);
-            } else {
-                stmt = conn.prepareStatement(
-                        "SELECT question_id FROM level_log WHERE session_id = ? AND completed = true ORDER BY id DESC LIMIT 1");
-                stmt.setInt(1, session.getId());
-            }
-
+            stmt = conn.prepareStatement("SELECT question_id FROM level_log WHERE session_id = ? ORDER BY id DESC LIMIT 1");
+            stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("question_id");
                 }
+            } catch (SQLException e) {
+                System.out.println("error: " + e);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("error: " + e);
         }
-
         return null;
     }
 }
