@@ -14,19 +14,19 @@ public class RoomLogHelper {
         int id = session.getId();
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt;
-            stmt = conn.prepareStatement("SELECT question_id FROM level_log WHERE session_id = ? ORDER BY id DESC LIMIT 1");
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("question_id");
+            String query = "SELECT COUNT(*) AS total_rows FROM level_log WHERE session_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("total_rows");
+                    }
                 }
-            } catch (SQLException e) {
-                System.out.println("error: " + e);
             }
         } catch (SQLException e) {
-            System.out.println("error: " + e);
+            System.out.println("Database error: " + e.getMessage());
         }
+
         return null;
     }
 }
