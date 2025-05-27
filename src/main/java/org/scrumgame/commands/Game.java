@@ -35,7 +35,7 @@ public class Game{
             System.out.println("You are not in a game. Type 'start' to begin.");
             return;
         }
-         gameService.submitAnswer(answer);
+         gameService.submitAnswer(answer, false);
     }
 
     @ShellMethod(key = "next", value = "Go to the next room if possible.")
@@ -44,7 +44,7 @@ public class Game{
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
         }
-        return gameService.goToNextRoom(); // TODO: Check if monsters are cleared before advancing
+        return gameService.goToNextRoom(true); // TODO: Check if monsters are cleared before advancing
     }
 
     @ShellMethod(key = "status", value = "Show current game status.")
@@ -140,7 +140,12 @@ public class Game{
         - pickup <itemId>     → Pick up an item from the current room
         - use-item <itemId>   → Use an item out of your inventory
         - drop-item <itemId>  → Drops an item out of your inventory
-
+        
+        Jokers:
+        - use-joker <joker>   -> uses a joker
+        - use-joker skip-room
+        - use-joker kill-monster
+        
         Use 'help' anytime to redisplay this list.
         """;
     }

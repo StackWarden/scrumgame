@@ -7,6 +7,7 @@ import org.scrumgame.database.RoomLogHelper;
 import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
+import org.scrumgame.jokers.SkipRoomJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
@@ -38,12 +39,13 @@ public class GameService {
 
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
+    private final SkipRoomJoker room;
 
     private boolean inGame = false;
     private Session session;
 
         @Autowired
-        public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
+        public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
             this.context = context;
             this.logService = new LogService();
             // inject both the subject and observer via spring
@@ -51,6 +53,7 @@ public class GameService {
             this.messageObserver = messageObserver;
             this.itemSpawner = itemSpawner;
             this.inventory = inventory;
+            this.room = room;
         }
 
     public boolean isInGame() {
@@ -86,25 +89,26 @@ public class GameService {
         return session.getCurrentPrompt(logService);
     }
 
-    public void submitAnswer(String answer) {
+    public void submitAnswer(String answer, boolean skip) {
         if (hasActiveMonsters()) {
             handleMonsterAnswer(answer);
             return;
         }
-        handleRoomAnswer(answer);
+        handleRoomAnswer(answer, skip);
     }
 
-    public String goToNextRoom() {
-        if (session == null || !session.isActive()) {
-            return "No active session.";
-        }
+    public String goToNextRoom(boolean check) {
+        if (check) {
+            if (session == null || !session.isActive()) {
+                return "No active session.";
+            }
+            if (session.getCurrentRoomId() != -1) {
+                return "You must complete the current room first.";
+            }
 
-        if (session.getCurrentRoomId() != -1) {
-            return "You must complete the current room first.";
-        }
-
-        if (session.getCurrentMonsterLogId() != -1) {
-            return "You must defeat all monsters before proceeding.";
+            if (session.getCurrentMonsterLogId() != -1) {
+                return "You must defeat all monsters before proceeding.";
+            }
         }
 
         // Create a new room
@@ -191,7 +195,7 @@ public class GameService {
         inventory.use(itemId, session.getPlayerId(), session.getId());
     }
 
-    public void defeatCurrentMonster() {
+    public void defeatCurrentMonster(String killMethod) {
         Monster monster = getCurrentActiveMonster();
         if (monster == null) {
             System.out.println("No monster to defeat.");
@@ -205,7 +209,7 @@ public class GameService {
             Monster next = remaining.getFirst();
             session.setCurrentMonsterLogId(next.getLogId());
             session.save();
-            System.out.println("Monster defeated using item! Next monster: " + next.getPrompt());
+            System.out.println("Monster defeated using "+ killMethod + "! " + next.getPrompt());
             return;
         }
 
@@ -258,12 +262,12 @@ public class GameService {
         System.out.println("All monsters defeated! You're back in your room.");
     }
 
-    private void handleRoomAnswer(String answer) {
+    private void handleRoomAnswer(String answer, boolean skip) {
         Room room = getCurrentRoom(session.getCurrentRoomId());
         room.setLogId(session.getCurrentRoomId());
 
         boolean correct = room.checkAnswer(answer);
-        if (correct) {
+        if (correct || skip) {
             logService.markCurrentLogCompleted(room);
             session.setCurrentRoomId(null);
             session.save();
@@ -320,4 +324,11 @@ public class GameService {
     public void dropItem(int itemId) {
         inventory.drop(itemId, session);
     }
+
+    public void answerComplete(Room room) {
+        logService.markCurrentLogCompleted(room);
+        session.setCurrentRoomId(null);
+        session.save();
+    }
+
 }
