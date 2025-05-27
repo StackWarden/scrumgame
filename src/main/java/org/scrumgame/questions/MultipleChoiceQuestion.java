@@ -1,6 +1,8 @@
-package org.scrumgame.classes;
+package org.scrumgame.questions;
 
-public class MultipleChoiceQuestion extends Question{
+import org.scrumgame.classes.Question;
+
+public class MultipleChoiceQuestion extends Questions {
     public MultipleChoiceQuestion(int id, String question, String answer, String hint) {
         super(id, question, answer, hint);
     }
