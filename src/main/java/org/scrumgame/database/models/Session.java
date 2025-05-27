@@ -2,9 +2,11 @@ package org.scrumgame.database.models;
 
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.services.LogService;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
+@Component
 public class Session {
     private int id;
     private int playerId;
