@@ -61,7 +61,7 @@ public class RoomLog implements GameLog {
             // from the hint column get the value from the column and set it to hint
             String hint = correctRs.getString("hint");
             // create a question with type Question which holds the id, text and correctAnswer from the query
-            Question question = new Question(correctId, text, correctAnswer) {
+            Question question = new Question(correctId, text, correctAnswer, hint) {
                 @Override
                 protected boolean checkAnswer(String givenAnswer) {
                     return false;
