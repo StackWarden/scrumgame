@@ -2,6 +2,8 @@ package org.scrumgame.game;
 
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Room;
+import org.scrumgame.database.DatabaseConnection;
+import org.scrumgame.database.RoomLogHelper;
 import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
@@ -15,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Objects;
@@ -157,6 +163,14 @@ public class GameService {
         logService.setStrategy(new RoomLogStrategy());
         return (Room) logService.loadLevelByLogId(logId);
     }
+
+    public String getCurrentRoom() {
+        int currentRoomNumber = RoomLogHelper.getCurrentRoomNumber(session);
+        int totalRooms = 6;
+
+        return String.format("%d out of %d", currentRoomNumber, totalRooms);
+    }
+
 
     public Monster getCurrentMonster(int logId) {
         logService.setStrategy(new MonsterLogStrategy());
