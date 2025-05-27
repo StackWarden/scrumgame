@@ -33,10 +33,6 @@ public class Player {
         return id;
     }
 
-    public int getStatus() {
-        return 1;
-    }
-
     public String setName(String name) {
         this.name = name;
 
