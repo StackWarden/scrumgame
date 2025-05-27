@@ -89,12 +89,12 @@ public class GameService {
         return session.getCurrentPrompt(logService);
     }
 
-    public void submitAnswer(String answer) {
+    public void submitAnswer(String answer, boolean skip) {
         if (hasActiveMonsters()) {
             handleMonsterAnswer(answer);
             return;
         }
-        handleRoomAnswer(answer);
+        handleRoomAnswer(answer, skip);
     }
 
     public String goToNextRoom(boolean check) {
@@ -262,12 +262,12 @@ public class GameService {
         System.out.println("All monsters defeated! You're back in your room.");
     }
 
-    private void handleRoomAnswer(String answer) {
+    private void handleRoomAnswer(String answer, boolean skip) {
         Room room = getCurrentRoom(session.getCurrentRoomId());
         room.setLogId(session.getCurrentRoomId());
 
         boolean correct = room.checkAnswer(answer);
-        if (correct) {
+        if (correct || skip) {
             logService.markCurrentLogCompleted(room);
             session.setCurrentRoomId(null);
             session.save();
@@ -324,4 +324,11 @@ public class GameService {
     public void dropItem(int itemId) {
         inventory.drop(itemId, session);
     }
+
+    public void answerComplete(Room room) {
+        logService.markCurrentLogCompleted(room);
+        session.setCurrentRoomId(null);
+        session.save();
+    }
+
 }
