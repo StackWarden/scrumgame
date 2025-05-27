@@ -18,6 +18,6 @@ public class Status {
 
     @ShellMethod(key = "status", value = "Show the status of the game")
     public String status() {
-        return String.format("You are in room " + gameService.getCurrentRoom()) + " out of 10";
+        return "You are in room " + gameService.getCurrentRoom();
     }
 }

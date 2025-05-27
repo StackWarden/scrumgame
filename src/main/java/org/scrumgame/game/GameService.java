@@ -158,13 +158,20 @@ public class GameService {
         return (Room) logService.loadLevelByLogId(logId);
     }
 
-    public Room getCurrentRoom() {
-        if (session == null || !session.isActive()) {
-            System.out.println("No active session.");
-            return null;
+    public String getCurrentRoom() {
+        int currentRoomNumber = 1; //placeholder
+        int totalRooms = 6; //placeholder
+
+        if (session != null) {
+            int logId = session.getCurrentRoomId();
+            currentRoomNumber = logId > 0 ? logId : 1;
         }
-        return this.getCurrentRoom(session.getCurrentRoomId());
+
+        
+
+        return String.format("%d out of %d", currentRoomNumber, totalRooms);
     }
+
 
     public Monster getCurrentMonster(int logId) {
         logService.setStrategy(new MonsterLogStrategy());
