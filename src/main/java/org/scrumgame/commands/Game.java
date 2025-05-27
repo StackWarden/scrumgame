@@ -44,7 +44,7 @@ public class Game{
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
         }
-        return gameService.goToNextRoom(); // TODO: Check if monsters are cleared before advancing
+        return gameService.goToNextRoom(true); // TODO: Check if monsters are cleared before advancing
     }
 
     @ShellMethod(key = "status", value = "Show current game status.")
