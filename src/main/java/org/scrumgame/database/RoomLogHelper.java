@@ -13,8 +13,6 @@ public class RoomLogHelper {
 
         int id = session.getId();
 
-        System.out.println(id);
-
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt;
             stmt = conn.prepareStatement("SELECT question_id FROM level_log WHERE session_id = ? ORDER BY id DESC LIMIT 1");
