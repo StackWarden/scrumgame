@@ -1,6 +1,7 @@
 package org.scrumgame.game;
 
 import org.scrumgame.classes.Monster;
+import org.scrumgame.classes.Player;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.RoomLogHelper;
@@ -43,6 +44,7 @@ public class GameService {
 
     private boolean inGame = false;
     private Session session;
+    private Player player;
 
         @Autowired
         public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
@@ -61,7 +63,7 @@ public class GameService {
     }
 
     public void startNewSession() {
-        Session session = Session.createNew(1);
+        Session session = Session.createNew(player.getId());
         Room room = Room.createRoom(session);
 
         logService.setStrategy(new RoomLogStrategy());
@@ -331,4 +333,11 @@ public class GameService {
         session.save();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }
