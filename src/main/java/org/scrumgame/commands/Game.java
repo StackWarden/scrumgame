@@ -25,7 +25,7 @@ public class Game{
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
         }
-        return gameService.getCurrentPrompt(); // TODO: Return prompt from Room or Monster
+        return gameService.getCurrentPrompt();
     }
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")

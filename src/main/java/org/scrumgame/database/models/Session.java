@@ -5,6 +5,8 @@ import org.scrumgame.services.LogService;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class Session {
@@ -40,6 +42,7 @@ public class Session {
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
+        this.save();
     }
 
     public static Session createNew(int playerId) {
@@ -92,7 +95,7 @@ public class Session {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -142,6 +145,7 @@ public class Session {
 
     public void incrementScore(int amount) {
         this.score += amount;
+        this.save();
     }
 
     public int getCurrentRoomId() {
@@ -150,6 +154,7 @@ public class Session {
 
     public void setCurrentRoomId(Integer currentRoomId) {
         this.currentLevelLogId = currentRoomId;
+        this.save();
     }
 
     public boolean isActive() {
@@ -158,6 +163,7 @@ public class Session {
 
     public void setGameOver(boolean gameover) {
         this.gameOver = gameover;
+        this.save();
     }
 
     public int getCurrentMonsterLogId() {
@@ -166,10 +172,85 @@ public class Session {
 
     public void setCurrentMonsterLogId(Integer currentMonsterLogId) {
         this.currentMonsterLogId = currentMonsterLogId;
+        this.save();
     }
 
     public String getCurrentPrompt(LogService logService) {
         if (currentLevelLogId == null) return "No level active.";
         return logService.getPromptByLogId(currentLevelLogId);
+    }
+
+    public static List<Session> getAllForPlayer(int playerId) {
+        String sql = """
+        SELECT id, player_id, current_level_log_id, current_monster_log_id,
+               score, monster_encounters, gameover
+        FROM session
+        WHERE player_id = ?
+    """;
+
+        List<Session> sessions = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, playerId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Session session = new Session(
+                        rs.getInt("id"),
+                        rs.getInt("player_id"),
+                        rs.getObject("current_level_log_id", Integer.class),
+                        rs.getObject("current_monster_log_id", Integer.class),
+                        rs.getInt("score"),
+                        rs.getInt("monster_encounters"),
+                        rs.getBoolean("gameover")
+                );
+                sessions.add(session);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return sessions;
+    }
+
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean oneLiner) {
+        String status = gameOver ? "Game Ended" : "In Progress";
+
+        if (oneLiner) {
+            return String.format(
+                    "Session #%d | RoomLog: %s | MonsterLog: %s | Score: %d | Status: %s",
+                    id,
+                    currentLevelLogId != null ? currentLevelLogId : "-",
+                    currentMonsterLogId != null ? currentMonsterLogId : "-",
+                    score,
+                    status
+            );
+        } else {
+            return String.format("""
+            === Session #%d ===
+            Player ID        : %d
+            Current Room Log : %s
+            Current Monster  : %s
+            Score            : %d
+            Monster Encounters: %d
+            Game Status      : %s
+            """,
+                    id,
+                    playerId,
+                    currentLevelLogId != null ? currentLevelLogId : "None",
+                    currentMonsterLogId != null ? currentMonsterLogId : "None",
+                    score,
+                    monsterEncounters,
+                    status
+            );
+        }
     }
 }

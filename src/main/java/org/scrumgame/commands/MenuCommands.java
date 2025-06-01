@@ -25,9 +25,8 @@ public class MenuCommands {
 
     @ShellMethod(key = "load-game", value = "Load a saved game.")
     @ShellMethodAvailability("menuAvailable")
-    public String loadGame(@ShellOption int slot) {
-        gameService.loadSession(slot);
-        return "Game loaded.";
+    public void loadGame() {
+        gameService.loadSession(1); // TODO: Player id should become the actual player id
     }
 
     public Availability menuAvailable() {
