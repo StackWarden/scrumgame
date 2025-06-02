@@ -7,7 +7,6 @@ import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 import java.util.Scanner;
 
@@ -32,7 +31,7 @@ public class MenuCommands {
     @ShellMethod(key = "load-game", value = "Load a saved game.")
     @ShellMethodAvailability("menuAvailable")
     public void loadGame() {
-        gameService.loadSession(1); // TODO: Player id should become the actual player id
+        gameService.loadSession(gameService.getPlayer().getId());
     }
 
     @ShellMethod("Login with an existing player name.")
