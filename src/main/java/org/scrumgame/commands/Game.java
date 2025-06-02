@@ -1,6 +1,5 @@
 package org.scrumgame.commands;
 
-import org.scrumgame.factories.ItemSpawner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -25,7 +24,7 @@ public class Game{
         if (!gameService.isInGame()) {
             return "You are not in a game. Type 'start' to begin.";
         }
-        return gameService.getCurrentPrompt(); // TODO: Return prompt from Room or Monster
+        return gameService.getCurrentPrompt();
     }
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")
