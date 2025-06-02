@@ -109,6 +109,10 @@ public class GameService {
         }
     }
 
+    public boolean isLoggedIn() {
+        return player != null;
+    }
+
     public String getCurrentPrompt() {
         List<Monster> activeMonsters = logService.getActiveMonsters(session);
         if (!activeMonsters.isEmpty()) {
