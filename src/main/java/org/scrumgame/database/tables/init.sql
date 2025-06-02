@@ -82,6 +82,7 @@ CREATE TABLE `question` (
                             `text` text NOT NULL,
                             `correct_answer` varchar(255) NOT NULL,
                             `hint` varchar(255),
+                            `type` varchar(255),
                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -122,10 +123,14 @@ INSERT INTO `player` (`name`) VALUES
                                   ('Charlie');
 
 -- Seed: questions
-INSERT INTO `question` (`text`, `correct_answer`) VALUES
-                                                      ('What is the capital of France?', 'Paris'),
-                                                      ('2 + 2 = ?', '4'),
-                                                      ('What color is the sky?', 'Blue');
+INSERT INTO `question` (`text`, `correct_answer`, `type`) VALUES
+                                                      ('What is the capital of France?', 'Paris', 'Open'),
+                                                      ('2 + 2 = ?', '4', 'Open'),
+                                                      ('What color is the sky?', 'Blue', 'Open');
+                                                      -- ('Which is correct? A, B, C, D?' 'A', 'Multiple Choice');
+                                                      -- ('What is the meaning of life, the universe and everything?', '42', 'Open');
+                                                      -- (' )
+
 
 -- Seed: sessions
 INSERT INTO `session` (`player_id`, `score`, `monster_encounters`, `gameover`)
