@@ -1,6 +1,7 @@
 package org.scrumgame.game;
 
 import org.scrumgame.classes.Monster;
+import org.scrumgame.classes.Player;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.RoomLogHelper;
@@ -22,14 +23,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Objects;
-import java.util.Random;
 
 @Service
 public class GameService {
 
+    private final Scanner scanner = new Scanner(System.in);
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameContext context;
     private final LogService logService;
@@ -43,6 +43,7 @@ public class GameService {
 
     private boolean inGame = false;
     private Session session;
+    private Player player;
 
         @Autowired
         public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
@@ -61,7 +62,7 @@ public class GameService {
     }
 
     public void startNewSession() {
-        Session session = Session.createNew(1);
+        Session session = Session.createNew(player.getId());
         Room room = Room.createRoom(session);
 
         logService.setStrategy(new RoomLogStrategy());
@@ -74,8 +75,42 @@ public class GameService {
         inGame = true;
     }
 
-    public void loadSession(int sessionId) {
-        this.session = Session.loadById(sessionId);
+    public void loadSession(int playerId) {
+        List<Session> sessions = Session.getAllForPlayer(playerId);
+        if (sessions.isEmpty()) {
+            System.out.println("There are no saved sessions");
+            return;
+        }
+
+        System.out.println("Available sessions:");
+        for (Session s : sessions) {
+            System.out.println(s.toString(true));
+        }
+
+        System.out.println("Which session do you want to load? Type in the #ID:");
+
+        boolean chosen = false;
+
+        while (!chosen) {
+            int choice = scanner.nextInt();
+            Optional<Session> match = sessions.stream()
+                    .filter(s -> s.getId() == choice)
+                    .findFirst();
+
+            if (match.isPresent()) {
+                Session selected = match.get();
+                this.session = selected;
+                this.inGame = true;
+                chosen = true;
+                System.out.println("Session loaded: " + selected.toString(false));
+            } else {
+                System.out.println("Invalid choice try again:");
+            }
+        }
+    }
+
+    public boolean isLoggedIn() {
+        return player != null;
     }
 
     public String getCurrentPrompt() {
@@ -331,4 +366,11 @@ public class GameService {
         session.save();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }
