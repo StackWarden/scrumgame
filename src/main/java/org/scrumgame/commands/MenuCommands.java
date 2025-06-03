@@ -3,10 +3,8 @@ package org.scrumgame.commands;
 import org.scrumgame.classes.Player;
 import org.scrumgame.game.GameService;
 import org.scrumgame.services.PlayerService;
-import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.util.Scanner;
 
@@ -22,20 +20,37 @@ public class MenuCommands {
     }
 
     @ShellMethod(key = "start", value = "Start a new game.")
-    @ShellMethodAvailability("menuAvailable")
     public String startGame() {
+        if (!isLoggedIn()) {
+            return "You must be logged in. Use `login` or `register` first.";
+        }
+        if (isInGame()) {
+            return "You are already in a game. Use `status` or `quit`.";
+        }
+
         gameService.startNewSession();
         return "Game started. " + gameService.getCurrentPrompt();
     }
 
     @ShellMethod(key = "load-game", value = "Load a saved game.")
-    @ShellMethodAvailability("menuAvailable")
-    public void loadGame() {
+    public String loadGame() {
+        if (!isLoggedIn()) {
+            return "You must be logged in. Use `login` or `register` first.";
+        }
+        if (isInGame()) {
+            return "You are already in a game. Use `status` or `quit`.";
+        }
+
         gameService.loadSession(gameService.getPlayer().getId());
+        return "Game session loaded.";
     }
 
     @ShellMethod("Login with an existing player name.")
     public String login() {
+        if (isLoggedIn()) {
+            return "You are already logged in.";
+        }
+
         Scanner scanner = new Scanner(System.in);
         System.out.print("What is your username? ");
         String name = scanner.nextLine();
@@ -51,6 +66,10 @@ public class MenuCommands {
 
     @ShellMethod("Register a new player.")
     public String register() {
+        if (isLoggedIn()) {
+            return "You are already logged in.";
+        }
+
         Scanner scanner = new Scanner(System.in);
         System.out.print("What username do you want to have? ");
         String name = scanner.nextLine();
@@ -66,10 +85,14 @@ public class MenuCommands {
 
     @ShellMethod("Delete your account.")
     public String deleteAccount() {
-        Player currentPlayer = gameService.getPlayer();
-        if (currentPlayer == null) {
+        if (!isLoggedIn()) {
             return "You must be logged in to delete your account.";
         }
+        if (isInGame()) {
+            return "You cannot delete your account while in a game. Use `quit` first.";
+        }
+
+        Player currentPlayer = gameService.getPlayer();
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Are you sure? Type your full username to confirm: ");
@@ -89,10 +112,11 @@ public class MenuCommands {
         return "Failed to delete account.";
     }
 
+    private boolean isLoggedIn() {
+        return gameService.isLoggedIn();
+    }
 
-    public Availability menuAvailable() {
-        return !gameService.isInGame()
-                ? Availability.available()
-                : Availability.unavailable("You are already in a game.");
+    private boolean isInGame() {
+        return gameService.isInGame();
     }
 }
