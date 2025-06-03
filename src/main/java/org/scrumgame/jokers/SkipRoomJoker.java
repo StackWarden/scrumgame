@@ -17,7 +17,7 @@ public class SkipRoomJoker extends Joker {
 
     @Override
     protected String applyEffect() {
-        gameService.submitAnswer("", true);
+        gameService.submitAnswer(true);
         gameService.goToNextRoom(false);
         return "Used skip-room joker!";
     }

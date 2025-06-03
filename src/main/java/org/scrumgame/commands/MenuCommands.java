@@ -20,16 +20,15 @@ public class MenuCommands {
     }
 
     @ShellMethod(key = "start", value = "Start a new game.")
-    public String startGame() {
+    public void startGame() {
         if (!isLoggedIn()) {
-            return "You must be logged in. Use `login` or `register` first.";
+            System.out.println("You must be logged in. Use `login` or `register` first.");
         }
         if (isInGame()) {
-            return "You are already in a game. Use `status` or `quit`.";
+            System.out.println("You are already in a game. Use `status` or `quit`.");
         }
 
         gameService.startNewSession();
-        return "Game started. " + gameService.getCurrentPrompt();
     }
 
     @ShellMethod(key = "load-game", value = "Load a saved game.")

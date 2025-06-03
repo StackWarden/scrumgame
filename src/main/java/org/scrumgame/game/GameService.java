@@ -1,15 +1,15 @@
 package org.scrumgame.game;
 
-import org.scrumgame.classes.Monster;
-import org.scrumgame.classes.Player;
-import org.scrumgame.classes.Room;
-import org.scrumgame.database.DatabaseConnection;
+import org.scrumgame.classes.*;
 import org.scrumgame.database.RoomLogHelper;
 import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
+import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.jokers.SkipRoomJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
+import org.scrumgame.rooms.Benefits;
+import org.scrumgame.seeders.BenefitsRoomSeeder;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
@@ -19,24 +19,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class GameService {
-
     private final Scanner scanner = new Scanner(System.in);
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameContext context;
     private final LogService logService;
-    // the subject and the observer to react to monster spawning
     private final MonsterSpawner monsterSpawner;
     private final MonsterSpawnMessageObserver messageObserver;
-
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
     private final SkipRoomJoker room;
@@ -45,17 +38,16 @@ public class GameService {
     private Session session;
     private Player player;
 
-        @Autowired
-        public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
-            this.context = context;
-            this.logService = new LogService();
-            // inject both the subject and observer via spring
-            this.monsterSpawner = monsterSpawner;
-            this.messageObserver = messageObserver;
-            this.itemSpawner = itemSpawner;
-            this.inventory = inventory;
-            this.room = room;
-        }
+    @Autowired
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
+        this.context = context;
+        this.logService = new LogService();
+        this.monsterSpawner = monsterSpawner;
+        this.messageObserver = messageObserver;
+        this.itemSpawner = itemSpawner;
+        this.inventory = inventory;
+        this.room = room;
+    }
 
     public boolean isInGame() {
         return inGame;
@@ -63,13 +55,12 @@ public class GameService {
 
     public void startNewSession() {
         Session session = Session.createNew(player.getId());
-        Room room = Room.createRoom(session);
-
-        logService.setStrategy(new RoomLogStrategy());
-        room = (Room) logService.executeLog(session, room);
 
         assert session != null;
-        session.setCurrentRoomId(room.getLogId());
+        BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
+
+        int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 7);
+        session.setCurrentRoomId(benefitsLogId);
 
         this.session = session;
         inGame = true;
@@ -120,11 +111,14 @@ public class GameService {
             return "Monster appears: " + current.getPrompt();
         }
 
-        logService.setStrategy(new RoomLogStrategy());
+        logService.setStrategy(new QuestionLogStrategy());
         return session.getCurrentPrompt(logService);
     }
 
-    public void submitAnswer(String answer, boolean skip) {
+    public void submitAnswer(boolean skip) {
+        System.out.print("Your answer: ");
+        String answer = scanner.nextLine();
+
         if (hasActiveMonsters()) {
             handleMonsterAnswer(answer);
             return;
@@ -150,7 +144,7 @@ public class GameService {
         Room newRoom = Room.createRoom(session);
 
         // Log the room
-        logService.setStrategy(new RoomLogStrategy());
+        logService.setStrategy(new QuestionLogStrategy());
         newRoom = (Room) logService.executeLog(session, newRoom);
 
         // Set new room in session
@@ -199,7 +193,7 @@ public class GameService {
     }
 
     public Room getCurrentRoom(int logId) {
-        logService.setStrategy(new RoomLogStrategy());
+        logService.setStrategy(new QuestionLogStrategy());
         return (Room) logService.loadLevelByLogId(logId);
     }
 
@@ -237,7 +231,8 @@ public class GameService {
             return;
         }
 
-        logService.markCurrentLogCompleted(monster);
+        logService.setStrategy(new MonsterLogStrategy());
+        logService.markCurrentLogCompleted(session);
 
         List<Monster> remaining = logService.getActiveMonsters(session);
         if (!remaining.isEmpty()) {
@@ -249,7 +244,8 @@ public class GameService {
         }
 
         session.setCurrentMonsterLogId(null);
-        logService.markCurrentLogCompleted(getCurrentRoom(session.getCurrentRoomId()));
+        logService.setStrategy(new QuestionLogStrategy());
+        logService.markCurrentLogCompleted(session);
         session.setCurrentRoomId(null);
         session.save();
         System.out.println("All monsters defeated using item. You're back in your room.");
@@ -279,7 +275,8 @@ public class GameService {
             return;
         }
 
-        logService.markCurrentLogCompleted(currentMonster);
+        logService.setStrategy(new MonsterLogStrategy());
+        logService.markCurrentLogCompleted(session);
 
         List<Monster> remaining = logService.getActiveMonsters(session);
         if (!remaining.isEmpty()) {
@@ -291,8 +288,8 @@ public class GameService {
         }
 
         session.setCurrentMonsterLogId(null);
-        logService.markCurrentLogCompleted(getCurrentRoom(session.getCurrentRoomId()));
-        session.setCurrentRoomId(null);
+        logService.setStrategy(new QuestionLogStrategy());
+        logService.markCurrentLogCompleted(session);
         session.save();
         System.out.println("All monsters defeated! You're back in your room.");
     }
@@ -303,7 +300,8 @@ public class GameService {
 
         boolean correct = room.checkAnswer(answer);
         if (correct || skip) {
-            logService.markCurrentLogCompleted(room);
+            logService.setStrategy(new QuestionLogStrategy());
+            logService.markCurrentLogCompleted(session);
             session.setCurrentRoomId(null);
             session.save();
             System.out.println("Good Answer!\nYou may proceed to the next room with 'next'.");
@@ -356,14 +354,36 @@ public class GameService {
         return "You can only get hints for monsters!";
     }
 
-    public void dropItem(int itemId) {
-        inventory.drop(itemId, session);
+    public void printRoomOverview() {
+        int logId = session.getCurrentRoomId();
+        if (logId == -1) {
+            System.out.println("Er is geen actieve kamer.");
+            return;
+        }
+
+        logService.setStrategy(new QuestionLogStrategy());
+        Level level = logService.loadLevelByLogId(logId);
+
+        if (!(level instanceof RoomLevel roomLevel)) {
+            System.out.println("De huidige kamer is geen room-level.");
+            return;
+        }
+
+        Queue<Question> remaining = roomLevel.getRemainingQuestions();
+        if (remaining.isEmpty()) {
+            System.out.println("Alle vragen in kamer " + roomLevel.getRoomNumber() + " zijn beantwoord.");
+            return;
+        }
+
+        System.out.println("\n Overzicht van openstaande vragen in kamer " + roomLevel.getRoomNumber() + ":");
+        int index = 1;
+        for (Question q : remaining) {
+            System.out.printf("  %d. %s%n", index++, q.getQuestion());
+        }
     }
 
-    public void answerComplete(Room room) {
-        logService.markCurrentLogCompleted(room);
-        session.setCurrentRoomId(null);
-        session.save();
+    public void dropItem(int itemId) {
+        inventory.drop(itemId, session);
     }
 
     public Player getPlayer() {

@@ -4,7 +4,7 @@ import org.scrumgame.classes.Level;
 import org.scrumgame.classes.Question;
 import org.scrumgame.classes.Room;
 import org.scrumgame.database.DatabaseConnection;
-import org.scrumgame.database.models.RoomLog;
+import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.LogStrategy;
 
@@ -12,14 +12,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomLogStrategy implements LogStrategy {
+public class QuestionLogStrategy implements LogStrategy {
 
-    private static final String INSERT_ROOM_LOG_SQL =
-            "INSERT INTO level_log (session_id, question_id, completed) VALUES (?, ?, ?)";
-    private static final String SELECT_ROOM_LOGS_SQL =
-            "SELECT id, question_id, completed FROM level_log WHERE session_id = ?";
+    private static final String INSERT_SQL =
+            "INSERT INTO question_log (session_id, question_id, completed) VALUES (?, ?, ?)";
+    private static final String SELECT_SQL =
+            "SELECT id, question_id, completed FROM question_log WHERE session_id = ?";
     private int lastInsertedLogId = -1;
-
 
     @Override
     public Level log(Session session, Level level) {
@@ -31,9 +30,7 @@ public class RoomLogStrategy implements LogStrategy {
         }
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO level_log (session_id, question_id, completed) VALUES (?, ?, ?)",
-                     Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, session.getId());
             stmt.setInt(2, question.getId());
@@ -44,6 +41,7 @@ public class RoomLogStrategy implements LogStrategy {
             if (keys.next()) {
                 int logId = keys.getInt(1);
                 room.setLogId(logId);
+                lastInsertedLogId = logId;
             }
             return room;
 
@@ -54,34 +52,36 @@ public class RoomLogStrategy implements LogStrategy {
     }
 
     @Override
-    public List<RoomLog> getLogs(Session session) {
-        List<RoomLog> roomLogs = new ArrayList<>();
+    public List<QuestionLog> getLogs(Session session) {
+        List<QuestionLog> QuestionLogs = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement roomLogStatement = connection.prepareStatement(SELECT_ROOM_LOGS_SQL)) {
+             PreparedStatement stmt = connection.prepareStatement(SELECT_SQL)) {
 
-            roomLogStatement.setInt(1, session.getId());
-            ResultSet result = roomLogStatement.executeQuery();
+            stmt.setInt(1, session.getId());
+            ResultSet result = stmt.executeQuery();
 
             while (result.next()) {
+                int logId = result.getInt("id");
                 int questionId = result.getInt("question_id");
                 boolean completed = result.getBoolean("completed");
                 Question question = Question.fetchQuestionById(connection, questionId);
 
-                RoomLog log = new RoomLog(session.getId(), question, completed);
-                roomLogs.add(log);
+                QuestionLog log = new QuestionLog(session.getId(), question, completed);
+                log.setId(logId);
+                QuestionLogs.add(log);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return roomLogs;
+        return QuestionLogs;
     }
 
     @Override
     public void markCurrentLogCompleted(Session session) {
-        String sql = "UPDATE level_log SET completed = true WHERE id = ?";
+        String sql = "UPDATE question_log SET completed = true WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -94,7 +94,7 @@ public class RoomLogStrategy implements LogStrategy {
 
     @Override
     public String getPromptByLogId(int logId) {
-        String sql = "SELECT question_id FROM level_log WHERE id = ?";
+        String sql = "SELECT question_id FROM question_log WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, logId);
@@ -112,7 +112,7 @@ public class RoomLogStrategy implements LogStrategy {
 
     @Override
     public Level loadByLogId(int logId) {
-        String sql = "SELECT question_id FROM level_log WHERE id = ?";
+        String sql = "SELECT question_id FROM question_log WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, logId);
@@ -120,7 +120,9 @@ public class RoomLogStrategy implements LogStrategy {
             if (rs.next()) {
                 int qId = rs.getInt("question_id");
                 Question q = Question.fetchQuestionById(conn, qId);
-                return new Room(q);
+                Room room = new Room(q);
+                room.setLogId(logId);
+                return room;
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -34,28 +34,9 @@ public class LogService {
         return strategy.getLogs(session);
     }
 
-    public void markCurrentLogCompleted(Level level) {
-        int logId = level.getLogId();
-        if (logId == -1) return;
-
-        String sql;
-        if (level instanceof Room) {
-            sql = "UPDATE level_log SET completed = true WHERE id = ?";
-        } else if (level instanceof Monster) {
-            sql = "UPDATE monster_log SET defeated = true WHERE id = ?";
-        } else {
-            System.out.println("Unknown level type: " + level.getClass().getSimpleName());
-            return;
-        }
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, logId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error marking log completed for log ID " + logId);
-            e.printStackTrace();
-        }
+    public void markCurrentLogCompleted(Session session) {
+        if (strategy == null) throw new IllegalStateException("No strategy set.");
+        strategy.markCurrentLogCompleted(session);
     }
 
     public List<Monster> getActiveMonsters(Session session) {
