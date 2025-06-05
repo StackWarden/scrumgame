@@ -59,11 +59,11 @@ public class GameService {
         assert session != null;
         BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
 
-        int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 7);
+        int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
 
         this.session = session;
-        itemSpawner.spawnItems(session.getCurrentRoomId(), 3);
+        itemSpawner.spawnItems(benefitsLogId, 3);
         inGame = true;
     }
 

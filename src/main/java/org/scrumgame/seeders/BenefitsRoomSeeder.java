@@ -8,7 +8,7 @@ import java.util.*;
 
 public class BenefitsRoomSeeder {
 
-    private static final int ROOM_NUMBER = 7;
+    private static final int ROOM_NUMBER = 1;
     private static final String LEVEL_TYPE = "benefits";
 
     private static final List<Question> BENEFITS_QUESTIONS = List.of(
