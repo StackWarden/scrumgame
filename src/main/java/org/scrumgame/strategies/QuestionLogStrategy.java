@@ -86,10 +86,8 @@ public class QuestionLogStrategy implements LogStrategy {
     @Override
     public void markCurrentLogCompleted(Session session) {
         int logId = session.getCurrentQuestionLogId();
-        System.out.println("[DEBUG] Trying to mark question_log as completed for logId: " + logId);
 
         if (logId == -1) {
-            System.out.println("[DEBUG] No valid question log ID set in session.");
             return;
         }
 
@@ -100,12 +98,9 @@ public class QuestionLogStrategy implements LogStrategy {
 
             stmt.setInt(1, logId);
             int rowsUpdated = stmt.executeUpdate();
-            System.out.println("[DEBUG] Rows updated: " + rowsUpdated);
 
             if (rowsUpdated == 0) {
                 System.out.println("[WARNING] No question_log row found with id = " + logId);
-            } else {
-                System.out.println("[DEBUG] Successfully marked question_log #" + logId + " as completed.");
             }
 
         } catch (SQLException e) {
