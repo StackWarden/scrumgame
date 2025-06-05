@@ -63,6 +63,7 @@ public class GameService {
         session.setCurrentRoomId(benefitsLogId);
 
         this.session = session;
+        itemSpawner.spawnItems(session.getCurrentRoomId(), 3);
         inGame = true;
     }
 
