@@ -15,7 +15,6 @@ public class Monster extends Level {
         this.question = question.getQuestion();
         this.answer = question.getAnswer();
         this.defeated = false;
-        setRoomNumber(null);
     }
 
     public String getName() {

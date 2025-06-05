@@ -17,7 +17,7 @@ public class QuestionLogStrategy implements LogStrategy {
     private static final String INSERT_SQL =
             "INSERT INTO question_log (session_id, question_id, completed) VALUES (?, ?, ?)";
     private static final String SELECT_SQL =
-            "SELECT id, question_id, completed FROM question_log WHERE session_id = ?";
+            "SELECT id, session_id, question_id, completed, level_log_id FROM question_log WHERE session_id = ?";
     private int lastInsertedLogId = -1;
 
     @Override
@@ -34,7 +34,9 @@ public class QuestionLogStrategy implements LogStrategy {
 
             stmt.setInt(1, session.getId());
             stmt.setInt(2, question.getId());
-            stmt.setBoolean(3, false);
+            stmt.setInt(3, room.getLogId());
+            stmt.setBoolean(4, false);
+
             stmt.executeUpdate();
 
             ResultSet keys = stmt.getGeneratedKeys();
@@ -53,7 +55,7 @@ public class QuestionLogStrategy implements LogStrategy {
 
     @Override
     public List<QuestionLog> getLogs(Session session) {
-        List<QuestionLog> QuestionLogs = new ArrayList<>();
+        List<QuestionLog> questionLogs = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(SELECT_SQL)) {
@@ -65,29 +67,49 @@ public class QuestionLogStrategy implements LogStrategy {
                 int logId = result.getInt("id");
                 int questionId = result.getInt("question_id");
                 boolean completed = result.getBoolean("completed");
-                Question question = Question.fetchQuestionById(connection, questionId);
+                int levelLogId = result.getInt("level_log_id");
 
-                QuestionLog log = new QuestionLog(session.getId(), question, completed);
+                Question question = Question.fetchQuestionById(connection, questionId);
+                QuestionLog log = new QuestionLog(session.getId(),levelLogId, question, completed);
                 log.setId(logId);
-                QuestionLogs.add(log);
+
+                questionLogs.add(log);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return QuestionLogs;
+        return questionLogs;
     }
 
     @Override
     public void markCurrentLogCompleted(Session session) {
+        int logId = session.getCurrentQuestionLogId();
+        System.out.println("[DEBUG] Trying to mark question_log as completed for logId: " + logId);
+
+        if (logId == -1) {
+            System.out.println("[DEBUG] No valid question log ID set in session.");
+            return;
+        }
+
         String sql = "UPDATE question_log SET completed = true WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, session.getCurrentRoomId());
-            stmt.executeUpdate();
+
+            stmt.setInt(1, logId);
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println("[DEBUG] Rows updated: " + rowsUpdated);
+
+            if (rowsUpdated == 0) {
+                System.out.println("[WARNING] No question_log row found with id = " + logId);
+            } else {
+                System.out.println("[DEBUG] Successfully marked question_log #" + logId + " as completed.");
+            }
+
         } catch (SQLException e) {
+            System.out.println("[ERROR] Failed to update question_log for id = " + logId);
             e.printStackTrace();
         }
     }

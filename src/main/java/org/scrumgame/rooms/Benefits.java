@@ -2,19 +2,43 @@ package org.scrumgame.rooms;
 
 import org.scrumgame.classes.Level;
 import org.scrumgame.classes.Question;
+import org.scrumgame.database.models.QuestionLog;
+import org.scrumgame.database.models.Session;
+import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.RoomLevel;
+import org.scrumgame.services.LogService;
+import org.scrumgame.strategies.QuestionLogStrategy;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Benefits extends Level implements RoomLevel {
 
-    private final Queue<Question> questions = new LinkedList<>();
+    private final List<QuestionLog> questions = new ArrayList<>();
     private Question currentQuestion;
+    private int logId;
+    private int roomNumber;
 
-    public Benefits(Queue<Question> questions) {
-        this.questions.addAll(questions);
-        this.currentQuestion = this.questions.peek();
+    public Benefits(Session session, LogService logService) {
+        this.logId = session.getCurrentRoomId();
+        this.questions.addAll(fetchQuestionsForLevel(session, logService));
+        assert !this.questions.isEmpty();
+        this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
+        setRoomNumber(1);
+    }
+
+    public Benefits(List<QuestionLog> questions) {
+        this.questions.addAll(
+                questions.stream()
+                        .filter(q -> !q.isCompleted())
+                        .toList()
+        );
+
+        if (this.questions.isEmpty()) {
+            throw new IllegalStateException("No incomplete questions found for this level.");
+        }
+
+        this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
         setRoomNumber(1);
     }
 
@@ -29,15 +53,28 @@ public class Benefits extends Level implements RoomLevel {
 
         boolean correct = currentQuestion.getAnswer().trim().equalsIgnoreCase(answer.trim());
         if (correct) {
-            questions.poll(); // verwijder huidige vraag
-            currentQuestion = questions.peek(); // volgende vraag klaarzetten
+            questions.removeFirst();
+            System.out.println(questions);
+
+            if (!questions.isEmpty()) {
+                currentQuestion = questions.getFirst().getQuestions().getFirst();
+            } else {
+                currentQuestion = null;
+            }
         }
+
         return correct;
     }
 
+
     @Override
     public String getAnswer() {
-        return currentQuestion != null ? currentQuestion.getAnswer() : "No more questions.";
+        return "";
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return questions.isEmpty();
     }
 
     @Override
@@ -45,11 +82,50 @@ public class Benefits extends Level implements RoomLevel {
         return currentQuestion;
     }
 
-    public boolean isCompleted() {
-        return questions.isEmpty();
+    @Override
+    public int getQuestionLogId() {
+        assert !questions.isEmpty();
+        return questions.getFirst().getId();
     }
 
-    public Queue<Question> getRemainingQuestions() {
-        return new LinkedList<>(questions);
+    @Override
+    public List<Question> getRemainingQuestions() {
+        List<Question> result = new ArrayList<>();
+        for (QuestionLog log : questions) {
+            result.add(log.getQuestions().getFirst());
+        }
+        return result;
+    }
+
+    @Override
+    public int getRoomNumber() {
+        return this.roomNumber;
+    }
+
+    @Override
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    @Override
+    public void setLogId(int logId) {
+        this.logId = logId;
+    }
+
+    @Override
+    public int getLogId() {
+        return logId;
+    }
+
+    private static List<QuestionLog> fetchQuestionsForLevel(Session session, LogService logService) {
+        logService.setStrategy(new QuestionLogStrategy());
+
+        List<? extends GameLog> logs = logService.getLogs(session);
+
+        return logs.stream()
+                .filter(log -> log instanceof QuestionLog qLog
+                        && qLog.getLevelLogId() == session.getCurrentRoomId())
+                .map(log -> (QuestionLog) log)
+                .toList();
     }
 }

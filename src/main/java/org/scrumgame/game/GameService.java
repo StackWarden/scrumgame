@@ -111,8 +111,7 @@ public class GameService {
             return "Monster appears: " + current.getPrompt();
         }
 
-        logService.setStrategy(new QuestionLogStrategy());
-        return session.getCurrentPrompt(logService);
+        return getCurrentRoom().getPrompt();
     }
 
     public void submitAnswer(boolean skip) {
@@ -192,18 +191,21 @@ public class GameService {
                 .collect(Collectors.joining("\n"));
     }
 
-    public Room getCurrentRoom(int logId) {
-        logService.setStrategy(new QuestionLogStrategy());
-        return (Room) logService.loadLevelByLogId(logId);
+    public RoomLevel getCurrentRoom() {
+        logService.setStrategy(new RoomLogStrategy());
+
+        int logId = session.getCurrentRoomId();
+        if (logId == -1) {
+            throw new IllegalStateException("No current room is active for this session.");
+        }
+
+        Level level = logService.loadLevelByLogId(logId);
+        if (!(level instanceof RoomLevel roomLevel)) {
+            throw new IllegalStateException("Current level is not a RoomLevel. Log ID: " + logId);
+        }
+
+        return roomLevel;
     }
-
-    public String getCurrentRoom() {
-        int currentRoomNumber = RoomLogHelper.getCurrentRoomNumber(session);
-        int totalRooms = 6;
-
-        return String.format("%d out of %d", currentRoomNumber, totalRooms);
-    }
-
 
     public Monster getCurrentMonster(int logId) {
         logService.setStrategy(new MonsterLogStrategy());
@@ -288,30 +290,45 @@ public class GameService {
         }
 
         session.setCurrentMonsterLogId(null);
-        logService.setStrategy(new QuestionLogStrategy());
-        logService.markCurrentLogCompleted(session);
         session.save();
         System.out.println("All monsters defeated! You're back in your room.");
     }
 
     private void handleRoomAnswer(String answer, boolean skip) {
-        Room room = getCurrentRoom(session.getCurrentRoomId());
-        room.setLogId(session.getCurrentRoomId());
+        logService.setStrategy(new RoomLogStrategy());
+        Level level = logService.loadLevelByLogId(session.getCurrentRoomId());
 
-        boolean correct = room.checkAnswer(answer);
+        if (!(level instanceof RoomLevel roomLevel)) {
+            System.out.println("This level does not support room-style interaction.");
+            return;
+        }
+
+        roomLevel.setLogId(session.getCurrentRoomId());
+        session.setCurrentQuestionLogId(roomLevel.getQuestionLogId());
+
+        boolean correct = roomLevel.checkAnswer(answer);
         if (correct || skip) {
             logService.setStrategy(new QuestionLogStrategy());
             logService.markCurrentLogCompleted(session);
-            session.setCurrentRoomId(null);
+
+            RoomLevel reloadedRoom = getCurrentRoom();
             session.save();
-            System.out.println("Good Answer!\nYou may proceed to the next room with 'next'.");
+
+            System.out.println("Correct! You've answered the question successfully.");
+            if (roomLevel.isCompleted()) {
+                System.out.println("All questions in this room are answered.");
+            } else {
+                System.out.println("Next question: " + roomLevel.getPrompt());
+            }
+
+            session.save();
             return;
         }
 
         messageObserver.clear();
         monsterSpawner.addObserver(messageObserver);
 
-        List<Monster> monsters = monsterSpawner.spawnMonstersForRoom(session, room);
+        List<Monster> monsters = monsterSpawner.spawnMonstersForRoom(session);
         for (Monster monster : monsters) {
             logService.setStrategy(new MonsterLogStrategy());
             Monster logged = (Monster) logService.executeLog(session, monster);
@@ -361,21 +378,23 @@ public class GameService {
             return;
         }
 
-        logService.setStrategy(new QuestionLogStrategy());
-        Level level = logService.loadLevelByLogId(logId);
-
-        if (!(level instanceof RoomLevel roomLevel)) {
+        logService.setStrategy(new RoomLogStrategy());
+        RoomLevel roomLevel;
+        try {
+            Level level = logService.loadLevelByLogId(logId);
+            roomLevel = logService.extractRoomLevel(level);
+        } catch (IllegalStateException e) {
             System.out.println("De huidige kamer is geen room-level.");
             return;
         }
 
-        Queue<Question> remaining = roomLevel.getRemainingQuestions();
+        List<Question> remaining = roomLevel.getRemainingQuestions();
         if (remaining.isEmpty()) {
             System.out.println("Alle vragen in kamer " + roomLevel.getRoomNumber() + " zijn beantwoord.");
             return;
         }
 
-        System.out.println("\n Overzicht van openstaande vragen in kamer " + roomLevel.getRoomNumber() + ":");
+        System.out.println("\nOverzicht van openstaande vragen in kamer " + roomLevel.getRoomNumber() + ":");
         int index = 1;
         for (Question q : remaining) {
             System.out.printf("  %d. %s%n", index++, q.getQuestion());

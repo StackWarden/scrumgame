@@ -4,8 +4,6 @@ public abstract class Level {
     private int scoreRequirement = 0;
     private int logId = -1;
 
-    private Integer roomNumber = null;
-
     public abstract String getPrompt();
     public abstract boolean checkAnswer(String answer);
     public abstract String getAnswer();
@@ -30,19 +28,4 @@ public abstract class Level {
         return null;
     }
 
-    public Integer getRoomNumber() {
-        return roomNumber;
-    }
-
-    public void setRoomNumber(Integer roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
-    public boolean isMonster() {
-        return roomNumber == null;
-    }
-
-    public boolean isRoom() {
-        return roomNumber != null;
-    }
 }
