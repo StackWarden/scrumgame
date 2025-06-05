@@ -17,6 +17,8 @@ public class Session {
     private int score;
     private int monsterEncounters;
     private boolean gameOver;
+    private Integer currentQuestionLogId = null;
+
 
     public Session(int id, int playerId, Integer currentLevelLogId, Integer currentMonsterLogId,
                    int score, int monsterEncounters, boolean gameOver) {
@@ -178,6 +180,14 @@ public class Session {
     public String getCurrentPrompt(LogService logService) {
         if (currentLevelLogId == null) return "No level active.";
         return logService.getPromptByLogId(currentLevelLogId);
+    }
+
+    public Integer getCurrentQuestionLogId() {
+        return currentQuestionLogId;
+    }
+
+    public void setCurrentQuestionLogId(Integer currentQuestionLogId) {
+        this.currentQuestionLogId = currentQuestionLogId;
     }
 
     public static List<Session> getAllForPlayer(int playerId) {

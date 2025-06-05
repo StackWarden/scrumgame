@@ -23,19 +23,19 @@ public class Game {
     }
 
     @ShellMethod(key = "answer", value = "Submit an answer to the current question.")
-    public void submitAnswer(@ShellOption(help = "Your answer") String answer) {
+    public void submitAnswer() {
         if (!isInGame()) {
             System.out.println(notInGameMessage());
             return;
         }
-        gameService.submitAnswer(answer, false);
+        gameService.submitAnswer(false);
     }
-
-    @ShellMethod(key = "next", value = "Go to the next room if possible.")
-    public String goToNextRoom() {
-        if (!isInGame()) return notInGameMessage();
-        return gameService.goToNextRoom(true);
-    }
+//      Tijdelijk Disabled
+//    @ShellMethod(key = "next", value = "Go to the next room if possible.")
+//    public String goToNextRoom() {
+//        if (!isInGame()) return notInGameMessage();
+//        return gameService.goToNextRoom(true);
+//    }
 
     @ShellMethod(key = "status", value = "Show current game status.")
     public String getStatus() {
@@ -62,6 +62,12 @@ public class Game {
     public String viewInventory() {
         if (!isInGame()) return notInGameMessage();
         return gameService.viewPlayerInventory();
+    }
+
+    @ShellMethod(key = "room-info", value = "Bekijk een overzicht van de openstaande vragen in de huidige kamer.")
+    public void viewRoomInfo() {
+        if (!isInGame()) System.out.println(notInGameMessage());
+        gameService.printRoomOverview();
     }
 
     @ShellMethod(key = "quit", value = "End the current game.")
