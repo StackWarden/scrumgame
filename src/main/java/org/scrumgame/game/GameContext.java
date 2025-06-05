@@ -29,7 +29,7 @@ public class GameContext {
         return null;
     }
 
-    public List<Monster> spawnMonstersForRoom(Session session, Room room) {
+    public List<Monster> spawnMonstersForRoom(Session session) {
         List<Monster> monsters = new ArrayList<>();
 
         List<Question> questions = QuestionService.generateQuestions(session, 3);

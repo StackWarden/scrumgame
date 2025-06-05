@@ -96,7 +96,7 @@ public class MonsterLogStrategy implements LogStrategy {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, session.getCurrentRoomId());
+            stmt.setInt(1, session.getCurrentMonsterLogId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -41,9 +41,9 @@ public class MonsterSpawner {
         }
     }
     // the main method of this monsterspawner class, it's what the gameservice calls when a player answers a question wrong
-    public List<Monster> spawnMonstersForRoom(Session session, Room room) {
+    public List<Monster> spawnMonstersForRoom(Session session) {
         // use the gamecontext to generate a list of monsters
-        List<Monster> monsters = context.spawnMonstersForRoom(session, room);
+        List<Monster> monsters = context.spawnMonstersForRoom(session);
         // notifies all REGISTERED observers
         notifyObservers(monsters);
         // return lol, you know this
