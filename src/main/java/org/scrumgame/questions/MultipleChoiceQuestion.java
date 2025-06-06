@@ -1,15 +1,20 @@
 package org.scrumgame.questions;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.scrumgame.classes.Question;
+import org.scrumgame.database.DatabaseConnection;
 
 public class MultipleChoiceQuestion extends Questions {
 
     @Override
     protected Question fetchQuestionFromDatabase(Connection connection, int questionId) {
         try {
-            return Question.fetchQuestionById(connection, questionId);
+            String sql = "SELECT type FROM questions WHERE type = Multiple_Choice";
+            try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
+                return Question.fetchQuestionById(connection, questionId);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Unable to fetch multiple choice question.", e);
         }

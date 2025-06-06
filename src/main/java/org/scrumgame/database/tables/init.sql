@@ -127,9 +127,9 @@ INSERT INTO `question` (`text`, `correct_answer`, `type`) VALUES
                                                       ('What is the capital of France?', 'Paris', 'Open'),
                                                       ('2 + 2 = ?', '4', 'Open'),
                                                       ('What color is the sky?', 'Blue', 'Open'),
-                                                      ('Which is correct? A, B, C, D?', 'A', 'Multiple Choice'),
-                                                      ('What is the meaning of life, the universe and everything?', '42', 'Open');
-                                                      -- ('', '', 'Riddle')
+                                                      ('Which is correct? A, B, C, D?', 'A', 'Multiple_Choice'),
+                                                      ('What is the meaning of life, the universe and everything?', '42', 'Open'),
+                                                      ('What has wings but can not fly?', 'Penguin', 'Riddle');
 
 
 -- Seed: sessions

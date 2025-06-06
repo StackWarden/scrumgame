@@ -10,14 +10,23 @@ public class Question {
     private int id;
     private String question;
     private String answer;
+    private String type;
     private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
+            "SELECT id, text, correct_answer, hint, type FROM question WHERE id = ?";
 
     public Question(int id, String question, String answer, String hint) {
         this.id = id;
         this.question = question;
         this.answer = answer;
         this.hint = hint;
+    }
+
+    public Question(int id, String question, String answer, String hint, String type) {
+        this.id = id;
+        this.question = question;
+        this.answer = answer;
+        this.hint = hint;
+        this.type = type;
     }
 
     public Question(String question, String answer) {
@@ -71,7 +80,8 @@ public class Question {
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
-                        rs.getString("hint")
+                        rs.getString("hint"),
+                        rs.getString("type")
                 );
             } else {
                 throw new SQLException("Question not found for ID: " + questionId);
