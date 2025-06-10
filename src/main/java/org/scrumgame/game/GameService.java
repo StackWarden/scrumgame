@@ -440,4 +440,35 @@ public class GameService {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    public void skipCurrentQuestion() {
+        if (hasActiveMonsters()) {
+            Monster currentMonster = getCurrentActiveMonster();
+            if (currentMonster != null) {
+                defeatCurrentMonster("skip joker");
+            }
+            return;
+        }
+
+        handleRoomAnswer("", true);
+    }
+
+    public String skipRoom() {
+        if (session == null || !session.isActive()) {
+            return "No active session.";
+        }
+
+        skipCurrentQuestion();
+
+        try {
+            RoomLevel currentRoom = getCurrentRoom();
+            if (currentRoom.isCompleted()) {
+                return goToNextRoom(false);
+            } else {
+                return "Question skipped. Next question: " + currentRoom.getPrompt();
+            }
+        } catch (IllegalStateException e) {
+            return goToNextRoom(false);
+        }
+    }
 }
