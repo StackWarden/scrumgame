@@ -9,7 +9,7 @@ import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.jokers.SkipRoomJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.rooms.Benefits;
-import org.scrumgame.seeders.BenefitsRoomSeeder;
+import org.scrumgame.seeders.*;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
@@ -58,6 +58,11 @@ public class GameService {
 
         assert session != null;
         BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
+        DailyScrumRoomSeeder.seedDailyScrumRoomForSession(session.getId());
+        PlanningRoomSeeder.seedPlanningRoomForSession(session.getId());
+        RetrospectiveRoomSeeder.seedRetrospectiveRoomForSession(session.getId());
+        ScrumBoardRoomSeeder.seedScrumBoardRoomForSession(session.getId());
+        SprintReviewRoomSeeder.seedSprintReviewRoomForSession(session.getId());
 
         int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
