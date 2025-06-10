@@ -9,7 +9,7 @@ import org.scrumgame.database.DatabaseConnection;
 public class MultipleChoiceQuestion extends Questions {
 
     @Override
-    protected Question fetchQuestionFromDatabase(Connection connection, int questionId) {
+    protected Question dbQuestion(Connection connection, int questionId) {
         try {
             String sql = "SELECT type FROM questions WHERE type = Multiple_Choice";
             try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){

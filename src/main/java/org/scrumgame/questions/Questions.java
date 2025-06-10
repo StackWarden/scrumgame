@@ -1,18 +1,18 @@
 package org.scrumgame.questions;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.scrumgame.classes.Question;
 
 public abstract class Questions {
 
-    public final void presentQuestion(Connection connection, int questionId) {
-        Question dbQuestion = fetchQuestionFromDatabase(connection, questionId);
+    public final void presentQuestion(Connection connection, int questionId) throws SQLException {
+        Question dbQuestion = Question.fetchQuestionById(connection, questionId);
         displayQuestion(dbQuestion);
         displayAnswer(dbQuestion);
         useHint(dbQuestion);
     }
-
-    protected abstract Question fetchQuestionFromDatabase(Connection connection, int questionId);
 
     protected abstract void displayQuestion(Question dbQuestion);
 

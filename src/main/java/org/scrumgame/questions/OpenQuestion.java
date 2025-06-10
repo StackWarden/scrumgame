@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class OpenQuestion extends Questions {
 
     @Override
-    protected Question fetchQuestionFromDatabase(Connection connection, int questionId) {
+    protected Question dbQuestion(Connection connection, int questionId) {
         try {
             String sql = "SELECT type FROM questions WHERE type = Open";
             try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
