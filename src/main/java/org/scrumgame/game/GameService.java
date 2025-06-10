@@ -377,18 +377,7 @@ public class GameService {
 
         if (session.getCurrentMonsterLogId() != -1) {
             Monster monster = getCurrentMonster(session.getCurrentMonsterLogId());
-            String answer = monster.getAnswer();
-            String hint = monster.getHint();
-
-            HintContext hintContext = new HintContext();
-
-            if (hint != null && !hint.isBlank()) {
-                hintContext.setStrategy(new PredefinedHintStrategy());
-            } else {
-                hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
-            }
-
-            return hintContext.getHint(answer, hint);
+            return generateHint(monster.getAnswer(), monster.getHint());
         }
 
         if (session.getCurrentRoomId() != -1) {
@@ -398,18 +387,7 @@ public class GameService {
 
                 if (!remainingQuestions.isEmpty()) {
                     Question currentQuestion = remainingQuestions.get(0);
-                    String answer = currentQuestion.getAnswer();
-                    String hint = currentQuestion.getHint();
-
-                    HintContext hintContext = new HintContext();
-
-                    if (hint != null && !hint.isBlank()) {
-                        hintContext.setStrategy(new PredefinedHintStrategy());
-                    } else {
-                        hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
-                    }
-
-                    return hintContext.getHint(answer, hint);
+                    return generateHint(currentQuestion.getAnswer(), currentQuestion.getHint());
                 } else {
                     return "All questions in this room have been answered.";
                 }
@@ -419,7 +397,19 @@ public class GameService {
         }
 
         return "No active question or monster to get hint for.";
-}
+    }
+
+    private String generateHint(String answer, String hint) {
+        HintContext hintContext = new HintContext();
+
+        if (hint != null && !hint.isBlank()) {
+            hintContext.setStrategy(new PredefinedHintStrategy());
+        } else {
+            hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
+        }
+
+        return hintContext.getHint(answer, hint);
+    }
 
     public void printRoomOverview() {
         int logId = session.getCurrentRoomId();
