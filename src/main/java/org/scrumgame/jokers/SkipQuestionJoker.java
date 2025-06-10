@@ -5,20 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-@Component("skip-room")
-public class SkipRoomJoker extends Joker {
+@Component("skip-question")
+public class SkipQuestionJoker extends Joker {
 
     private final GameService gameService;
 
     @Autowired
-    public SkipRoomJoker(@Lazy GameService gameService) {
+    public SkipQuestionJoker(@Lazy GameService gameService) {
         this.gameService = gameService;
     }
 
     @Override
     protected String applyEffect() {
-        gameService.submitAnswer(true);
-        gameService.goToNextRoom(false);
-        return "Used skip-room joker!";
+        String result = gameService.skipQuestion();
+        return "Used skip-question joker! " + result;
     }
 }
