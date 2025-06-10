@@ -6,7 +6,7 @@ public class Monster extends Level {
     private final String answer;
     private final String hint;
     private boolean defeated;
-    private Question questionObject;
+    private final Question questionObject;
 
     public Monster(Question question) {
         this.questionObject = question;

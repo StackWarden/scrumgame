@@ -105,7 +105,6 @@ public class Item {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-
             // Set ID or NULL if not yet assigned
             if (this.id > 0) {
                 stmt.setInt(1, this.id);
