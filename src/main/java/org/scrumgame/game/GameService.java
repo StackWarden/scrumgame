@@ -6,9 +6,8 @@ import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
 import org.scrumgame.interfaces.RoomLevel;
-import org.scrumgame.jokers.SkipRoomJoker;
+import org.scrumgame.jokers.SkipQuestionJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
-import org.scrumgame.rooms.Benefits;
 import org.scrumgame.seeders.BenefitsRoomSeeder;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
@@ -32,14 +31,14 @@ public class GameService {
     private final MonsterSpawnMessageObserver messageObserver;
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
-    private final SkipRoomJoker room;
+    private final SkipQuestionJoker room;
 
     private boolean inGame = false;
     private Session session;
     private Player player;
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipQuestionJoker room) {
         this.context = context;
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
@@ -439,5 +438,36 @@ public class GameService {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public void skipCurrentQuestion() {
+        if (hasActiveMonsters()) {
+            Monster currentMonster = getCurrentActiveMonster();
+            if (currentMonster != null) {
+                defeatCurrentMonster("skip joker");
+            }
+            return;
+        }
+
+        handleRoomAnswer("", true);
+    }
+
+    public String skipQuestion() {
+        if (session == null || !session.isActive()) {
+            return "No active session.";
+        }
+
+        skipCurrentQuestion();
+
+        try {
+            RoomLevel currentRoom = getCurrentRoom();
+            if (currentRoom.isCompleted()) {
+                return goToNextRoom(false);
+            } else {
+                return "Question skipped. Next question: " + currentRoom.getPrompt();
+            }
+        } catch (IllegalStateException e) {
+            return goToNextRoom(false);
+        }
     }
 }
