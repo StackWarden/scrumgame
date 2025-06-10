@@ -14,6 +14,8 @@ public abstract class Questions {
         useHint(dbQuestion);
     }
 
+    protected abstract Question dbQuestion(Connection connection, int questionId);
+
     protected abstract void displayQuestion(Question dbQuestion);
 
     protected abstract void displayAnswer(Question dbQuestion);
