@@ -32,12 +32,11 @@ public class Game {
         }
         gameService.submitAnswer(false);
     }
-//      Tijdelijk Disabled
-//    @ShellMethod(key = "next", value = "Go to the next room if possible.")
-//    public String goToNextRoom() {
-//        if (!isInGame()) return notInGameMessage();
-//        return gameService.goToNextRoom(true);
-//    }
+    @ShellMethod(key = "next", value = "Go to the next room if possible.")
+    public String goToNextRoom() {
+        if (!isInGame()) return notInGameMessage();
+        return gameService.goToNextRoom();
+    }
 
     @ShellMethod(key = "status", value = "Show current game status.")
     public String getStatus() {

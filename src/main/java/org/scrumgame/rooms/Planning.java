@@ -35,7 +35,9 @@ public class Planning extends Level implements RoomLevel {
         );
 
         if (this.questions.isEmpty()) {
-            throw new IllegalStateException("No incomplete questions found for this level.");
+            setCompleted(true);
+            setRoomNumber(3);
+            return;
         }
 
         this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();

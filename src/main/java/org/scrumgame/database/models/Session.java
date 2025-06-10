@@ -1,6 +1,7 @@
 package org.scrumgame.database.models;
 
 import org.scrumgame.database.DatabaseConnection;
+import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.services.LogService;
 import org.springframework.stereotype.Component;
 
