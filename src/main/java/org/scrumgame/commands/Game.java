@@ -10,12 +10,10 @@ import org.scrumgame.game.GameService;
 public class Game {
 
     private final GameService gameService;
-    private final GameService isLoggedIn;
 
     @Autowired
-    public Game(GameService gameService, GameService isLoggedIn) {
+    public Game(GameService gameService) {
         this.gameService = gameService;
-        this.isLoggedIn = isLoggedIn;
     }
 
     @ShellMethod(key = "prompt", value = "Show current question or monster prompt.")
@@ -97,15 +95,6 @@ public class Game {
         return gameService.getHint();
     }
 
-    @ShellMethod(key = "achievements" , value = "shows current players achievements.")
-    public String achievements() {
-        if (!isLoggedIn()) {
-            return "There is no player logged in, please log in with a player to see achievements.";
-        }
-        System.out.println("this is just a WIP, There are no achievements added yet. Stay tuned for future updates.");
-        return null;
-    }
-
     @ShellMethod(key = "help", value = "List available game and account commands.")
     public String showHelp() {
         return """
@@ -136,7 +125,6 @@ public class Game {
         - login               → Log in with an existing player name
         - register            → Create a new player account
         - delete-account      → Permanently delete your player account
-        - achievements        → Shows current players achievements
 
         Use 'help' anytime to redisplay this list.
         """;
@@ -144,10 +132,6 @@ public class Game {
 
     private boolean isInGame() {
         return gameService.isInGame();
-    }
-
-    private boolean isLoggedIn() {
-        return gameService.isLoggedIn();
     }
 
     private String notInGameMessage() {
