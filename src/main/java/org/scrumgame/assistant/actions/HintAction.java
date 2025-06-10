@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HintAction implements AssistantAction {
-
     private final GameService gameService;
 
     public HintAction(GameService gameService) {
@@ -16,13 +15,14 @@ public class HintAction implements AssistantAction {
 
     @Override
     public void run() {
-        Player a = gameService.getPlayer();
-        if (a != null) {
-            System.out.println("Hint action is running. " + a.getName());
+        Player player = gameService.getPlayer();
+
+        if (player == null) {
+            System.out.println("Hint action is running, but no player found.");
+            return;
         }
 
-        if (a == null) {
-            System.out.println("Hint action is running, name is null.");
-        }
+        String hint = gameService.getHint();
+        System.out.println("Hint: " + hint);
     }
 }

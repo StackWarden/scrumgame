@@ -369,8 +369,35 @@ public class GameService {
             return hintContext.getHint(answer, hint);
         }
 
-        return "You can only get hints for monsters!";
-    }
+        if (session.getCurrentRoomId() != -1) {
+            try {
+                RoomLevel currentRoom = getCurrentRoom();
+                List<Question> remainingQuestions = currentRoom.getRemainingQuestions();
+
+                if (!remainingQuestions.isEmpty()) {
+                    Question currentQuestion = remainingQuestions.get(0);
+                    String answer = currentQuestion.getAnswer();
+                    String hint = currentQuestion.getHint();
+
+                    HintContext hintContext = new HintContext();
+
+                    if (hint != null && !hint.isBlank()) {
+                        hintContext.setStrategy(new PredefinedHintStrategy());
+                    } else {
+                        hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
+                    }
+
+                    return hintContext.getHint(answer, hint);
+                } else {
+                    return "All questions in this room have been answered.";
+                }
+            } catch (IllegalStateException e) {
+                return "Cannot get hint for current room: " + e.getMessage();
+            }
+        }
+
+        return "No active question or monster to get hint for.";
+}
 
     public void printRoomOverview() {
         int logId = session.getCurrentRoomId();
