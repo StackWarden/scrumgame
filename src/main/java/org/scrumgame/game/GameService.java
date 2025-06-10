@@ -6,9 +6,10 @@ import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
 import org.scrumgame.interfaces.RoomLevel;
-import org.scrumgame.jokers.SkipQuestionJoker;
+import org.scrumgame.jokers.SkipRoomJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
-import org.scrumgame.seeders.BenefitsRoomSeeder;
+import org.scrumgame.rooms.Benefits;
+import org.scrumgame.seeders.*;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
@@ -31,14 +32,14 @@ public class GameService {
     private final MonsterSpawnMessageObserver messageObserver;
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
-    private final SkipQuestionJoker room;
+    private final SkipRoomJoker room;
 
     private boolean inGame = false;
     private Session session;
     private Player player;
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipQuestionJoker room) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipRoomJoker room) {
         this.context = context;
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
@@ -57,6 +58,11 @@ public class GameService {
 
         assert session != null;
         BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
+        DailyScrumRoomSeeder.seedDailyScrumRoomForSession(session.getId());
+        PlanningRoomSeeder.seedPlanningRoomForSession(session.getId());
+        RetrospectiveRoomSeeder.seedRetrospectiveRoomForSession(session.getId());
+        ScrumBoardRoomSeeder.seedScrumBoardRoomForSession(session.getId());
+        SprintReviewRoomSeeder.seedSprintReviewRoomForSession(session.getId());
 
         int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
@@ -102,13 +108,6 @@ public class GameService {
 
     public boolean isLoggedIn() {
         return player != null;
-    }
-
-    public void saveSession(int sessionId) {
-        if (session == null || session.getId() != sessionId) {
-            throw new IllegalArgumentException("No active session with the given ID.");
-        }
-        session.save(); // Calls the save method in the Session class
     }
 
     public String getCurrentPrompt() {
@@ -361,7 +360,18 @@ public class GameService {
 
         if (session.getCurrentMonsterLogId() != -1) {
             Monster monster = getCurrentMonster(session.getCurrentMonsterLogId());
-            return generateHint(monster.getAnswer(), monster.getHint());
+            String answer = monster.getAnswer();
+            String hint = monster.getHint();
+
+            HintContext hintContext = new HintContext();
+
+            if (hint != null && !hint.isBlank()) {
+                hintContext.setStrategy(new PredefinedHintStrategy());
+            } else {
+                hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
+            }
+
+            return hintContext.getHint(answer, hint);
         }
 
         if (session.getCurrentRoomId() != -1) {
@@ -371,7 +381,18 @@ public class GameService {
 
                 if (!remainingQuestions.isEmpty()) {
                     Question currentQuestion = remainingQuestions.get(0);
-                    return generateHint(currentQuestion.getAnswer(), currentQuestion.getHint());
+                    String answer = currentQuestion.getAnswer();
+                    String hint = currentQuestion.getHint();
+
+                    HintContext hintContext = new HintContext();
+
+                    if (hint != null && !hint.isBlank()) {
+                        hintContext.setStrategy(new PredefinedHintStrategy());
+                    } else {
+                        hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
+                    }
+
+                    return hintContext.getHint(answer, hint);
                 } else {
                     return "All questions in this room have been answered.";
                 }
@@ -381,19 +402,7 @@ public class GameService {
         }
 
         return "No active question or monster to get hint for.";
-    }
-
-    private String generateHint(String answer, String hint) {
-        HintContext hintContext = new HintContext();
-
-        if (hint != null && !hint.isBlank()) {
-            hintContext.setStrategy(new PredefinedHintStrategy());
-        } else {
-            hintContext.setStrategy(new RandomObfuscatedHintStrategy(0.3));
-        }
-
-        return hintContext.getHint(answer, hint);
-    }
+}
 
     public void printRoomOverview() {
         int logId = session.getCurrentRoomId();
@@ -435,36 +444,5 @@ public class GameService {
 
     public void setPlayer(Player player) {
         this.player = player;
-    }
-
-    public void skipCurrentQuestion() {
-        if (hasActiveMonsters()) {
-            Monster currentMonster = getCurrentActiveMonster();
-            if (currentMonster != null) {
-                defeatCurrentMonster("skip joker");
-            }
-            return;
-        }
-
-        handleRoomAnswer("", true);
-    }
-
-    public String skipQuestion() {
-        if (session == null || !session.isActive()) {
-            return "No active session.";
-        }
-
-        skipCurrentQuestion();
-
-        try {
-            RoomLevel currentRoom = getCurrentRoom();
-            if (currentRoom.isCompleted()) {
-                return goToNextRoom(false);
-            } else {
-                return "Question skipped. Next question: " + currentRoom.getPrompt();
-            }
-        } catch (IllegalStateException e) {
-            return goToNextRoom(false);
-        }
     }
 }
