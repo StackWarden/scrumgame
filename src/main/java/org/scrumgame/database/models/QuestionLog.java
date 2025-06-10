@@ -6,38 +6,42 @@ import org.scrumgame.classes.Question;
 import java.util.Collections;
 import java.util.List;
 
-public class RoomLog implements GameLog {
+public class QuestionLog implements GameLog {
     private int id;
-    private int levelLogId;
     private int sessionId;
-    private int roomNumber;
+    private int levelLogId;
     private Question question;
     private boolean completed;
 
-    public RoomLog(int id, int levelLogId, int sessionId, int roomNumber, Question question, boolean completed) {
-        this.id = id;
-        this.levelLogId = levelLogId;
+    public QuestionLog(int sessionId, int levelLogId, Question question, boolean completed) {
         this.sessionId = sessionId;
-        this.roomNumber = roomNumber;
+        this.levelLogId = levelLogId;
         this.question = question;
         this.completed = completed;
     }
 
-    public int getLevelLogId() {
-        return levelLogId;
+    public QuestionLog(int sessionId, Question question, boolean completed) {
+        this(sessionId, -1, question, completed);
     }
 
-    public int getRoomNumber() {
-        return roomNumber;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
         return id;
     }
 
-    @Override
     public int getSessionId() {
         return sessionId;
+    }
+
+    public int getLevelLogId() {
+        return levelLogId;
+    }
+
+    public void setLevelLogId(int levelLogId) {
+        this.levelLogId = levelLogId;
     }
 
     @Override

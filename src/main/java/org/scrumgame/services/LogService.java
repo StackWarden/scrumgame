@@ -6,6 +6,7 @@ import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.LogStrategy;
+import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.strategies.MonsterLogStrategy;
 
 import java.sql.Connection;
@@ -34,28 +35,9 @@ public class LogService {
         return strategy.getLogs(session);
     }
 
-    public void markCurrentLogCompleted(Level level) {
-        int logId = level.getLogId();
-        if (logId == -1) return;
-
-        String sql;
-        if (level instanceof Room) {
-            sql = "UPDATE level_log SET completed = true WHERE id = ?";
-        } else if (level instanceof Monster) {
-            sql = "UPDATE monster_log SET defeated = true WHERE id = ?";
-        } else {
-            System.out.println("Unknown level type: " + level.getClass().getSimpleName());
-            return;
-        }
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, logId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error marking log completed for log ID " + logId);
-            e.printStackTrace();
-        }
+    public void markCurrentLogCompleted(Session session) {
+        if (strategy == null) throw new IllegalStateException("No strategy set.");
+        strategy.markCurrentLogCompleted(session);
     }
 
     public List<Monster> getActiveMonsters(Session session) {
@@ -92,4 +74,12 @@ public class LogService {
         }
         return strategy.loadByLogId(logId);
     }
+
+    public RoomLevel extractRoomLevel(Level level) {
+        if (!(level instanceof RoomLevel roomLevel)) {
+            throw new IllegalStateException("Loaded level is not a RoomLevel.");
+        }
+        return roomLevel;
+    }
+
 }

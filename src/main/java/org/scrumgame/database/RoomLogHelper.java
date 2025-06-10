@@ -29,4 +29,20 @@ public class RoomLogHelper {
 
         return null;
     }
+
+    public static int getLevelLogIdByRoomNumber(int sessionId, int roomNumber) {
+        String query = "SELECT id FROM level_log WHERE session_id = ? AND room_number = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, sessionId);
+            stmt.setInt(2, roomNumber);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

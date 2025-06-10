@@ -1,158 +1,159 @@
--- -------------------------------------------------------------
--- TablePlus 6.4.8(608)
---
--- https://tableplus.com/
---
--- Database: scrumgame
--- Generation Time: 2025-05-15 11:12:57.2070
--- -------------------------------------------------------------
+DROP TABLE IF EXISTS question_log;
+DROP TABLE IF EXISTS monster_log_questions;
+DROP TABLE IF EXISTS item;
+DROP TABLE IF EXISTS level_log;
+DROP TABLE IF EXISTS monster_log;
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS player;
 
+-- 1. Player table
+CREATE TABLE player (
+                        id INT NOT NULL AUTO_INCREMENT,
+                        name VARCHAR(255) NOT NULL,
+                        PRIMARY KEY (id)
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- 2. Question table
+CREATE TABLE question (
+                          id INT NOT NULL AUTO_INCREMENT,
+                          text TEXT NOT NULL,
+                          correct_answer VARCHAR(255) NOT NULL,
+                          hint VARCHAR(255),
+                          type VARCHAR(255),
+                          PRIMARY KEY (id)
+);
 
-/*use scrumgame;*/
-DROP TABLE IF EXISTS `level_log`;
-CREATE TABLE `level_log` (
-                             `id` int NOT NULL AUTO_INCREMENT,
-                             `session_id` int NOT NULL,
-                             `question_id` int NOT NULL,
-                             `completed` tinyint(1) NOT NULL DEFAULT '0',
-                             PRIMARY KEY (`id`),
-                             KEY `question_id` (`question_id`),
-                             KEY `session_id` (`session_id`),
-                             CONSTRAINT `level_log_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`),
-                             CONSTRAINT `level_log_ibfk_2` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 3. Monster log table
+CREATE TABLE monster_log (
+                             id INT NOT NULL AUTO_INCREMENT,
+                             session_id INT NOT NULL,
+                             defeated TINYINT(1) NOT NULL DEFAULT 0,
+                             PRIMARY KEY (id),
+                             FOREIGN KEY (session_id) REFERENCES player(id) -- temporarily refer to player, fix later
+);
 
-DROP TABLE IF EXISTS `monster_log`;
-CREATE TABLE `monster_log` (
-                               `id` int NOT NULL AUTO_INCREMENT,
-                               `session_id` int NOT NULL,
-                               `defeated` tinyint(1) NOT NULL DEFAULT '0',
-                               PRIMARY KEY (`id`),
-                               KEY `session_id` (`session_id`),
-                               CONSTRAINT `monster_log_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 4. Level log table
+CREATE TABLE level_log (
+                           id INT NOT NULL AUTO_INCREMENT,
+                           session_id INT NOT NULL,
+                           room_number INT NOT NULL,
+                           level_type VARCHAR(50) NOT NULL,
+                           completed TINYINT(1) NOT NULL DEFAULT 0,
+                           PRIMARY KEY (id),
+                           FOREIGN KEY (session_id) REFERENCES player(id) -- temporarily refer to player, fix later
+);
 
-DROP TABLE IF EXISTS `item`;
-CREATE TABLE `item` (
-                            `id` BIGINT NOT NULL AUTO_INCREMENT,
-                            `name` VARCHAR(100) NOT NULL,
-                            `level_log_id` INT NOT NULL,
-                            `used` TINYINT(1) NOT NULL DEFAULT 0,
-                            `player_id` INT DEFAULT NULL,
-                            `session_id` INT DEFAULT NULL,
-                            PRIMARY KEY (`id`),
-                            KEY `level_log_id` (`level_log_id`),
-                            KEY `player_id` (`player_id`),
-                            CONSTRAINT `item_ibfk_1` FOREIGN KEY (`level_log_id`) REFERENCES `level_log` (`id`) ON DELETE CASCADE,
-                            CONSTRAINT `item_ibfk_2` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE SET NULL,
-                            CONSTRAINT `item_ibfk_3` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 5. Session table (now level_log and monster_log exist)
+CREATE TABLE session (
+                         id INT NOT NULL AUTO_INCREMENT,
+                         player_id INT NOT NULL,
+                         current_level_log_id INT DEFAULT NULL,
+                         current_monster_log_id INT DEFAULT NULL,
+                         score INT NOT NULL DEFAULT 0,
+                         monster_encounters INT NOT NULL DEFAULT 0,
+                         gameover TINYINT(1) NOT NULL DEFAULT 0,
+                         PRIMARY KEY (id),
+                         FOREIGN KEY (player_id) REFERENCES player(id),
+                         FOREIGN KEY (current_level_log_id) REFERENCES level_log(id),
+                         FOREIGN KEY (current_monster_log_id) REFERENCES monster_log(id)
+);
 
-DROP TABLE IF EXISTS `monster_log_questions`;
-CREATE TABLE `monster_log_questions` (
-                                         `id` int NOT NULL AUTO_INCREMENT,
-                                         `monster_log_id` int NOT NULL,
-                                         `question_id` int NOT NULL,
-                                         PRIMARY KEY (`id`),
-                                         KEY `monster_log_id` (`monster_log_id`),
-                                         KEY `question_id` (`question_id`),
-                                         CONSTRAINT `monster_log_questions_ibfk_1` FOREIGN KEY (`monster_log_id`) REFERENCES `monster_log` (`id`),
-                                         CONSTRAINT `monster_log_questions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 6. Fix foreign key references now that session table exists
+ALTER TABLE level_log DROP FOREIGN KEY level_log_ibfk_1;
+ALTER TABLE level_log ADD FOREIGN KEY (session_id) REFERENCES session(id);
 
-DROP TABLE IF EXISTS `player`;
-CREATE TABLE `player` (
-                          `id` int NOT NULL AUTO_INCREMENT,
-                          `name` varchar(255) NOT NULL,
-                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ALTER TABLE monster_log DROP FOREIGN KEY monster_log_ibfk_1;
+ALTER TABLE monster_log ADD FOREIGN KEY (session_id) REFERENCES session(id);
 
-DROP TABLE IF EXISTS `question`;
-CREATE TABLE `question` (
-                            `id` int NOT NULL AUTO_INCREMENT,
-                            `text` text NOT NULL,
-                            `correct_answer` varchar(255) NOT NULL,
-                            `hint` varchar(255),
-                            `type` varchar(255),
-                            PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 7. Question log
+CREATE TABLE question_log (
+                              id INT NOT NULL AUTO_INCREMENT,
+                              session_id INT NOT NULL,
+                              level_log_id INT NOT NULL,
+                              question_id INT NOT NULL,
+                              completed TINYINT(1) NOT NULL DEFAULT 0,
+                              PRIMARY KEY (id),
+                              FOREIGN KEY (session_id) REFERENCES session(id),
+                              FOREIGN KEY (level_log_id) REFERENCES level_log(id),
+                              FOREIGN KEY (question_id) REFERENCES question(id)
+);
 
-DROP TABLE IF EXISTS `session`;
-CREATE TABLE `session` (
-                           `id` int NOT NULL AUTO_INCREMENT,
-                           `player_id` int NOT NULL,
-                           `current_level_log_id` int DEFAULT NULL,
-                           `current_monster_log_id` int DEFAULT NULL,
-                           `score` int NOT NULL DEFAULT '0',
-                           `monster_encounters` int NOT NULL DEFAULT '0',
-                           `gameover` tinyint(1) NOT NULL DEFAULT '0',
-                           PRIMARY KEY (`id`),
-                           KEY `player_id` (`player_id`),
-                           KEY `current_level_log_id` (`current_level_log_id`),
-                           KEY `current_monster_log_id` (`current_monster_log_id`),
-                           CONSTRAINT `session_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
-                           CONSTRAINT `session_ibfk_2` FOREIGN KEY (`current_level_log_id`) REFERENCES `level_log` (`id`),
-                           CONSTRAINT `session_ibfk_3` FOREIGN KEY (`current_monster_log_id`) REFERENCES `monster_log` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 8. Monster log questions
+CREATE TABLE monster_log_questions (
+                                       id INT NOT NULL AUTO_INCREMENT,
+                                       monster_log_id INT NOT NULL,
+                                       question_id INT NOT NULL,
+                                       PRIMARY KEY (id),
+                                       FOREIGN KEY (monster_log_id) REFERENCES monster_log(id),
+                                       FOREIGN KEY (question_id) REFERENCES question(id)
+);
 
+-- 9. Items
+CREATE TABLE item (
+                      id BIGINT NOT NULL AUTO_INCREMENT,
+                      name VARCHAR(100) NOT NULL,
+                      level_log_id INT NOT NULL,
+                      used TINYINT(1) NOT NULL DEFAULT 0,
+                      player_id INT DEFAULT NULL,
+                      session_id INT DEFAULT NULL,
+                      PRIMARY KEY (id),
+                      FOREIGN KEY (level_log_id) REFERENCES level_log(id) ON DELETE CASCADE,
+                      FOREIGN KEY (player_id) REFERENCES player(id) ON DELETE SET NULL,
+                      FOREIGN KEY (session_id) REFERENCES session(id) ON DELETE SET NULL
+);
 
+-- Players
+INSERT INTO player (name) VALUES
+                              ('Alice'),
+                              ('Bob'),
+                              ('Charlie');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Questions
+INSERT INTO question (text, correct_answer, hint) VALUES
+                                                      ('What is the capital of France?', 'Paris', 'It’s also the city of love.'),
+                                                      ('2 + 2 = ?', '4', 'Basic arithmetic.'),
+                                                      ('What color is the sky?', 'Blue', 'Look up on a sunny day.'),
+                                                      ('Who wrote "Hamlet"?', 'Shakespeare', 'English playwright.'),
+                                                      ('What is the boiling point of water in Celsius?', '100', 'Standard atmospheric pressure.'),
+                                                      ('What is the square root of 64?', '8', 'It’s a whole number.'),
+                                                      ('Which is correct? A, B, C, D?', 'A'),
+                                                      ('What is the meaning of life, the universe and everything?', '42'),
+                                                      ('What has wings but can not fly?', 'Penguin');
 
--- ... [same DROP/CREATE statements as before] ...
-
--- Seed: players
-INSERT INTO `player` (`name`) VALUES
-                                  ('Alice'),
-                                  ('Bob'),
-                                  ('Charlie');
-
--- Seed: questions
-INSERT INTO `question` (`text`, `correct_answer`, `type`) VALUES
-                                                      ('What is the capital of France?', 'Paris', 'Open'),
-                                                      ('2 + 2 = ?', '4', 'Open'),
-                                                      ('What color is the sky?', 'Blue', 'Open'),
-                                                      ('Which is correct? A, B, C, D?', 'A', 'Multiple_Choice'),
-                                                      ('What is the meaning of life, the universe and everything?', '42', 'Open'),
-                                                      ('What has wings but can not fly?', 'Penguin', 'Riddle');
-
-
--- Seed: sessions
-INSERT INTO `session` (`player_id`, `score`, `monster_encounters`, `gameover`)
+-- Sessions (one per player)
+INSERT INTO session (player_id, score, monster_encounters, gameover)
 VALUES
     (1, 0, 0, 0),
-    (2, 0, 0, 0);
+    (2, 0, 0, 0),
+    (3, 0, 0, 0);
 
--- Seed: level_log
-INSERT INTO `level_log` (`session_id`, `question_id`, `completed`)
+-- Level logs (6 rooms per session for player 1)
+INSERT INTO level_log (session_id, room_number, level_type, completed)
 VALUES
-    (1, 1, 0),
-    (1, 2, 1),
-    (2, 3, 0);
+    (1, 1, 'trivia', 0),
+    (1, 2, 'trivia', 0),
+    (1, 3, 'puzzle', 0),
+    (1, 4, 'riddle', 0),
+    (1, 5, 'trivia', 0),
+    (1, 6, 'boss', 0);
 
--- Seed: monster_log
-INSERT INTO `monster_log` (`session_id`, `defeated`)
+-- Question logs (link each level with a question)
+-- Assume level_log IDs from 1 to 6
+INSERT INTO question_log (session_id, level_log_id, question_id, completed)
+VALUES
+    (1, 1, 1, 0),
+    (1, 2, 2, 0),
+    (1, 3, 3, 0),
+    (1, 4, 4, 0),
+    (1, 5, 5, 0),
+    (1, 6, 6, 0);
+
+INSERT INTO monster_log (session_id, defeated)
+VALUES (1, 0);
+
+INSERT INTO monster_log_questions (monster_log_id, question_id)
 VALUES
     (1, 1),
-    (2, 0);
+    (1, 2);
 
--- Seed: monster_log_questions
-INSERT INTO `monster_log_questions` (`monster_log_id`, `question_id`)
-VALUES
-    (1, 1),
-    (2, 2);
