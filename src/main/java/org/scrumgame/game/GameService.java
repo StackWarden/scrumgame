@@ -32,21 +32,19 @@ public class GameService {
     private final MonsterSpawnMessageObserver messageObserver;
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
-    private final SkipQuestionJoker room;
 
     private boolean inGame = false;
     private Session session;
     private Player player;
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipQuestionJoker room) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
         this.context = context;
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;
         this.itemSpawner = itemSpawner;
         this.inventory = inventory;
-        this.room = room;
     }
 
     public boolean isInGame() {
