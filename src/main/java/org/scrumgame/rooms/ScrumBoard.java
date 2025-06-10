@@ -24,7 +24,7 @@ public class ScrumBoard extends Level implements RoomLevel {
         this.questions.addAll(fetchQuestionsForLevel(session, logService));
         assert !this.questions.isEmpty();
         this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
-        setRoomNumber(4);
+        setRoomNumber(5);
     }
 
     public ScrumBoard(List<QuestionLog> questions) {
@@ -35,11 +35,12 @@ public class ScrumBoard extends Level implements RoomLevel {
         );
 
         if (this.questions.isEmpty()) {
-            throw new IllegalStateException("No incomplete questions found for this level.");
+            setCompleted(true);
+            setRoomNumber(5);
+            return;
         }
-
         this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
-        setRoomNumber(4);
+        setRoomNumber(5);
     }
 
     @Override

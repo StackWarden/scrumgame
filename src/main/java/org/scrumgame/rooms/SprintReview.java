@@ -24,7 +24,7 @@ public class SprintReview extends Level implements RoomLevel {
         this.questions.addAll(fetchQuestionsForLevel(session, logService));
         assert !this.questions.isEmpty();
         this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
-        setRoomNumber(5);
+        setRoomNumber(6);
     }
 
     public SprintReview(List<QuestionLog> questions) {
@@ -35,11 +35,13 @@ public class SprintReview extends Level implements RoomLevel {
         );
 
         if (this.questions.isEmpty()) {
-            throw new IllegalStateException("No incomplete questions found for this level.");
+            setCompleted(true);
+            setRoomNumber(6);
+            return;
         }
 
         this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
-        setRoomNumber(5);
+        setRoomNumber(6);
     }
 
     @Override
