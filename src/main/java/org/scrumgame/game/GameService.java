@@ -8,7 +8,8 @@ import org.scrumgame.factories.ItemSpawner;
 import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.jokers.SkipQuestionJoker;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
-import org.scrumgame.seeders.BenefitsRoomSeeder;
+import org.scrumgame.rooms.Benefits;
+import org.scrumgame.seeders.*;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
 import org.scrumgame.services.MonsterSpawner;
@@ -31,21 +32,19 @@ public class GameService {
     private final MonsterSpawnMessageObserver messageObserver;
     private final ItemSpawner itemSpawner;
     private final Inventory inventory;
-    private final SkipQuestionJoker room;
 
     private boolean inGame = false;
     private Session session;
     private Player player;
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory, SkipQuestionJoker room) {
+    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
         this.context = context;
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;
         this.itemSpawner = itemSpawner;
         this.inventory = inventory;
-        this.room = room;
     }
 
     public boolean isInGame() {
@@ -57,6 +56,11 @@ public class GameService {
 
         assert session != null;
         BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
+        DailyScrumRoomSeeder.seedDailyScrumRoomForSession(session.getId());
+        PlanningRoomSeeder.seedPlanningRoomForSession(session.getId());
+        RetrospectiveRoomSeeder.seedRetrospectiveRoomForSession(session.getId());
+        ScrumBoardRoomSeeder.seedScrumBoardRoomForSession(session.getId());
+        SprintReviewRoomSeeder.seedSprintReviewRoomForSession(session.getId());
 
         int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
@@ -125,34 +129,51 @@ public class GameService {
         handleRoomAnswer(answer, skip);
     }
 
-    public String goToNextRoom(boolean check) {
-        if (check) {
-            if (session == null || !session.isActive()) {
-                return "No active session.";
-            }
-            if (session.getCurrentRoomId() != -1) {
-                return "You must complete the current room first.";
-            }
-
-            if (session.getCurrentMonsterLogId() != -1) {
-                return "You must defeat all monsters before proceeding.";
-            }
+    public String goToNextRoom() {
+        if (!canAdvanceToNextRoom()) {
+            return "You must complete the current room and defeat all monsters before proceeding.";
         }
 
-        // Create a new room
-        Room newRoom = Room.createRoom(session);
+        int nextRoomNumber = getNextRoomNumber();
+        if (nextRoomNumber == -1) {
+            return "No further rooms available.";
+        }
 
-        // Log the room
-        logService.setStrategy(new QuestionLogStrategy());
-        newRoom = (Room) logService.executeLog(session, newRoom);
+        int logId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), nextRoomNumber);
+        if (logId == -1) {
+            return "Room #" + nextRoomNumber + " not found in session.";
+        }
 
-        // Set new room in session
-        session.setCurrentRoomId(newRoom.getLogId());
+        logService.setStrategy(new RoomLogStrategy());
+        RoomLevel nextRoom = logService.extractRoomLevel(logService.loadLevelByLogId(logId));
+
+        session.setCurrentRoomId(logId);
+        session.setCurrentQuestionLogId(null);
+        session.setCurrentMonsterLogId(null);
         session.save();
 
-        itemSpawner.spawnItems(session.getCurrentRoomId(), 3);
+        itemSpawner.spawnItems(logId, 3);
+        return "Entered Room #" + nextRoomNumber + ":\n" + nextRoom.getPrompt();
+    }
 
-        return "New room entered.\nQuestion: " + newRoom.getPrompt();
+    private int getNextRoomNumber() {
+        int currentLogId = session.getCurrentRoomId();
+        if (currentLogId == -1) return 1;
+
+        logService.setStrategy(new RoomLogStrategy());
+        Level level = logService.loadLevelByLogId(currentLogId);
+        if (!(level instanceof RoomLevel room)) return -1;
+
+        return room.getRoomNumber() + 1;
+    }
+
+    private boolean canAdvanceToNextRoom() {
+        logService.setStrategy(new RoomLogStrategy());
+        Level room = logService.loadLevelByLogId(session.getCurrentRoomId());
+        return session != null
+                && session.isActive()
+                && room.isCompleted()
+                && session.getCurrentMonsterLogId() == -1;
     }
 
     public String getStatus() {
@@ -314,6 +335,8 @@ public class GameService {
             RoomLevel reloadedRoom = getCurrentRoom();
             session.save();
 
+            roomLevel = reloadedRoom;
+
             System.out.println("Correct! You've answered the question successfully.");
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
@@ -452,12 +475,12 @@ public class GameService {
         try {
             RoomLevel currentRoom = getCurrentRoom();
             if (currentRoom.isCompleted()) {
-                return goToNextRoom(false);
+                return goToNextRoom();
             } else {
                 return "Question skipped. Next question: " + currentRoom.getPrompt();
             }
         } catch (IllegalStateException e) {
-            return goToNextRoom(false);
+            return goToNextRoom();
         }
     }
 }
