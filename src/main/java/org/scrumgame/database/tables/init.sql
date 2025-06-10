@@ -103,6 +103,13 @@ CREATE TABLE `session` (
                            CONSTRAINT `session_ibfk_3` FOREIGN KEY (`current_monster_log_id`) REFERENCES `monster_log` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `achievements`;
+CREATE TABLE `achievements` (
+                            `id` INT AUTO_INCREMENT PRIMARY KEY,
+                            `naam` VARCHAR(255) NOT NULL,
+                            `beschrijving` TEXT,
+                            `unlocked` BOOLEAN DEFAULT FALSE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -151,3 +158,13 @@ INSERT INTO `monster_log_questions` (`monster_log_id`, `question_id`)
 VALUES
     (1, 1),
     (2, 2);
+
+
+-- Seed: achievements
+INSERT INTO `achievements` (`naam`, `beschrijving`, `unlocked`)
+VALUES
+    ('Monster killer', 'Defeat 5 monsters', FALSE),
+    ('Hintless', 'Answer 5 monsters correctly without using hints', FALSE),
+    ('Game Completed', 'Complete the game', FALSE),
+    ('No help needed', 'Complete the game without any help', FALSE),
+    ('Items? Who needs them', 'Complete the game without using any items', FALSE);
