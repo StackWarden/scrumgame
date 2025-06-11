@@ -5,6 +5,7 @@ import org.scrumgame.classes.Question;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Random;
 
 public class RiddleQuestion extends Question {
 
@@ -31,6 +32,25 @@ public class RiddleQuestion extends Question {
 
     @Override
     protected void displayAnswer(Question question) {
-        System.out.println("Correct Answer: " + question.getAnswer());
+        System.out.println("Correct Answer: " + generateFillInTheBlank(question.getQuestion()));
     }
+
+    private String generateFillInTheBlank(String questionText) {
+        String[] words = questionText.split(" ");
+        StringBuilder result = new StringBuilder();
+        Random random = new Random();
+
+        double revealRatio = 0.6;
+
+        for (String word : words) {
+            if (random.nextDouble() < revealRatio) {
+                result.append(word).append(" ");
+            } else {
+                result.append("_".repeat(word.length())).append(" ");
+            }
+        }
+
+        return result.toString().trim();
+    }
+
 }
