@@ -72,6 +72,12 @@ public abstract class Question {
         this.hint = hint;
     }
 
+     protected abstract Question fetchQuestion(Connection connection, int questionId);
+
+     protected abstract void displayQuestion(Question question);
+
+     protected abstract void displayAnswer(Question question);
+
     public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);

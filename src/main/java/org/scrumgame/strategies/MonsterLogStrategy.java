@@ -7,6 +7,7 @@ import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.LogStrategy;
+import org.scrumgame.questions.TypeLessQuestion;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -119,21 +120,21 @@ public class MonsterLogStrategy implements LogStrategy {
         return questions;
     }
 
-    private Question fetchQuestionById(Connection conn, int questionId) throws SQLException {
-        try (PreparedStatement stmt = conn.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
+    public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Question(
+                return new TypeLessQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
                         rs.getString("hint")
                 );
+            } else {
+                throw new SQLException("Question not found for ID: " + questionId);
             }
-
-            throw new SQLException("Question not found for ID: " + questionId);
         }
     }
 

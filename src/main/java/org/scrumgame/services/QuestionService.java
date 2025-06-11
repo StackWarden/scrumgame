@@ -4,6 +4,7 @@ import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
+import org.scrumgame.questions.TypeLessQuestion;
 import org.scrumgame.strategies.MonsterLogStrategy;
 import org.scrumgame.strategies.QuestionLogStrategy;
 import org.scrumgame.interfaces.GameLog;
@@ -77,7 +78,7 @@ public class QuestionService {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                results.add(new Question(
+                results.add(new TypeLessQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
@@ -124,8 +125,8 @@ public class QuestionService {
                         continue;
                     }
 
-                    Question q = new Question(
-                            id,
+                    Question q = new TypeLessQuestion(
+                            rs.getInt("id"),
                             rs.getString("text"),
                             rs.getString("correct_answer"),
                             rs.getString("hint")

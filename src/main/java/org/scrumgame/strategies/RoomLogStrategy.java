@@ -8,6 +8,7 @@ import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.LogStrategy;
+import org.scrumgame.questions.TypeLessQuestion;
 import org.scrumgame.rooms.Benefits;
 import org.scrumgame.interfaces.RoomLevel;
 
@@ -115,7 +116,7 @@ public class RoomLogStrategy implements LogStrategy {
                 String answer = rs.getString("correct_answer");
                 String hint = rs.getString("hint");
 
-                Question question = new Question(qId, text, answer, hint);
+                Question question = new TypeLessQuestion(qId, text, answer, hint);
                 QuestionLog qLog = new QuestionLog(sessionId, levelLogId, question, completed);
                 qLog.setId(logIdQ);
                 logs.add(qLog);
