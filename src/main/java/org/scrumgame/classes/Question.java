@@ -1,11 +1,13 @@
 package org.scrumgame.classes;
 
+import org.scrumgame.questions.TypeLessQuestion;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Question {
+public abstract class Question {
     private String hint;
     private int id;
     private String question;
@@ -76,16 +78,16 @@ public class Question {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Question(
+                return new TypeLessQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
-                        rs.getString("hint"),
-                        rs.getString("type")
+                        rs.getString("hint")
                 );
             } else {
                 throw new SQLException("Question not found for ID: " + questionId);
             }
         }
     }
+
 }

@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 
-public class MultipleChoiceQuestion extends Questions {
+public class MultipleChoiceQuestion extends Question {
 
     @Override
-    protected Question dbQuestion(Connection connection, int questionId) {
+    protected Question Question(Connection connection, int questionId) {
         try {
             String sql = "SELECT type FROM questions WHERE type = Multiple_Choice";
             try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
@@ -21,13 +21,13 @@ public class MultipleChoiceQuestion extends Questions {
     }
 
     @Override
-    protected void displayQuestion(Question dbQuestion) {
-        System.out.println("Question: " + dbQuestion.getQuestion());
+    protected void displayQuestion(Question Question) {
+        System.out.println("Question: " + getQuestion());
 
     }
 
     @Override
-    protected void displayAnswer(Question dbQuestion) {
-        System.out.println("Correct Answer: " + dbQuestion.getAnswer());
+    protected void displayAnswer(Question Question) {
+        System.out.println("Correct Answer: " + getAnswer());
     }
 }

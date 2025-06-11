@@ -7,10 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class RiddleQuestion extends Questions {
+public class RiddleQuestion extends Question {
 
     @Override
-    protected Question dbQuestion(Connection connection, int questionId) {
+    protected Question Question (Connection connection, int questionId) {
         try {
             String sql = "SELECT type FROM questions WHERE type = Riddle";
             try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)){
@@ -22,13 +22,13 @@ public class RiddleQuestion extends Questions {
     }
 
     @Override
-    protected void displayQuestion(Question dbQuestion) {
-        System.out.println("Question: " + dbQuestion.getQuestion());
+    protected void displayQuestion(Question Question) {
+        System.out.println("Question: " + getQuestion());
 
     }
 
     @Override
-    protected void displayAnswer(Question dbQuestion) {
-        System.out.println("Correct Answer: " + dbQuestion.getAnswer());
+    protected void displayAnswer(Question Question) {
+        System.out.println("Correct Answer: " + getAnswer());
     }
 }
