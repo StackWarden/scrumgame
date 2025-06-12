@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS monster_log;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS player;
+DROP TABLE IF EXISTS `achievements`;
 
 -- 1. Player table
 CREATE TABLE player (
@@ -102,6 +103,13 @@ CREATE TABLE item (
                       FOREIGN KEY (session_id) REFERENCES session(id) ON DELETE SET NULL
 );
 
+CREATE TABLE `achievements` (
+                                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                                `naam` VARCHAR(255) NOT NULL,
+                                `beschrijving` TEXT,
+                                `unlocked` BOOLEAN DEFAULT FALSE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- Players
 INSERT INTO player (name) VALUES
                               ('Alice'),
@@ -153,3 +161,13 @@ VALUES
     (1, 1),
     (1, 2);
 
+
+
+-- Seed: achievements
+INSERT INTO `achievements` (`naam`, `beschrijving`, `unlocked`)
+VALUES
+    ('Monster killer', 'Defeat 5 monsters', FALSE),
+    ('Hintless', 'Answer 5 monsters correctly without using hints', FALSE),
+    ('Game Completed', 'Complete the game', FALSE),
+    ('No help needed', 'Complete the game without any help', FALSE),
+    ('Items? Who needs them', 'Complete the game without using any items', FALSE);
