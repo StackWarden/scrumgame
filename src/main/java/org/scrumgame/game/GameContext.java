@@ -2,7 +2,6 @@ package org.scrumgame.game;
 
 import org.scrumgame.classes.Monster;
 import org.scrumgame.classes.Question;
-import org.scrumgame.classes.Room;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.services.QuestionService;
 import org.springframework.stereotype.Component;
