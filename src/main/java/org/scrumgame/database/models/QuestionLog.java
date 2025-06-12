@@ -9,10 +9,10 @@ import java.util.List;
 
 public class QuestionLog extends Level implements GameLog {
     private int id;
-    private int sessionId;
+    private final int sessionId;
     private int levelLogId;
-    private Question question;
-    private boolean completed;
+    private final Question question;
+    private final boolean completed;
 
     public QuestionLog(int sessionId, int levelLogId, Question question, boolean completed) {
         this.sessionId = sessionId;
@@ -33,7 +33,7 @@ public class QuestionLog extends Level implements GameLog {
         return id;
     }
 
-    public int getSessionId() {
+    public int sessionId() {
         return sessionId;
     }
 
@@ -46,7 +46,7 @@ public class QuestionLog extends Level implements GameLog {
     }
 
     @Override
-    public List<Question> getQuestions() {
+    public List<Question> questions() {
         return Collections.singletonList(question);
     }
 

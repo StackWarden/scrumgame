@@ -43,14 +43,14 @@ public class LogService {
 
         return logs.stream()
                 .filter(log -> {
-                    boolean alive = !log.isDefeated();
+                    boolean alive = !log.defeated();
                     return alive;
                 })
                 .map(log -> {
-                    Question q = log.getQuestions().getFirst();
+                    Question q = log.questions().getFirst();
 
                     Monster m = new Monster(q);
-                    m.setLogId(log.getId());
+                    m.setLogId(log.id());
 
                     return m;
                 })
