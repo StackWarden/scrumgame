@@ -12,7 +12,6 @@ public class RiddleQuestion extends Question {
 
     public RiddleQuestion(String question, String answer) {
         super(question, answer);
-        this.setAnswer(generateFillInTheBlank(question));
     }
 
     @Override

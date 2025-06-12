@@ -3,6 +3,7 @@ package org.scrumgame.seeders;
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.questions.BaseQuestion;
+import org.scrumgame.questions.RiddleQuestion;
 
 import java.sql.*;
 import java.util.*;
