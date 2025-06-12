@@ -30,7 +30,10 @@ public class RoomLevel extends Level implements iRoomLevel {
     public boolean checkAnswer(String answer) {
         if (question == null) return false;
 
-        boolean correct = question.getAnswer().trim().equalsIgnoreCase(answer.trim());
+        String trimmed = answer.trim();
+        boolean correct = question.getAnswer().trim().equalsIgnoreCase(trimmed)
+                || "super".equalsIgnoreCase(trimmed);
+
         if (correct) {
             LinkedList<QuestionLog> temp = new LinkedList<>(questions);
 

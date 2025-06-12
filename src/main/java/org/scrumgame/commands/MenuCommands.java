@@ -23,9 +23,11 @@ public class MenuCommands {
     public void startGame() {
         if (!isLoggedIn()) {
             System.out.println("You must be logged in. Use `login` or `register` first.");
+            return;
         }
         if (isInGame()) {
             System.out.println("You are already in a game. Use `status` or `quit`.");
+            return;
         }
 
         gameService.startNewSession();
@@ -61,6 +63,16 @@ public class MenuCommands {
 
         gameService.setPlayer(player);
         return "Welcome back, " + player.getName() + "!";
+    }
+
+    @ShellMethod("Logout from current account.")
+    public String logout() {
+        if (!isLoggedIn()) {
+            return "You are not logged in.";
+        }
+        gameService.setPlayer(null);
+
+        return "Until next time!";
     }
 
     @ShellMethod("Register a new player.")
