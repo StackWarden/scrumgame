@@ -68,6 +68,9 @@ public class RoomLevel extends Level implements iRoomLevel {
 
     @Override
     public Question getQuestion() {
+        if (question == null){
+            return null;
+        }
         Random random = new Random();
         int randomCase = random.nextInt(3);
 

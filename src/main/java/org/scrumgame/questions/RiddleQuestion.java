@@ -25,7 +25,7 @@ public class RiddleQuestion extends Question {
         StringBuilder result = new StringBuilder();
         Random random = new Random();
 
-        double revealRatio = 0.5;
+        double revealRatio = 0.25;
 
         for (String word : words) {
             if (random.nextDouble() < revealRatio) {
