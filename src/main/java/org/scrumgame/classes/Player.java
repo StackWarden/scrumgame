@@ -7,12 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Player {
-    private static Player currentPlayer;
     int id;
     String name;
 
     public Player() {
-        this.name = name;
     }
 
     public String getName() {
@@ -44,8 +42,8 @@ public class Player {
     }
 
     public static void setCurrentPlayer(Player player) {
-        currentPlayer = player;
     }
+
     public void loadFromDatabase(int playerId) {
         try {
             String sql = "SELECT id, name FROM player WHERE id = ?";
