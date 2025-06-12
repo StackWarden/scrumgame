@@ -46,7 +46,7 @@ public class QuestionService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return used;
@@ -85,7 +85,7 @@ public class QuestionService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return results;
@@ -135,7 +135,7 @@ public class QuestionService {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return fallback;

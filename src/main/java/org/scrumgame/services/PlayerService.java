@@ -111,7 +111,7 @@ public class PlayerService {
             return updated > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return false;
     }
