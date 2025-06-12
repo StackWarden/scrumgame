@@ -1,6 +1,6 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.questions.TypeLessQuestion;
+import org.scrumgame.questions.BaseQuestion;
 
 public class Monster extends Level {
     private final String name;
@@ -65,6 +65,6 @@ public class Monster extends Level {
 
     @Override
     public Question getQuestion() {
-        return new TypeLessQuestion(-1, question, answer, hint);
+        return new BaseQuestion(-1, question, answer, hint);
     }
 }

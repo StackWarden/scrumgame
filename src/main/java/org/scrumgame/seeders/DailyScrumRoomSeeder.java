@@ -2,7 +2,7 @@ package org.scrumgame.seeders;
 
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
-import org.scrumgame.questions.TypeLessQuestion;
+import org.scrumgame.questions.BaseQuestion;
 
 import java.sql.*;
 import java.util.*;
@@ -13,11 +13,11 @@ public class DailyScrumRoomSeeder {
     private static final String LEVEL_TYPE = "daily_scrum";
 
     private static final List<Question> DAILY_SCRUM_QUESTIONS = List.of(
-            new TypeLessQuestion(-1, "Wat is het doel van de Daily Scrum?", "Synchronisatie en planning", "Denk aan samenwerking."),
-            new TypeLessQuestion(-1, "Wie neemt deel aan de Daily Scrum?", "Het ontwikkelteam", "Wie werkt dagelijks samen?"),
-            new TypeLessQuestion(-1, "Wat is de maximale duur van een Daily Scrum?", "15 minuten", "Het is kort."),
-            new TypeLessQuestion(-1, "Wanneer vindt de Daily Scrum plaats?", "Elke werkdag", "Denk aan frequentie."),
-            new TypeLessQuestion(-1, "Wat bespreekt men tijdens de Daily Scrum?", "Voortgang en obstakels", "Wat helpt het team vooruit?")
+            new BaseQuestion(-1, "Wat is het doel van de Daily Scrum?", "Synchronisatie en planning", "Denk aan samenwerking."),
+            new BaseQuestion(-1, "Wie neemt deel aan de Daily Scrum?", "Het ontwikkelteam", "Wie werkt dagelijks samen?"),
+            new BaseQuestion(-1, "Wat is de maximale duur van een Daily Scrum?", "15 minuten", "Het is kort."),
+            new BaseQuestion(-1, "Wanneer vindt de Daily Scrum plaats?", "Elke werkdag", "Denk aan frequentie."),
+            new BaseQuestion(-1, "Wat bespreekt men tijdens de Daily Scrum?", "Voortgang en obstakels", "Wat helpt het team vooruit?")
     );
 
     public static void seedDailyScrumRoomForSession(int sessionId) {

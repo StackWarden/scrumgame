@@ -2,7 +2,7 @@ package org.scrumgame.seeders;
 
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
-import org.scrumgame.questions.TypeLessQuestion;
+import org.scrumgame.questions.BaseQuestion;
 
 import java.sql.*;
 import java.util.*;
@@ -13,11 +13,11 @@ public class ScrumBoardRoomSeeder {
     private static final String LEVEL_TYPE = "scrumboard";
 
     private static final List<Question> SCRUM_BOARD_QUESTIONS = List.of(
-            new TypeLessQuestion(-1, "What is a Scrum Board used for?", "To visualize the progress of tasks", "Think about transparency."),
-            new TypeLessQuestion(-1, "What are typical columns on a Scrum Board?", "To Do, In Progress, Done", "They represent status."),
-            new TypeLessQuestion(-1, "Who updates the Scrum Board?", "The Development Team", "They manage the work."),
-            new TypeLessQuestion(-1, "How often should the Scrum Board be updated?", "Daily", "It reflects the latest status."),
-            new TypeLessQuestion(-1, "What is the benefit of using a physical or digital Scrum Board?", "Improved visibility and collaboration", "It helps teams stay aligned.")
+            new BaseQuestion(-1, "What is a Scrum Board used for?", "To visualize the progress of tasks", "Think about transparency."),
+            new BaseQuestion(-1, "What are typical columns on a Scrum Board?", "To Do, In Progress, Done", "They represent status."),
+            new BaseQuestion(-1, "Who updates the Scrum Board?", "The Development Team", "They manage the work."),
+            new BaseQuestion(-1, "How often should the Scrum Board be updated?", "Daily", "It reflects the latest status."),
+            new BaseQuestion(-1, "What is the benefit of using a physical or digital Scrum Board?", "Improved visibility and collaboration", "It helps teams stay aligned.")
     );
 
     public static void seedScrumBoardRoomForSession(int sessionId) {

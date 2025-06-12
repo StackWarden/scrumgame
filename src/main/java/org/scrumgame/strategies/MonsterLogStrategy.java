@@ -7,7 +7,7 @@ import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.LogStrategy;
-import org.scrumgame.questions.TypeLessQuestion;
+import org.scrumgame.questions.BaseQuestion;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class MonsterLogStrategy implements LogStrategy {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new TypeLessQuestion(
+                return new BaseQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),

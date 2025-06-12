@@ -1,6 +1,6 @@
 package org.scrumgame.classes;
 
-import org.scrumgame.questions.TypeLessQuestion;
+import org.scrumgame.questions.BaseQuestion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public abstract class Question {
     private String hint;
     private int id;
-    private String question;
+    public String question;
     private String answer;
     private String type;
     private static final String SELECT_QUESTION_BY_ID_SQL =
@@ -48,9 +48,7 @@ public abstract class Question {
         return answer.trim().equalsIgnoreCase(givenAnswer.trim());
     }
 
-    public String getQuestion() {
-        return question;
-    }
+    public abstract String getQuestion();
 
     public void setQuestion(String question) {
         this.question = question;
@@ -72,19 +70,13 @@ public abstract class Question {
         this.hint = hint;
     }
 
-     protected abstract Question fetchQuestion(Connection connection, int questionId);
-
-     protected abstract void displayQuestion(Question question);
-
-     protected abstract void displayAnswer(Question question);
-
     public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new TypeLessQuestion(
+                return new BaseQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
