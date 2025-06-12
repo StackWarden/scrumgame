@@ -5,10 +5,8 @@ import org.scrumgame.database.RoomLogHelper;
 import org.scrumgame.database.models.Item;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.factories.ItemSpawner;
-import org.scrumgame.interfaces.RoomLevel;
-import org.scrumgame.jokers.SkipQuestionJoker;
+import org.scrumgame.interfaces.iRoomLevel;
 import org.scrumgame.observers.MonsterSpawnMessageObserver;
-import org.scrumgame.rooms.Benefits;
 import org.scrumgame.seeders.*;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
@@ -140,7 +138,7 @@ public class GameService {
         }
 
         logService.setStrategy(new RoomLogStrategy());
-        RoomLevel nextRoom = logService.extractRoomLevel(logService.loadLevelByLogId(logId));
+        iRoomLevel nextRoom = logService.extractRoomLevel(logService.loadLevelByLogId(logId));
 
         session.setCurrentRoomId(logId);
         session.setCurrentQuestionLogId(null);
@@ -157,7 +155,7 @@ public class GameService {
 
         logService.setStrategy(new RoomLogStrategy());
         Level level = logService.loadLevelByLogId(currentLogId);
-        if (!(level instanceof RoomLevel room)) return -1;
+        if (!(level instanceof iRoomLevel room)) return -1;
 
         return room.getRoomNumber() + 1;
     }
@@ -207,7 +205,7 @@ public class GameService {
                 .collect(Collectors.joining("\n"));
     }
 
-    public RoomLevel getCurrentRoom() {
+    public iRoomLevel getCurrentRoom() {
         logService.setStrategy(new RoomLogStrategy());
 
         int logId = session.getCurrentRoomId();
@@ -216,7 +214,7 @@ public class GameService {
         }
 
         Level level = logService.loadLevelByLogId(logId);
-        if (!(level instanceof RoomLevel roomLevel)) {
+        if (!(level instanceof iRoomLevel roomLevel)) {
             throw new IllegalStateException("Current level is not a RoomLevel. Log ID: " + logId);
         }
 
@@ -314,7 +312,7 @@ public class GameService {
         logService.setStrategy(new RoomLogStrategy());
         Level level = logService.loadLevelByLogId(session.getCurrentRoomId());
 
-        if (!(level instanceof RoomLevel roomLevel)) {
+        if (!(level instanceof iRoomLevel roomLevel)) {
             System.out.println("This level does not support room-style interaction.");
             return;
         }
@@ -327,7 +325,7 @@ public class GameService {
             logService.setStrategy(new QuestionLogStrategy());
             logService.markCurrentLogCompleted(session);
 
-            RoomLevel reloadedRoom = getCurrentRoom();
+            iRoomLevel reloadedRoom = getCurrentRoom();
             session.save();
 
             roomLevel = reloadedRoom;
@@ -388,7 +386,7 @@ public class GameService {
 
         if (session.getCurrentRoomId() != -1) {
             try {
-                RoomLevel currentRoom = getCurrentRoom();
+                iRoomLevel currentRoom = getCurrentRoom();
                 List<Question> remainingQuestions = currentRoom.getRemainingQuestions();
 
                 if (!remainingQuestions.isEmpty()) {
@@ -424,7 +422,7 @@ public class GameService {
         }
 
         logService.setStrategy(new RoomLogStrategy());
-        RoomLevel roomLevel;
+        iRoomLevel roomLevel;
         try {
             Level level = logService.loadLevelByLogId(logId);
             roomLevel = logService.extractRoomLevel(level);
@@ -478,7 +476,7 @@ public class GameService {
         skipCurrentQuestion();
 
         try {
-            RoomLevel currentRoom = getCurrentRoom();
+            iRoomLevel currentRoom = getCurrentRoom();
             if (currentRoom.isCompleted()) {
                 return goToNextRoom();
             } else {

@@ -1,12 +1,13 @@
 package org.scrumgame.database.models;
 
+import org.scrumgame.classes.Level;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.classes.Question;
 
 import java.util.Collections;
 import java.util.List;
 
-public class QuestionLog implements GameLog {
+public class QuestionLog extends Level implements GameLog {
     private int id;
     private int sessionId;
     private int levelLogId;
@@ -47,6 +48,21 @@ public class QuestionLog implements GameLog {
     @Override
     public List<Question> getQuestions() {
         return Collections.singletonList(question);
+    }
+
+    @Override
+    public String getPrompt() {
+        return question.getQuestion();
+    }
+
+    @Override
+    public boolean checkAnswer(String answer) {
+        return question.checkAnswer(answer);
+    }
+
+    @Override
+    public String getAnswer() {
+        return question.getAnswer();
     }
 
     public boolean isCompleted() {
