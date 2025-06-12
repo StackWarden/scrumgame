@@ -9,7 +9,6 @@ import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.LogStrategy;
 import org.scrumgame.interfaces.iRoomLevel;
 import org.scrumgame.questions.BaseQuestion;
-import org.scrumgame.rooms.Benefits;
 
 import java.sql.*;
 import java.util.ArrayList;

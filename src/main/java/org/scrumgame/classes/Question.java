@@ -1,14 +1,10 @@
 package org.scrumgame.classes;
 
 import org.scrumgame.questions.BaseQuestion;
-import org.scrumgame.questions.MultipleChoiceQuestion;
-import org.scrumgame.questions.RiddleQuestion;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Random;
 
 public abstract class Question {
     private String hint;

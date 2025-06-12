@@ -1,10 +1,7 @@
 package org.scrumgame.seeders;
 
 import org.scrumgame.classes.Question;
-import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.questions.BaseQuestion;
-
-import java.sql.*;
 import java.util.*;
 
 public class ScrumBoardRoomSeeder extends BaseSeeder {

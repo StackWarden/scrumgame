@@ -13,6 +13,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.shell.component.view.event.KeyEvent.Key.e;
+
 public class MonsterLogStrategy implements LogStrategy {
 
     private static final String INSERT_MONSTER_LOG_SQL =
@@ -118,8 +120,8 @@ public class MonsterLogStrategy implements LogStrategy {
         return questions;
     }
 
-    public static Question fetchQuestionById(Connection connection, int questionId) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
+    public Question fetchQuestionById(Connection conn, int questionId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);
             ResultSet rs = stmt.executeQuery();
 
@@ -130,10 +132,9 @@ public class MonsterLogStrategy implements LogStrategy {
                         rs.getString("correct_answer"),
                         rs.getString("hint")
                 );
-            } else {
-                throw new SQLException("Question not found for ID: " + questionId);
             }
-        }
+        } catch (SQLException e) {
+        e.printStackTrace(System.out);
     }
 
     @Override
