@@ -21,10 +21,6 @@ public class QuestionLog extends Level implements GameLog {
         this.completed = completed;
     }
 
-    public QuestionLog(int sessionId, Question question, boolean completed) {
-        this(sessionId, -1, question, completed);
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -39,10 +35,6 @@ public class QuestionLog extends Level implements GameLog {
 
     public int getLevelLogId() {
         return levelLogId;
-    }
-
-    public void setLevelLogId(int levelLogId) {
-        this.levelLogId = levelLogId;
     }
 
     @Override
