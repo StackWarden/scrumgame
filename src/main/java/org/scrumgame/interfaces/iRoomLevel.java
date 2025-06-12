@@ -1,6 +1,6 @@
 package org.scrumgame.interfaces;
 
-public interface RoomLevel extends
+public interface iRoomLevel extends
         QuestionInteraction,
         HasMultipleQuestions,
         HasRoomNumber,

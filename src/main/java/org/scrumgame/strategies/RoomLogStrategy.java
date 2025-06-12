@@ -2,14 +2,12 @@ package org.scrumgame.strategies;
 
 import org.scrumgame.classes.Level;
 import org.scrumgame.classes.Question;
-import org.scrumgame.commands.Game;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.LogStrategy;
-import org.scrumgame.rooms.Benefits;
-import org.scrumgame.interfaces.RoomLevel;
+import org.scrumgame.interfaces.iRoomLevel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class RoomLogStrategy implements LogStrategy {
 
     @Override
     public String getPromptByLogId(int logId) {
-        RoomLevel level = (RoomLevel) loadByLogId(logId);
+        iRoomLevel level = (iRoomLevel) loadByLogId(logId);
         return level != null ? level.getPrompt() : "Geen prompt gevonden.";
     }
 
@@ -59,7 +57,7 @@ public class RoomLogStrategy implements LogStrategy {
                 markLevelAsCompleted(conn, logId);
             }
 
-            RoomLevel level = createRoomLevel(metadata.levelType, questionLogs);
+            iRoomLevel level = createRoomLevel(metadata.levelType, questionLogs);
             if (level == null) return null;
 
             level.setLogId(logId);
@@ -134,7 +132,7 @@ public class RoomLogStrategy implements LogStrategy {
         }
     }
 
-    private RoomLevel createRoomLevel(String levelType, List<QuestionLog> logs) {
+    private iRoomLevel createRoomLevel(String levelType, List<QuestionLog> logs) {
         return switch (levelType) {
             case "benefits"      -> new org.scrumgame.rooms.Benefits(logs);
             case "planning"      -> new org.scrumgame.rooms.Planning(logs);
