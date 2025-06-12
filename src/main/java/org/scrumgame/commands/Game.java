@@ -114,7 +114,7 @@ public class Game {
         - prompt              → Show the current question or monster prompt
         - answer <x>          → Submit your answer to the current challenge
         - next                → Proceed to the next room if eligible
-        - room-info              → View current game status
+        - room-info           → View current game status
 
         ▶ Inventory:
         - items               → View available items in the current room
