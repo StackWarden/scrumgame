@@ -55,12 +55,7 @@ public class GameService {
         Session session = Session.createNew(player.getId());
 
         assert session != null;
-        BenefitsRoomSeeder.seedBenefitsRoomForSession(session.getId());
-        DailyScrumRoomSeeder.seedDailyScrumRoomForSession(session.getId());
-        PlanningRoomSeeder.seedPlanningRoomForSession(session.getId());
-        RetrospectiveRoomSeeder.seedRetrospectiveRoomForSession(session.getId());
-        ScrumBoardRoomSeeder.seedScrumBoardRoomForSession(session.getId());
-        SprintReviewRoomSeeder.seedSprintReviewRoomForSession(session.getId());
+        BaseSeeder baseSeeder = new BaseSeeder(session.getId());
 
         int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
