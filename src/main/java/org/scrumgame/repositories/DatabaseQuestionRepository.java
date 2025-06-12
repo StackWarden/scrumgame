@@ -3,6 +3,7 @@ package org.scrumgame.repositories;
 import org.scrumgame.classes.Question;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.Session;
+import org.scrumgame.questions.BaseQuestion;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -51,7 +52,7 @@ public class DatabaseQuestionRepository implements QuestionRepository {
             stmt.setInt(idx, limit);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    questions.add(new Question(
+                    questions.add(new BaseQuestion(
                             rs.getInt("id"),
                             rs.getString("text"),
                             rs.getString("correct_answer"),
@@ -78,7 +79,7 @@ public class DatabaseQuestionRepository implements QuestionRepository {
                 while (rs.next() && historic.size() < limit) {
                     int id = rs.getInt("id");
                     if (!excludeIds.contains(id)) {
-                        historic.add(new Question(
+                        historic.add(new BaseQuestion(
                                 id,
                                 rs.getString("text"),
                                 rs.getString("correct_answer"),

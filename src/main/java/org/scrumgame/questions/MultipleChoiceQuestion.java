@@ -23,8 +23,10 @@ public class MultipleChoiceQuestion extends Question {
     @Override
     public String getQuestion() {
         String[] otherOptions = IncorrectAnswers();
-        return MultipleChoice(this.question, this.answer, otherOptions);
+        String correctAnswer = this.getAnswer();
+        return MultipleChoice(this.question, correctAnswer, otherOptions);
     }
+    
 
     public String MultipleChoice(String questionText, String correctAnswer, String[] otherOptions) {
 

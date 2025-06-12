@@ -16,8 +16,9 @@ public class RiddleQuestion extends Question {
 
     @Override
     public String getQuestion() {
-        return "Fill in the Blank: " + this.question + "\n" + generateFillInTheBlank(this.answer);
+        return "Fill in the Blank: " + this.question + "\n" + generateFillInTheBlank(this.getAnswer());
     }
+    
 
     private String generateFillInTheBlank(String questionText) {
         String[] words = questionText.split(" ");
