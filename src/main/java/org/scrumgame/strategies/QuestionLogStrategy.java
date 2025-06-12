@@ -48,7 +48,7 @@ public class QuestionLogStrategy implements LogStrategy {
             return room;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -77,7 +77,7 @@ public class QuestionLogStrategy implements LogStrategy {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return questionLogs;
@@ -105,7 +105,7 @@ public class QuestionLogStrategy implements LogStrategy {
 
         } catch (SQLException e) {
             System.out.println("[ERROR] Failed to update question_log for id = " + logId);
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -122,7 +122,7 @@ public class QuestionLogStrategy implements LogStrategy {
                 return q.getQuestion();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return "No prompt found.";
     }
@@ -142,7 +142,7 @@ public class QuestionLogStrategy implements LogStrategy {
                 return room;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }

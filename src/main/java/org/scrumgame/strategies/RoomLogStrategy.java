@@ -36,7 +36,7 @@ public class RoomLogStrategy implements LogStrategy {
             stmt.setInt(1, session.getCurrentRoomId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -67,7 +67,7 @@ public class RoomLogStrategy implements LogStrategy {
 
             return (Level) level;
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }

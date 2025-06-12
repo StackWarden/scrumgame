@@ -82,7 +82,7 @@ public class MonsterLogStrategy implements LogStrategy {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return monsterLogs;
@@ -97,7 +97,7 @@ public class MonsterLogStrategy implements LogStrategy {
             stmt.setInt(1, session.getCurrentMonsterLogId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -148,7 +148,7 @@ public class MonsterLogStrategy implements LogStrategy {
                 return q.getQuestion();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return "No monster prompt found.";
     }

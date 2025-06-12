@@ -66,7 +66,7 @@ public class Session {
                 return new Session(id, playerId, null, null, 0, 0, false);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -134,7 +134,7 @@ public class Session {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
