@@ -5,6 +5,6 @@ import org.scrumgame.classes.Question;
 import java.util.List;
 
 public interface GameLog {
-    int getSessionId();
+    int sessionId();
     List<Question> getQuestions();
 }

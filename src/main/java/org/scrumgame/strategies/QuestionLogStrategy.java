@@ -2,7 +2,7 @@ package org.scrumgame.strategies;
 
 import org.scrumgame.classes.Level;
 import org.scrumgame.classes.Question;
-import org.scrumgame.classes.Room;
+import org.scrumgame.classes.RoomLevel;
 import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
@@ -22,7 +22,7 @@ public class QuestionLogStrategy implements LogStrategy {
 
     @Override
     public Level log(Session session, Level level) {
-        Room room = (Room) level;
+        RoomLevel room = (RoomLevel) level;
         Question question = room.getQuestion();
 
         if (question == null) {
@@ -48,7 +48,7 @@ public class QuestionLogStrategy implements LogStrategy {
             return room;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -77,7 +77,7 @@ public class QuestionLogStrategy implements LogStrategy {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return questionLogs;
@@ -105,7 +105,7 @@ public class QuestionLogStrategy implements LogStrategy {
 
         } catch (SQLException e) {
             System.out.println("[ERROR] Failed to update question_log for id = " + logId);
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -122,27 +122,31 @@ public class QuestionLogStrategy implements LogStrategy {
                 return q.getQuestion();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return "No prompt found.";
     }
 
     @Override
     public Level loadByLogId(int logId) {
-        String sql = "SELECT question_id FROM question_log WHERE id = ?";
+        String sql = "SELECT session_id, level_log_id, question_id, completed FROM question_log WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, logId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                int sId = rs.getInt("session_id");
+                int lId = rs.getInt("level_log_id");
                 int qId = rs.getInt("question_id");
+                boolean completed = rs.getBoolean("completed");
+
                 Question q = Question.fetchQuestionById(conn, qId);
-                Room room = new Room(q);
-                room.setLogId(logId);
-                return room;
+                QuestionLog questionLog = new QuestionLog(sId, lId, q, completed);
+                questionLog.setId(logId);
+                return questionLog;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }

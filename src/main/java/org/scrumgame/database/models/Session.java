@@ -1,7 +1,6 @@
 package org.scrumgame.database.models;
 
 import org.scrumgame.database.DatabaseConnection;
-import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.services.LogService;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +34,18 @@ public class Session {
         this.id = id;
     }
 
+    public static Session fromResultSet(ResultSet rs) throws SQLException {
+        return new Session(
+                rs.getInt("id"),
+                rs.getInt("player_id"),
+                rs.getObject("current_level_log_id", Integer.class),
+                rs.getObject("current_monster_log_id", Integer.class),
+                rs.getInt("score"),
+                rs.getInt("monster_encounters"),
+                rs.getBoolean("gameover")
+        );
+    }
+
     public Session() {
 
     }
@@ -66,7 +77,7 @@ public class Session {
                 return new Session(id, playerId, null, null, 0, 0, false);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -86,15 +97,7 @@ public class Session {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Session(
-                        rs.getInt("id"),
-                        rs.getInt("player_id"),
-                        rs.getObject("current_level_log_id", Integer.class),
-                        rs.getObject("current_monster_log_id", Integer.class),
-                        rs.getInt("score"),
-                        rs.getInt("monster_encounters"),
-                        rs.getBoolean("gameover")
-                );
+                return Session.fromResultSet(rs);
             }
 
         } catch (SQLException e) {
@@ -134,7 +137,7 @@ public class Session {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -208,16 +211,7 @@ public class Session {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Session session = new Session(
-                        rs.getInt("id"),
-                        rs.getInt("player_id"),
-                        rs.getObject("current_level_log_id", Integer.class),
-                        rs.getObject("current_monster_log_id", Integer.class),
-                        rs.getInt("score"),
-                        rs.getInt("monster_encounters"),
-                        rs.getBoolean("gameover")
-                );
-                sessions.add(session);
+                sessions.add(Session.fromResultSet(rs));
             }
 
         } catch (SQLException e) {

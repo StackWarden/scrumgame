@@ -26,8 +26,6 @@ public class MonsterLogStrategy implements LogStrategy {
     private static final String SELECT_QUESTION_BY_ID_SQL =
             "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
-    private int lastInsertedLogId = -1;
-
 
     @Override
     public Level log(Session session, Level level) {
@@ -62,7 +60,7 @@ public class MonsterLogStrategy implements LogStrategy {
                 return monster;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -85,7 +83,7 @@ public class MonsterLogStrategy implements LogStrategy {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
         return monsterLogs;
@@ -100,7 +98,7 @@ public class MonsterLogStrategy implements LogStrategy {
             stmt.setInt(1, session.getCurrentMonsterLogId());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -151,7 +149,7 @@ public class MonsterLogStrategy implements LogStrategy {
                 return q.getQuestion();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return "No monster prompt found.";
     }
@@ -169,12 +167,12 @@ public class MonsterLogStrategy implements LogStrategy {
                 return new Monster(q);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
 
     public int getLastInsertedLogId() {
-        return lastInsertedLogId;
+        return -1;
     }
 }
