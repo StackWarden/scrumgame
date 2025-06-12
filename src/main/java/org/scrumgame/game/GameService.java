@@ -10,7 +10,7 @@ import org.scrumgame.observers.MonsterSpawnMessageObserver;
 import org.scrumgame.seeders.*;
 import org.scrumgame.services.Inventory;
 import org.scrumgame.services.LogService;
-import org.scrumgame.services.MonsterSpawner;
+import org.scrumgame.factories.MonsterSpawner;
 import org.scrumgame.strategies.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class GameService {
     private Player player;
 
     @Autowired
-    public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
+    public GameService(MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;

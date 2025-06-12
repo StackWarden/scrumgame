@@ -7,9 +7,11 @@ import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.LogStrategy;
 import org.scrumgame.interfaces.iRoomLevel;
 import org.scrumgame.strategies.MonsterLogStrategy;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class LogService {
     private LogStrategy strategy;
 
