@@ -56,7 +56,7 @@ public class GameService {
 
         assert session != null;
         BaseSeeder baseSeeder = new BaseSeeder(session.getId());
-
+        baseSeeder.seedGame();
         int benefitsLogId = RoomLogHelper.getLevelLogIdByRoomNumber(session.getId(), 1);
         session.setCurrentRoomId(benefitsLogId);
 

@@ -7,11 +7,10 @@ import java.sql.*;
 import java.util.*;
 
 public class SprintReviewRoomSeeder extends BaseSeeder{
-
     private static final int ROOM_NUMBER = 6;
     private static final String LEVEL_TYPE = "sprintreview";
 
-    private static final List<Question> SPRINT_REVIEW_QUESTIONS = List.of(
+    private static final List<Question> QUESTIONS = List.of(
             new Question(-1, "What is the main goal of the Sprint Review?", "To inspect the Increment and adapt the Product Backlog", "It's about reviewing work and planning future work."),
             new Question(-1, "Who attends the Sprint Review?", "The Scrum Team and stakeholders", "Think about collaboration and feedback."),
             new Question(-1, "What is demonstrated during the Sprint Review?", "The Increment", "It’s the usable product result."),
@@ -23,27 +22,7 @@ public class SprintReviewRoomSeeder extends BaseSeeder{
         super(sessionId);
     }
 
-    public void seedSprintReviewRoomForSession(int sessionId) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-
-            Map<String, Integer> questionIdMap = new HashMap<>();
-            for (Question q : SPRINT_REVIEW_QUESTIONS) {
-                int id = getOrInsertQuestion(conn, q);
-                questionIdMap.put(q.getQuestion(), id);
-            }
-
-            int levelLogId = createLevelLog(conn, sessionId, ROOM_NUMBER, LEVEL_TYPE);
-
-            for (int questionId : questionIdMap.values()) {
-                insertQuestionLog(conn, sessionId, levelLogId, questionId);
-            }
-
-            conn.commit();
-            System.out.println("SprintReview room successfully seeded for session " + sessionId);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void seed(int sessionId) {
+        insertDataToDatabase(sessionId, ROOM_NUMBER, LEVEL_TYPE, QUESTIONS);
     }
 }
