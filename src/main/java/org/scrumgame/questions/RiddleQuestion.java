@@ -17,7 +17,7 @@ public class RiddleQuestion extends Question {
 
     @Override
     public String getQuestion() {
-        return generateFillInTheBlank(this.question);
+        return "Fill in the Blank: " + this.question + "\n" + generateFillInTheBlank(this.answer);
     }
 
     private String generateFillInTheBlank(String questionText) {
@@ -25,7 +25,7 @@ public class RiddleQuestion extends Question {
         StringBuilder result = new StringBuilder();
         Random random = new Random();
 
-        double revealRatio = 0.6;
+        double revealRatio = 0.5;
 
         for (String word : words) {
             if (random.nextDouble() < revealRatio) {

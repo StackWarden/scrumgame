@@ -67,4 +67,5 @@ public class MultipleChoiceQuestion extends Question {
         Collections.shuffle(incorrectAnswers);
         return incorrectAnswers.stream().limit(3).toArray(String[]::new);
     }
+
 }
