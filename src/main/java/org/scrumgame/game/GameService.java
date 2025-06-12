@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class GameService {
     private final Scanner scanner = new Scanner(System.in);
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
-    private final GameContext context;
     private final LogService logService;
     private final MonsterSpawner monsterSpawner;
     private final MonsterSpawnMessageObserver messageObserver;
@@ -39,7 +38,6 @@ public class GameService {
 
     @Autowired
     public GameService(GameContext context, MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
-        this.context = context;
         this.logService = new LogService();
         this.monsterSpawner = monsterSpawner;
         this.messageObserver = messageObserver;
