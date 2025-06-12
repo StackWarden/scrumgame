@@ -38,18 +38,9 @@ public class Player {
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
-            // Handle the exception appropriately
-            System.out.println();
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
 
-    }
-
-    public static Player getCurrentPlayer() {
-        if (currentPlayer == null) {
-            currentPlayer = new Player();
-        }
-        return currentPlayer;
     }
 
     public static void setCurrentPlayer(Player player) {
@@ -68,8 +59,7 @@ public class Player {
                 }
             }
         } catch (SQLException e) {
-            // Handle the exception appropriately
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 }
