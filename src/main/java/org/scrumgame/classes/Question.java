@@ -10,8 +10,7 @@ public class Question {
     private int id;
     private String question;
     private String answer;
-    private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
+    private static final String SELECT_QUESTION_BY_ID_SQL = "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
     public Question(int id, String question, String answer, String hint) {
         this.id = id;
