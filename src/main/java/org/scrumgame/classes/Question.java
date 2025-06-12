@@ -14,21 +14,13 @@ public abstract class Question {
     public String answer;
     private String type;
     private static final String SELECT_QUESTION_BY_ID_SQL =
-            "SELECT id, text, correct_answer, hint, type FROM question WHERE id = ?";
+            "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
     public Question(int id, String question, String answer, String hint) {
         this.id = id;
         this.question = question;
         this.answer = answer;
         this.hint = hint;
-    }
-
-    public Question(int id, String question, String answer, String hint, String type) {
-        this.id = id;
-        this.question = question;
-        this.answer = answer;
-        this.hint = hint;
-        this.type = type;
     }
 
     public Question(String question, String answer) {

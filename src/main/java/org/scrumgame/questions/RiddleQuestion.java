@@ -6,8 +6,8 @@ import java.util.Random;
 
 public class RiddleQuestion extends Question {
 
-    public RiddleQuestion(int id, String question, String answer, String hint, String type) {
-        super(id, question, answer, hint, type);
+    public RiddleQuestion(int id, String question, String answer, String hint) {
+        super(id, question, answer, hint);
     }
 
     public RiddleQuestion(String question, String answer) {
