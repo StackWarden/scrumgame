@@ -23,7 +23,7 @@ public class ScrumBoard extends Level implements RoomLevel {
         this.logId = session.getCurrentRoomId();
         this.questions.addAll(fetchQuestionsForLevel(session, logService));
         assert !this.questions.isEmpty();
-        this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
+        this.currentQuestion = this.questions.getFirst().questions().getFirst();
         setRoomNumber(5);
     }
 
@@ -39,7 +39,7 @@ public class ScrumBoard extends Level implements RoomLevel {
             setRoomNumber(5);
             return;
         }
-        this.currentQuestion = this.questions.getFirst().getQuestions().getFirst();
+        this.currentQuestion = this.questions.getFirst().questions().getFirst();
         setRoomNumber(5);
     }
 
@@ -57,7 +57,7 @@ public class ScrumBoard extends Level implements RoomLevel {
             questions.removeFirst();
 
             if (!questions.isEmpty()) {
-                currentQuestion = questions.getFirst().getQuestions().getFirst();
+                currentQuestion = questions.getFirst().questions().getFirst();
             } else {
                 currentQuestion = null;
             }
@@ -91,7 +91,7 @@ public class ScrumBoard extends Level implements RoomLevel {
     public List<Question> getRemainingQuestions() {
         List<Question> result = new ArrayList<>();
         for (QuestionLog log : questions) {
-            result.add(log.getQuestions().getFirst());
+            result.add(log.questions().getFirst());
         }
         return result;
     }

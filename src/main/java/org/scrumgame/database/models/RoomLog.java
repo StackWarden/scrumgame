@@ -36,12 +36,12 @@ public class RoomLog implements GameLog {
     }
 
     @Override
-    public int getSessionId() {
+    public int sessionId() {
         return sessionId;
     }
 
     @Override
-    public List<Question> getQuestions() {
+    public List<Question> questions() {
         return Collections.singletonList(question);
     }
 

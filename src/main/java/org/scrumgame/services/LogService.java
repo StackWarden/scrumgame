@@ -1,7 +1,6 @@
 package org.scrumgame.services;
 
 import org.scrumgame.classes.*;
-import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
@@ -9,9 +8,6 @@ import org.scrumgame.interfaces.LogStrategy;
 import org.scrumgame.interfaces.RoomLevel;
 import org.scrumgame.strategies.MonsterLogStrategy;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 public class LogService {
@@ -47,14 +43,14 @@ public class LogService {
 
         return logs.stream()
                 .filter(log -> {
-                    boolean alive = !log.isDefeated();
+                    boolean alive = !log.defeated();
                     return alive;
                 })
                 .map(log -> {
-                    Question q = log.getQuestions().getFirst();
+                    Question q = log.questions().getFirst();
 
                     Monster m = new Monster(q);
-                    m.setLogId(log.getId());
+                    m.setLogId(log.id());
 
                     return m;
                 })

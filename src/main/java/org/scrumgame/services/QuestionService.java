@@ -5,7 +5,6 @@ import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.strategies.MonsterLogStrategy;
-import org.scrumgame.strategies.QuestionLogStrategy;
 import org.scrumgame.interfaces.GameLog;
 
 import java.sql.*;
@@ -100,7 +99,7 @@ public class QuestionService {
         monsterService.setStrategy(new MonsterLogStrategy());
         for (GameLog log : monsterService.getLogs(session)) {
             if (log instanceof MonsterLog monsterLog) {
-                for (Question q : monsterLog.getQuestions()) {
+                for (Question q : monsterLog.questions()) {
                     if (added.add(q.getId()) && !alreadyUsed.contains(q.getId()) && !alreadyAdded.contains(q.getId()) && fallback.size() < needed) {
                         fallback.add(q);
                     }
