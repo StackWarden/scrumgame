@@ -59,6 +59,7 @@ public class GameService {
         this.session = session;
         itemSpawner.spawnItems(benefitsLogId, 3);
         inGame = true;
+        System.out.println("Welcome to the game! Use 'help' to see all commands and learn how to play.");
     }
 
     public void loadSession(int playerId) {
@@ -111,6 +112,7 @@ public class GameService {
     }
 
     public void submitAnswer(boolean skip) {
+        System.out.println(getCurrentPrompt());
         System.out.print("Your answer: ");
         String answer = scanner.nextLine();
 

@@ -97,7 +97,6 @@ public class BaseSeeder {
             }
 
             conn.commit();
-            System.out.println("Benefits room successfully seeded for session " + sessionId);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

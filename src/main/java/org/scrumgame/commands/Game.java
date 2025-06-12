@@ -125,7 +125,7 @@ public class Game {
         - prompt              → Show the current question or monster prompt
         - answer <x>          → Submit your answer to the current challenge
         - next                → Proceed to the next room if eligible
-        - status              → View current game status
+        - room-info              → View current game status
 
         ▶ Inventory:
         - items               → View available items in the current room
@@ -139,6 +139,7 @@ public class Game {
 
         ▶ Account:
         - login               → Log in with an existing player name
+        - logout              → Log out of ur account
         - register            → Create a new player account
         - delete-account      → Permanently delete your player account
         - achievements        → Shows current players achievements
