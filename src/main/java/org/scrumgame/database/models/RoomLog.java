@@ -36,7 +36,7 @@ public class RoomLog implements GameLog {
     }
 
     @Override
-    public int getSessionId() {
+    public int sessionId() {
         return sessionId;
     }
 

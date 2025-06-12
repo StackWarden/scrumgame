@@ -9,20 +9,16 @@ import java.util.List;
 
 public class QuestionLog extends Level implements GameLog {
     private int id;
-    private int sessionId;
+    private final int sessionId;
     private int levelLogId;
-    private Question question;
-    private boolean completed;
+    private final Question question;
+    private final boolean completed;
 
     public QuestionLog(int sessionId, int levelLogId, Question question, boolean completed) {
         this.sessionId = sessionId;
         this.levelLogId = levelLogId;
         this.question = question;
         this.completed = completed;
-    }
-
-    public QuestionLog(int sessionId, Question question, boolean completed) {
-        this(sessionId, -1, question, completed);
     }
 
     public void setId(int id) {
@@ -33,16 +29,12 @@ public class QuestionLog extends Level implements GameLog {
         return id;
     }
 
-    public int getSessionId() {
+    public int sessionId() {
         return sessionId;
     }
 
     public int getLevelLogId() {
         return levelLogId;
-    }
-
-    public void setLevelLogId(int levelLogId) {
-        this.levelLogId = levelLogId;
     }
 
     @Override

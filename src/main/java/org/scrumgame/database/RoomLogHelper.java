@@ -41,7 +41,7 @@ public class RoomLogHelper {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return -1;
     }

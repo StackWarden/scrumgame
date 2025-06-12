@@ -14,10 +14,6 @@ public class Item {
     private Integer player_id = null;
     private Integer session_id = null;
 
-    public Integer getSession_id() {
-        return session_id;
-    }
-
     public void setSession_id(Integer session_id) {
         this.session_id = session_id;
     }
@@ -39,13 +35,6 @@ public class Item {
         this.session_id = session_id;
     }
 
-    public Item(boolean used, int level_log_id, String name, int id) {
-        this.used = used;
-        this.level_log_id = level_log_id;
-        this.name = name;
-        this.id = id;
-    }
-
     public Item(String name, int level_log_id) {
         this.name = name;
         this.level_log_id = level_log_id;
@@ -63,20 +52,8 @@ public class Item {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getLevel_log_id() {
         return level_log_id;
-    }
-
-    public void setLevel_log_id(int level_log_id) {
-        this.level_log_id = level_log_id;
-    }
-
-    public boolean isUsed() {
-        return used;
     }
 
     public void setUsed(boolean used) {
