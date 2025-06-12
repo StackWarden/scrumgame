@@ -10,8 +10,8 @@ public class RiddleQuestion extends Question {
         super(id, question, answer, hint);
     }
 
-    public RiddleQuestion(String question, String answer) {
-        super(question, answer);
+    public RiddleQuestion(Question question, String answer) {
+        super(question.getQuestion(), answer);
     }
 
     @Override

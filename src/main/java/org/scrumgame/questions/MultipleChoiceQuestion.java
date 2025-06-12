@@ -16,8 +16,8 @@ public class MultipleChoiceQuestion extends Question {
         super(id, question, answer, hint);
     }
 
-    public MultipleChoiceQuestion(String question, String answer) {
-        super(question, answer);
+    public MultipleChoiceQuestion(Question question, String answer) {
+        super(question.getQuestion(), answer);
     }
 
     @Override

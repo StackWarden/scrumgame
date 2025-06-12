@@ -4,12 +4,16 @@ import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.iRoomLevel;
+import org.scrumgame.questions.BaseQuestion;
+import org.scrumgame.questions.MultipleChoiceQuestion;
+import org.scrumgame.questions.RiddleQuestion;
 import org.scrumgame.services.LogService;
 import org.scrumgame.strategies.QuestionLogStrategy;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class RoomLevel extends Level implements iRoomLevel {
     private Question question;
@@ -64,8 +68,23 @@ public class RoomLevel extends Level implements iRoomLevel {
 
     @Override
     public Question getQuestion() {
-        return question;
+        Random random = new Random();
+        int randomCase = random.nextInt(3);
+
+        switch (randomCase) {
+            case 0 -> {
+                return new MultipleChoiceQuestion(this.question, this.getAnswer());
+            }
+            case 1 -> {
+                return new BaseQuestion(this.question, this.getAnswer());
+            }
+            case 2 -> {
+                return new RiddleQuestion(this.question, this.getAnswer());
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + randomCase);
+        }
     }
+
 
     @Override
     public List<Question> getRemainingQuestions() {

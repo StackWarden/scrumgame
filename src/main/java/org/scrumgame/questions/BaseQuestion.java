@@ -9,8 +9,8 @@ public class BaseQuestion extends Question {
         super(id, question, answer, hint);
     }
 
-    public BaseQuestion(String question, String answer) {
-        super(question, answer);
+    public BaseQuestion(Question question, String answer) {
+        super(question.getQuestion(), answer);
     }
 
     @Override
