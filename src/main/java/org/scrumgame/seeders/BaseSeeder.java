@@ -1,11 +1,15 @@
 package org.scrumgame.seeders;
 
 import org.scrumgame.classes.Question;
+import org.scrumgame.database.DatabaseConnection;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BaseSeeder {
-    private int sessionId;
+    private final int sessionId;
 
     public BaseSeeder(int sessionId) {
         this.sessionId = sessionId;
@@ -19,12 +23,12 @@ public class BaseSeeder {
         ScrumBoardRoomSeeder scrumBoardRoomSeeder = new ScrumBoardRoomSeeder(sessionId);
         SprintReviewRoomSeeder sprintReviewRoomSeeder = new SprintReviewRoomSeeder(sessionId);
 
-        benefitsRoomSeeder.seedBenefitsRoomForSession(sessionId);
-        dailyScrumRoomSeeder.seedDailyScrumRoomForSession(sessionId);
-        planningRoomSeeder.seedPlanningRoomForSession(sessionId);
-        retrospectiveRoomSeeder.seedRetrospectiveRoomForSession(sessionId);
-        scrumBoardRoomSeeder.seedScrumBoardRoomForSession(sessionId);
-        sprintReviewRoomSeeder.seedSprintReviewRoomForSession(sessionId);
+        benefitsRoomSeeder.seed(sessionId);
+        dailyScrumRoomSeeder.seed(sessionId);
+        planningRoomSeeder.seed(sessionId);
+        retrospectiveRoomSeeder.seed(sessionId);
+        scrumBoardRoomSeeder.seed(sessionId);
+        sprintReviewRoomSeeder.seed(sessionId);
     }
 
     public int getOrInsertQuestion(Connection conn, Question q) throws SQLException {
@@ -73,6 +77,30 @@ public class BaseSeeder {
             stmt.setInt(2, levelLogId);
             stmt.setInt(3, questionId);
             stmt.executeUpdate();
+        }
+    }
+
+    public void insertDataToDatabase(int sessionId, int roomNumber, String levelType, List<Question> questions) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            Map<String, Integer> questionIdMap = new HashMap<>();
+            for (Question q : questions) {
+                int id = getOrInsertQuestion(conn, q);
+                questionIdMap.put(q.getQuestion(), id);
+            }
+
+            int levelLogId = createLevelLog(conn, sessionId, roomNumber, levelType);
+
+            for (int questionId : questionIdMap.values()) {
+                insertQuestionLog(conn, sessionId, levelLogId, questionId);
+            }
+
+            conn.commit();
+            System.out.println("Benefits room successfully seeded for session " + sessionId);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
