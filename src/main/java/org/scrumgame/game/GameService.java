@@ -79,6 +79,7 @@ public class GameService {
 
         while (!chosen) {
             int choice = scanner.nextInt();
+            scanner.nextLine();
             Optional<Session> match = sessions.stream()
                     .filter(s -> s.getId() == choice)
                     .findFirst();
