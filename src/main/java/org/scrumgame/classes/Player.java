@@ -1,7 +1,6 @@
 package org.scrumgame.classes;
 
 import org.scrumgame.database.DatabaseConnection;
-import org.scrumgame.database.models.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ public class Player {
     private static Player currentPlayer;
     int id;
     String name;
-    int status;
 
     public Player() {
         this.name = name;
@@ -25,15 +23,11 @@ public class Player {
         this.id = id;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
     public int getId() {
         return id;
     }
 
-    public String setName(String name) {
+    public void setName(String name) {
         this.name = name;
 
         try {
@@ -45,10 +39,10 @@ public class Player {
             }
         } catch (SQLException e) {
             // Handle the exception appropriately
+            System.out.println();
             e.printStackTrace();
         }
 
-        return name;
     }
 
     public static Player getCurrentPlayer() {
