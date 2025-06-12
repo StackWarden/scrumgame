@@ -11,7 +11,7 @@ public abstract class Question {
     private String hint;
     private int id;
     public String question;
-    private String answer;
+    public String answer;
     private String type;
     private static final String SELECT_QUESTION_BY_ID_SQL =
             "SELECT id, text, correct_answer, hint, type FROM question WHERE id = ?";
