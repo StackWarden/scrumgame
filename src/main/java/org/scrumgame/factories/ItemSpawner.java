@@ -23,7 +23,7 @@ public class ItemSpawner {
             switch (index) {
                 case 0 -> gameItem = new Sword();
                 case 1 -> gameItem = new Totem();
-                default -> throw new IllegalStateException("Random out of bounds");
+                default -> throw new IllegalStateException("Random out of bounds");\
             }
 
             Item item = new Item(gameItem.getName(), levelId);
