@@ -5,7 +5,7 @@ public class Monster extends Level {
     private final String question;
     private final String answer;
     private final String hint;
-    private boolean defeated;
+    private final boolean defeated;
     private final Question questionObject;
 
     public Monster(Question question) {
@@ -27,10 +27,6 @@ public class Monster extends Level {
 
     public boolean isDefeated() {
         return defeated;
-    }
-
-    public void setDefeated(boolean defeated) {
-        this.defeated = defeated;
     }
 
     public Question getQuestionObject() {

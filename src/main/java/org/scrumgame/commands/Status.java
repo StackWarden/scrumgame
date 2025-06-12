@@ -1,6 +1,5 @@
 package org.scrumgame.commands;
 
-import org.scrumgame.database.models.Session;
 import org.scrumgame.game.GameService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -8,11 +7,9 @@ import org.springframework.shell.standard.ShellMethod;
 @ShellComponent
 public class Status {
 
-    private final Session session;
     private final GameService gameService;
 
-    public Status(Session session, GameService gameService) {
-        this.session = session;
+    public Status(GameService gameService) {
         this.gameService = gameService;
     }
 
