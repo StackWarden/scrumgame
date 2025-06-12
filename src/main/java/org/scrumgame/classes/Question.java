@@ -1,18 +1,20 @@
 package org.scrumgame.classes;
 
 import org.scrumgame.questions.BaseQuestion;
+import org.scrumgame.questions.MultipleChoiceQuestion;
+import org.scrumgame.questions.RiddleQuestion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 
 public abstract class Question {
     private String hint;
     private int id;
     public String question;
     public String answer;
-    private String type;
     private static final String SELECT_QUESTION_BY_ID_SQL =
             "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
@@ -80,4 +82,7 @@ public abstract class Question {
         }
     }
 
+    public Question RandomizeQuestion() {
+        return null;
+    }
 }
