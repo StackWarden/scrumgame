@@ -99,25 +99,4 @@ public class PlayerService {
         }
         return null;
     }
-
-    public boolean updatePlayerName(int id, String newName) {
-        String sql = "UPDATE player SET name = ? WHERE id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, newName);
-            stmt.setInt(2, id);
-            int updated = stmt.executeUpdate();
-            return updated > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace(System.out);
-        }
-        return false;
-    }
-
-    public String getPlayerNameById(int id) {
-        Player player = getPlayerById(id);
-        return (player != null) ? player.getName() : "Unknown Player";
-    }
 }
