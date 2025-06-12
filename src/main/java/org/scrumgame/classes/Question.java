@@ -81,8 +81,4 @@ public abstract class Question {
             }
         }
     }
-
-    public Question RandomizeQuestion() {
-        return null;
-    }
 }
