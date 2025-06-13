@@ -5,6 +5,7 @@ import org.scrumgame.classes.Question;
 import java.util.Random;
 
 public class RiddleQuestion extends Question {
+    private String fillIn;
 
     public RiddleQuestion(int id, String question, String answer, String hint) {
         super(id, question, answer, hint);
@@ -35,7 +36,18 @@ public class RiddleQuestion extends Question {
             }
         }
 
-        return result.toString().trim();
+        if (fillIn == null || !fillIn.contains("_")) {
+            setFillIn(result.toString().trim());
+        }
+
+        return getFillIn();
     }
 
+    public void setFillIn(String fillIn) {
+        this.fillIn = fillIn;
+    }
+
+    public String getFillIn() {
+        return fillIn;
+    }
 }

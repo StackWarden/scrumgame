@@ -159,7 +159,7 @@ public class GameService {
         session.save();
 
         itemSpawner.spawnItems(logId, 3);
-        return "Entered Room #" + nextRoomNumber + ":\n" + nextRoom.getPrompt();
+        return "Entered Room #" + nextRoomNumber + ":\n" + getCurrentPrompt();
     }
 
     private int getNextRoomNumber() {
@@ -348,7 +348,7 @@ public class GameService {
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
             } else {
-                System.out.println("Next question: " + getCurrentPrompt());
+                System.out.println("To see the next question make use of 'prompt' or 'answer'");
             }
 
             session.save();
