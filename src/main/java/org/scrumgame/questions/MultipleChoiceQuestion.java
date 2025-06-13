@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class MultipleChoiceQuestion extends Question {
+    List<String> options = new ArrayList<>();
 
     public MultipleChoiceQuestion(int id, String question, String answer, String hint) {
         super(id, question, answer, hint);
@@ -29,13 +30,12 @@ public class MultipleChoiceQuestion extends Question {
     
 
     public String MultipleChoice(String questionText, String correctAnswer, String[] otherOptions) {
+        if (options.isEmpty()){
+            options.add(correctAnswer);
+            options.addAll(Arrays.asList(otherOptions));
 
-        List<String> options = new ArrayList<>();
-
-        options.add(correctAnswer);
-        options.addAll(Arrays.asList(otherOptions));
-
-        Collections.shuffle(options);
+            Collections.shuffle(options);
+        }
 
         StringBuilder questionWithChoices = new StringBuilder(questionText + "\n");
         char optionLabel = 'A';
