@@ -20,7 +20,6 @@ public class RoomLevel extends Level implements iRoomLevel {
     private List<QuestionLog> questions = new ArrayList<>();
     private int logId;
     private int roomNumber;
-    private final Random sharedRandom = new Random();
 
     public RoomLevel() {
         super();
@@ -69,20 +68,7 @@ public class RoomLevel extends Level implements iRoomLevel {
 
     @Override
     public Question getQuestion() {
-        int randomCase = sharedRandom.nextInt(3); // Use the shared instance
-
-        switch (randomCase) {
-            case 0 -> {
-                return new MultipleChoiceQuestion(this.question, this.getAnswer());
-            }
-            case 1 -> {
-                return new BaseQuestion(this.question, this.getAnswer());
-            }
-            case 2 -> {
-                return new RiddleQuestion(this.question, this.getAnswer());
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + randomCase);
-        }
+        return question;
     }
 
     @Override
@@ -105,7 +91,21 @@ public class RoomLevel extends Level implements iRoomLevel {
     }
 
     public void setQuestion(Question question) {
-        this.question = question;
+        Random random = new Random();
+        int randomCase = random.nextInt(3);
+
+        switch (randomCase) {
+            case 0 -> {
+                this.question = new MultipleChoiceQuestion(question, question.getAnswer());
+            }
+            case 1 -> {
+                this.question = new BaseQuestion(question, question.getAnswer());
+            }
+            case 2 -> {
+                this.question = new RiddleQuestion(question, question.getAnswer());
+            }
+            default -> this.question = new BaseQuestion(question, question.getAnswer());
+        }
     }
 
     public List<QuestionLog> getQuestions() {

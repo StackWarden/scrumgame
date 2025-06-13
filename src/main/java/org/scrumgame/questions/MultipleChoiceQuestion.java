@@ -31,6 +31,10 @@ public class MultipleChoiceQuestion extends Question {
     public String MultipleChoice(String questionText, String correctAnswer, String[] otherOptions) {
 
         List<String> options = new ArrayList<>();
+        if (correctAnswer == "") {
+            System.out.println("No Correct answer");
+        }
+        System.out.println(correctAnswer);
         options.add(correctAnswer);
         options.addAll(Arrays.asList(otherOptions));
 

@@ -33,6 +33,7 @@ public class GameService {
     private boolean inGame = false;
     private Session session;
     private Player player;
+    private iRoomLevel currentRoom;
 
     @Autowired
     public GameService(MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
