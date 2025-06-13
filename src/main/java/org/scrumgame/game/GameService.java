@@ -109,10 +109,21 @@ public class GameService {
             return "Monster appears: " + current.getPrompt();
         }
 
-        return getCurrentRoom().getPrompt();
+        if (currentRoom == null) {
+            setCurrentRoom(getCurrentRoom());
+        }
+
+        return currentRoom.getPrompt();
+    }
+
+    public void setCurrentRoom(iRoomLevel currentRoom) {
+        this.currentRoom = currentRoom;
     }
 
     public void submitAnswer(boolean skip) {
+        if (currentRoom == null) {
+            setCurrentRoom(getCurrentRoom());
+        }
         System.out.println(getCurrentPrompt());
         System.out.print("Your answer: ");
         String answer = scanner.nextLine();
@@ -324,6 +335,7 @@ public class GameService {
 
         boolean correct = roomLevel.checkAnswer(answer);
         if (correct || skip) {
+            setCurrentRoom(null);
             logService.setStrategy(new QuestionLogStrategy());
             logService.markCurrentLogCompleted(session);
 
@@ -336,7 +348,7 @@ public class GameService {
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
             } else {
-                System.out.println("Next question: " + roomLevel.getPrompt());
+                System.out.println("Next question: " + getCurrentPrompt());
             }
 
             session.save();
