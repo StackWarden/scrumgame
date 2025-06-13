@@ -33,6 +33,7 @@ public class GameService {
     private boolean inGame = false;
     private Session session;
     private Player player;
+    private iRoomLevel currentRoom;
 
     @Autowired
     public GameService(MonsterSpawner monsterSpawner, MonsterSpawnMessageObserver messageObserver, ItemSpawner itemSpawner, Inventory inventory) {
@@ -108,10 +109,21 @@ public class GameService {
             return "Monster appears: " + current.getPrompt();
         }
 
-        return getCurrentRoom().getPrompt();
+        if (currentRoom == null) {
+            setCurrentRoom(getCurrentRoom());
+        }
+
+        return currentRoom.getPrompt();
+    }
+
+    public void setCurrentRoom(iRoomLevel currentRoom) {
+        this.currentRoom = currentRoom;
     }
 
     public void submitAnswer(boolean skip) {
+        if (currentRoom == null) {
+            setCurrentRoom(getCurrentRoom());
+        }
         System.out.println(getCurrentPrompt());
         System.out.print("Your answer: ");
         String answer = scanner.nextLine();
@@ -147,7 +159,7 @@ public class GameService {
         session.save();
 
         itemSpawner.spawnItems(logId, 3);
-        return "Entered Room #" + nextRoomNumber + ":\n" + nextRoom.getPrompt();
+        return "Entered Room #" + nextRoomNumber + ":\n" + getCurrentPrompt();
     }
 
     private int getNextRoomNumber() {
@@ -323,6 +335,7 @@ public class GameService {
 
         boolean correct = roomLevel.checkAnswer(answer);
         if (correct || skip) {
+            setCurrentRoom(null);
             logService.setStrategy(new QuestionLogStrategy());
             logService.markCurrentLogCompleted(session);
 
@@ -335,7 +348,7 @@ public class GameService {
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
             } else {
-                System.out.println("Next question: " + roomLevel.getPrompt());
+                System.out.println("To see the next question make use of 'prompt' or 'answer'");
             }
 
             session.save();

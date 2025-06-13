@@ -1,8 +1,7 @@
 package org.scrumgame.seeders;
 
 import org.scrumgame.classes.Question;
-
-import java.sql.*;
+import org.scrumgame.questions.BaseQuestion;
 import java.util.*;
 
 public class BenefitsRoomSeeder extends BaseSeeder {
@@ -10,11 +9,11 @@ public class BenefitsRoomSeeder extends BaseSeeder {
     private final String LEVEL_TYPE = "benefits";
 
     private final List<Question> QUESTIONS = List.of(
-            new Question(-1, "What is one benefit of using Scrum?", "Improved communication", "Think about teamwork."),
-            new Question(-1, "How does Scrum encourage adaptability?", "By using short iterations", "Sprints are useful here."),
-            new Question(-1, "Why is feedback important in Scrum?", "It allows for continuous improvement", "Think about retrospectives."),
-            new Question(-1, "Who inspects the product increment in Scrum?", "The stakeholders", "They review progress at Sprint Review."),
-            new Question(-1, "What is one outcome of regular Daily Scrums?", "Better team alignment", "It keeps everyone on the same page.")
+            new BaseQuestion(-1, "What is one benefit of using Scrum?", "Improved communication", "Think about teamwork."),
+            new BaseQuestion(-1, "How does Scrum encourage adaptability?", "By using short iterations", "Sprints are useful here."),
+            new BaseQuestion(-1, "Why is feedback important in Scrum?", "It allows for continuous improvement", "Think about retrospectives."),
+            new BaseQuestion(-1, "Who inspects the product increment in Scrum?", "The stakeholders", "They review progress at Sprint Review."),
+            new BaseQuestion(-1, "What is one outcome of regular Daily Scrums?", "Better team alignment", "It keeps everyone on the same page.")
     );
 
     public BenefitsRoomSeeder(int sessionId) {
