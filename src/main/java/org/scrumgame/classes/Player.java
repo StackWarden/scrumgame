@@ -12,6 +12,11 @@ public class Player {
 
     public Player() {
     }
+    private int PlayerLevel;
+
+    public int getPlayerLevel() {
+        return PlayerLevel;
+    }
 
     public String getName() {
         return name;
@@ -59,5 +64,12 @@ public class Player {
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
+    }
+
+    public void setLevel(int PlayerLevel) {
+        if (PlayerLevel < 1 || PlayerLevel > 100) {
+            throw new IllegalArgumentException("Invalid level value: " + PlayerLevel);
+        }
+        this.PlayerLevel = PlayerLevel;
     }
 }
