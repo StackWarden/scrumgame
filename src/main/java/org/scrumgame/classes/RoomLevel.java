@@ -4,12 +4,16 @@ import org.scrumgame.database.models.QuestionLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.GameLog;
 import org.scrumgame.interfaces.iRoomLevel;
+import org.scrumgame.questions.BaseQuestion;
+import org.scrumgame.questions.MultipleChoiceQuestion;
+import org.scrumgame.questions.RiddleQuestion;
 import org.scrumgame.services.LogService;
 import org.scrumgame.strategies.QuestionLogStrategy;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class RoomLevel extends Level implements iRoomLevel {
     private Question question;
@@ -87,7 +91,21 @@ public class RoomLevel extends Level implements iRoomLevel {
     }
 
     public void setQuestion(Question question) {
-        this.question = question;
+        Random random = new Random();
+        int randomCase = random.nextInt(3);
+
+        switch (randomCase) {
+            case 0 -> {
+                this.question = new MultipleChoiceQuestion(question, question.getAnswer());
+            }
+            case 1 -> {
+                this.question = new BaseQuestion(question, question.getAnswer());
+            }
+            case 2 -> {
+                this.question = new RiddleQuestion(question, question.getAnswer());
+            }
+            default -> this.question = new BaseQuestion(question, question.getAnswer());
+        }
     }
 
     public List<QuestionLog> getQuestions() {

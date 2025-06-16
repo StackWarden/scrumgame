@@ -21,6 +21,7 @@ CREATE TABLE question (
                           text TEXT NOT NULL,
                           correct_answer VARCHAR(255) NOT NULL,
                           hint VARCHAR(255),
+                          type VARCHAR(255),
                           PRIMARY KEY (id)
 );
 
@@ -117,13 +118,16 @@ INSERT INTO player (name) VALUES
                               ('Charlie');
 
 -- Questions
-INSERT INTO question (text, correct_answer, hint) VALUES
-                                                      ('What is the capital of France?', 'Paris', 'It’s also the city of love.'),
-                                                      ('2 + 2 = ?', '4', 'Basic arithmetic.'),
-                                                      ('What color is the sky?', 'Blue', 'Look up on a sunny day.'),
-                                                      ('Who wrote "Hamlet"?', 'Shakespeare', 'English playwright.'),
-                                                      ('What is the boiling point of water in Celsius?', '100', 'Standard atmospheric pressure.'),
-                                                      ('What is the square root of 64?', '8', 'It’s a whole number.');
+INSERT INTO question (text, correct_answer, hint, type) VALUES
+                                                      ('What is the capital of France?', 'Paris', 'It’s also the city of love.', 'Open'),
+                                                      ('2 + 2 = ?', '4', 'Basic arithmetic.', 'Open'),
+                                                      ('What color is the sky?', 'Blue', 'Look up on a sunny day.', 'Open'),
+                                                      ('Who wrote "Hamlet"?', 'Shakespeare', 'English playwright.', 'Open'),
+                                                      ('What is the boiling point of water in Celsius?', '100', 'Standard atmospheric pressure.', 'Open'),
+                                                      ('What is the square root of 64?', '8', 'It’s a whole number.', 'Open'),
+                                                      ('Which is correct? A, B, C, D?', 'A', 'Its one of the four', 'Multiple_Choice'),
+                                                      ('What is the meaning of life, the universe and everything?', '42', 'Refrence to Hitchikers Guide', 'Open'),
+                                                      ('What has wings but can not fly?', 'Penguin', 'Lives on one of the poles', 'Riddle');
 
 -- Sessions (one per player)
 INSERT INTO session (player_id, score, monster_encounters, gameover)

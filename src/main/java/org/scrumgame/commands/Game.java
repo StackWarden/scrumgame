@@ -30,6 +30,12 @@ public class Game {
             System.out.println(notInGameMessage());
             return;
         }
+
+        if (gameService.getCurrentRoom().getRemainingQuestions().isEmpty())
+        {
+            System.out.println("There are no questions left in this room. Use 'next'");
+            return;
+        }
         gameService.submitAnswer(false);
     }
     @ShellMethod(key = "next", value = "Go to the next room if possible.")
