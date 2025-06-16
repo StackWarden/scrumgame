@@ -18,7 +18,7 @@ class QuestionTest {
 
         // Test juiste antwoord met spaties
         assertTrue(question.checkAnswer(" 4 "), "Het antwoord ' 4 ' met spaties zou correct moeten zijn.");
-        
+
         // Test fout antwoord
         assertFalse(question.checkAnswer("5"), "Het antwoord '5' zou fout moeten zijn.");
 

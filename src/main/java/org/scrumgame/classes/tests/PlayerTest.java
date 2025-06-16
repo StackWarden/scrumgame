@@ -9,32 +9,33 @@ class PlayerTest {
 
     @Test
     void testSetNameBoundaryCases() {
-        // Create a player
+        // Speler aanmaken
         Player player = new Player();
-        player.setId(1); // Set an ID to perform the database update
+        player.setId(1); // Speler ID zetten voor Database verwerking
 
-        // Test a typical name
-        assertDoesNotThrow(() -> player.setName("John"), "A typical name should not throw any exception.");
-        assertEquals("John", player.getName(), "The player's name should be correctly set to 'John'.");
+        // Test een naam
+        assertDoesNotThrow(() -> player.setName("John"), "Een naam zou geen foutmelding moeten geven.");
+        assertEquals("John", player.getName(), "De spelers naam zou naar 'John' veranderd moeten zijn.");
 
-        // Test an empty name
-        assertDoesNotThrow(() -> player.setName(""), "An empty name should not throw any exception.");
-        assertEquals("", player.getName(), "The player's name should be correctly set to an empty string.");
+        // Test een lege naam
+        assertDoesNotThrow(() -> player.setName(""), "Een leeg veld voor een naam zou geen foutmelding moeten geven.");
+        assertEquals("", player.getName(), "De spelers naam zou leeg moeten zijn.");
 
-        // Test a name with only spaces
-        assertDoesNotThrow(() -> player.setName("   "), "A name with only spaces should not throw any exception.");
-        assertEquals("   ", player.getName(), "The player's name should be correctly set to the string with spaces.");
+        // Test alleen spaties
+        assertDoesNotThrow(() -> player.setName("   "), "Alleen spaties zou geen foutmelding moeten geven.");
+        assertEquals("   ", player.getName(), "De spelers naam zou er nu staan als alleen spaties.");
 
-        // Test a name exactly at the boundary (255 characters)
+        // Test een naam die maximale karakters gebruikt (255 characters)
         String boundaryName = "a".repeat(255); // Java 11 String repetition
-        assertDoesNotThrow(() -> player.setName(boundaryName), "A name of exactly 255 characters should not throw any exception.");
-        assertEquals(boundaryName, player.getName(), "The player's name should correctly handle names at the boundary length.");
+        assertDoesNotThrow(() -> player.setName(boundaryName), "Een naam van precies 255 karakters zou geen fout melding moeten geven.");
+        assertEquals(boundaryName, player.getName(), "Een speler naam die op het randje zit zou moeten werken.");
 
-        // Test a name exceeding the boundary (256 characters)
+        // Test een naam die boven de max zit(256 characters)
         String longName = "a".repeat(256);
-        assertThrows(IllegalArgumentException.class, () -> player.setName(longName), "A name longer than 255 characters should throw an exception.");
+        assertThrows(IllegalArgumentException.class, () -> player.setName(longName), "Een naam langer dan 255 karakters geeft een fout melding.");
 
-        // Test a null name
-        assertThrows(NullPointerException.class, () -> player.setName(null), "A null value for the name should throw a NullPointerException.");
+        // Test null als input
+        assertThrows(NullPointerException.class, () -> player.setName(null), "Een null waarde geeft NullPointerException.");
     }
 }
+
