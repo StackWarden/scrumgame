@@ -9,28 +9,32 @@ class PlayerTest {
 
     @Test
     void testSetNameBoundaryCases() {
-        // Creeër een speler
+        // Create a player
         Player player = new Player();
-        player.setId(1); // Stel een ID in zodat de database-update wordt uitgevoerd
+        player.setId(1); // Set an ID to perform the database update
 
-        // Test gebruikelijke naam
-        assertDoesNotThrow(() -> player.setName("John"), "Een gewone naam zou zonder uitzondering verwerkt moeten worden.");
-        assertEquals("John", player.getName(), "De naam van de speler moet correct ingesteld zijn op 'John'.");
+        // Test a typical name
+        assertDoesNotThrow(() -> player.setName("John"), "A typical name should not throw any exception.");
+        assertEquals("John", player.getName(), "The player's name should be correctly set to 'John'.");
 
-        // Test lege naam
-        assertDoesNotThrow(() -> player.setName(""), "Een lege naam zou zonder uitzondering verwerkt moeten worden.");
-        assertEquals("", player.getName(), "De naam van de speler moet correct ingesteld zijn op een lege string.");
+        // Test an empty name
+        assertDoesNotThrow(() -> player.setName(""), "An empty name should not throw any exception.");
+        assertEquals("", player.getName(), "The player's name should be correctly set to an empty string.");
 
-        // Test naam met alleen spaties
-        assertDoesNotThrow(() -> player.setName("   "), "Een naam met alleen spaties zou zonder uitzondering verwerkt moeten worden.");
-        assertEquals("   ", player.getName(), "De naam van de speler moet correct ingesteld zijn op de string met spaties.");
+        // Test a name with only spaces
+        assertDoesNotThrow(() -> player.setName("   "), "A name with only spaces should not throw any exception.");
+        assertEquals("   ", player.getName(), "The player's name should be correctly set to the string with spaces.");
 
-        // Test een lange naam (bijvoorbeeld 256 karakters)
-        String longName = "a".repeat(256); // Java 11 String herhaling
-        assertDoesNotThrow(() -> player.setName(longName), "Een lange naam mag niet leiden tot een uitzondering.");
-        assertEquals(longName, player.getName(), "De naam van de speler moet correct ingesteld zijn, zelfs als deze lang is.");
+        // Test a name exactly at the boundary (255 characters)
+        String boundaryName = "a".repeat(255); // Java 11 String repetition
+        assertDoesNotThrow(() -> player.setName(boundaryName), "A name of exactly 255 characters should not throw any exception.");
+        assertEquals(boundaryName, player.getName(), "The player's name should correctly handle names at the boundary length.");
 
-        // Test null-naam
-        assertThrows(NullPointerException.class, () -> player.setName(null), "Een null-waarde voor de naam moet een NullPointerException veroorzaken.");
+        // Test a name exceeding the boundary (256 characters)
+        String longName = "a".repeat(256);
+        assertThrows(IllegalArgumentException.class, () -> player.setName(longName), "A name longer than 255 characters should throw an exception.");
+
+        // Test a null name
+        assertThrows(NullPointerException.class, () -> player.setName(null), "A null value for the name should throw a NullPointerException.");
     }
 }

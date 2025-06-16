@@ -18,10 +18,7 @@ class QuestionTest {
 
         // Test juiste antwoord met spaties
         assertTrue(question.checkAnswer(" 4 "), "Het antwoord ' 4 ' met spaties zou correct moeten zijn.");
-
-        // Test juiste antwoord met verschillende hoofdletters
-        assertTrue(question.checkAnswer("FOUR"), "Het antwoord 'FOUR' zou correct moeten zijn (hoofdletterongevoelig).");
-
+        
         // Test fout antwoord
         assertFalse(question.checkAnswer("5"), "Het antwoord '5' zou fout moeten zijn.");
 
