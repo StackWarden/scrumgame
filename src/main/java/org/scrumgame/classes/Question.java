@@ -1,15 +1,16 @@
 package org.scrumgame.classes;
 
+import org.scrumgame.questions.BaseQuestion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Question {
+public abstract class Question {
     private String hint;
     private int id;
-    private String question;
-    private String answer;
+    public String question;
+    public String answer;
     private static final String SELECT_QUESTION_BY_ID_SQL = "SELECT id, text, correct_answer, hint FROM question WHERE id = ?";
 
     public Question(int id, String question, String answer, String hint) {
@@ -36,9 +37,7 @@ public class Question {
         return answer.trim().equalsIgnoreCase(givenAnswer.trim());
     }
 
-    public String getQuestion() {
-        return question;
-    }
+    public abstract String getQuestion();
 
     public void setQuestion(String question) {
         this.question = question;
@@ -66,7 +65,7 @@ public class Question {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Question(
+                return new BaseQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),

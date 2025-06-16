@@ -9,7 +9,7 @@ public class GameServiceMock extends GameService {
     private boolean skipQuestionCalled = false;
 
     public GameServiceMock() {
-        super(null, null, null, null, null, null);
+        super(null, null, null, null);
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.scrumgame.database.DatabaseConnection;
 import org.scrumgame.database.models.MonsterLog;
 import org.scrumgame.database.models.Session;
 import org.scrumgame.interfaces.LogStrategy;
+import org.scrumgame.questions.BaseQuestion;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -117,61 +118,61 @@ public class MonsterLogStrategy implements LogStrategy {
         return questions;
     }
 
-    private Question fetchQuestionById(Connection conn, int questionId) throws SQLException {
+    public Question fetchQuestionById(Connection conn, int questionId) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(SELECT_QUESTION_BY_ID_SQL)) {
             stmt.setInt(1, questionId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Question(
+                return new BaseQuestion(
                         rs.getInt("id"),
                         rs.getString("text"),
                         rs.getString("correct_answer"),
                         rs.getString("hint")
                 );
             }
-
-            throw new SQLException("Question not found for ID: " + questionId);
-        }
-    }
-
-    @Override
-    public String getPromptByLogId(int logId) {
-        String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(qSql)) {
-            stmt.setInt(1, logId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int qId = rs.getInt("question_id");
-                Question q = fetchQuestionById(conn, qId);
-                return q.getQuestion();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(System.out);
-        }
-        return "No monster prompt found.";
-    }
-
-    @Override
-    public Level loadByLogId(int logId) {
-        String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(qSql)) {
-            stmt.setInt(1, logId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int questionId = rs.getInt("question_id");
-                Question q = Question.fetchQuestionById(conn, questionId);
-                return new Monster(q);
-            }
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         }
         return null;
     }
+        @Override
+        public String getPromptByLogId(int logId) {
+            String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(qSql)) {
+                stmt.setInt(1, logId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int qId = rs.getInt("question_id");
+                    Question q = fetchQuestionById(conn, qId);
+                    return q.getQuestion();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+            return "No monster prompt found.";
+        }
 
-    public int getLastInsertedLogId() {
-        return -1;
+        @Override
+        public Level loadByLogId(int logId) {
+            String qSql = "SELECT question_id FROM monster_log_questions WHERE monster_log_id = ?";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(qSql)) {
+                stmt.setInt(1, logId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int questionId = rs.getInt("question_id");
+                    Question q = Question.fetchQuestionById(conn, questionId);
+                    return new Monster(q);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+            return null;
+        }
+
+        public int getLastInsertedLogId() {
+            return -1;
+        }
     }
-}

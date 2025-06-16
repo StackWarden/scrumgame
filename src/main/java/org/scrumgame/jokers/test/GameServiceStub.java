@@ -7,7 +7,7 @@ public class GameServiceStub extends GameService {
     private String skipQuestionResult = "Question skipped successfully";
 
     public GameServiceStub() {
-        super(null, null, null, null, null, null);
+        super(null, null, null, null);
     }
 
     @Override
