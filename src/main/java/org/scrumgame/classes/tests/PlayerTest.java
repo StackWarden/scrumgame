@@ -5,28 +5,32 @@ import org.scrumgame.classes.Player;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PlayerTest extends Player{
+class PlayerTest {
 
     @Test
-    void testPlayerLevelBoundary() {
-        // Test minimale waarde
-        Player playerMin = new Player();
-        playerMin.setLevel(1); // Minimum toegestane waarde
-        assertEquals(1, playerMin.getPlayerLevel(), "De minimale levelwaarde van de speler moet 1 zijn.");
+    void testSetNameBoundaryCases() {
+        // Creeër een speler
+        Player player = new Player();
+        player.setId(1); // Stel een ID in zodat de database-update wordt uitgevoerd
 
-        // Test maximale waarde
-        Player playerMax = new Player();
-        playerMax.setLevel(100); // Maximum toegestane waarde
-        assertEquals(100, playerMax.getPlayerLevel(), "De maximale levelwaarde van de speler moet 100 zijn.");
+        // Test gebruikelijke naam
+        assertDoesNotThrow(() -> player.setName("John"), "Een gewone naam zou zonder uitzondering verwerkt moeten worden.");
+        assertEquals("John", player.getName(), "De naam van de speler moet correct ingesteld zijn op 'John'.");
 
-        // Test waarde onder de grens
-        Player playerUnderMin = new Player();
-        Exception minException = assertThrows(IllegalArgumentException.class, () -> playerUnderMin.setLevel(0));
-        assertEquals("Invalid level value: 0", minException.getMessage(), "Verwachte exceptie bij waarde onder minimale grens.");
+        // Test lege naam
+        assertDoesNotThrow(() -> player.setName(""), "Een lege naam zou zonder uitzondering verwerkt moeten worden.");
+        assertEquals("", player.getName(), "De naam van de speler moet correct ingesteld zijn op een lege string.");
 
-        // Test waarde boven de grens
-        Player playerOverMax = new Player();
-        Exception maxException = assertThrows(IllegalArgumentException.class, () -> playerOverMax.setLevel(101));
-        assertEquals("Invalid level value: 101", maxException.getMessage(), "Verwachte exceptie bij waarde boven maximale grens.");
+        // Test naam met alleen spaties
+        assertDoesNotThrow(() -> player.setName("   "), "Een naam met alleen spaties zou zonder uitzondering verwerkt moeten worden.");
+        assertEquals("   ", player.getName(), "De naam van de speler moet correct ingesteld zijn op de string met spaties.");
+
+        // Test een lange naam (bijvoorbeeld 256 karakters)
+        String longName = "a".repeat(256); // Java 11 String herhaling
+        assertDoesNotThrow(() -> player.setName(longName), "Een lange naam mag niet leiden tot een uitzondering.");
+        assertEquals(longName, player.getName(), "De naam van de speler moet correct ingesteld zijn, zelfs als deze lang is.");
+
+        // Test null-naam
+        assertThrows(NullPointerException.class, () -> player.setName(null), "Een null-waarde voor de naam moet een NullPointerException veroorzaken.");
     }
 }
