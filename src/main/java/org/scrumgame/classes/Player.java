@@ -9,6 +9,7 @@ import java.sql.SQLException;
 public class Player {
     int id;
     String name;
+    private static final int MAX_NAME_LENGTH = 255;
 
     public Player() {
     }
@@ -26,6 +27,17 @@ public class Player {
     }
 
     public void setName(String name) {
+        if (name == null) {
+            throw new NullPointerException("Name cannot be null");
+        }
+
+        // Enforce maximum name length
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException(
+                    String.format("Name exceeds maximum length of %d characters", MAX_NAME_LENGTH)
+            );
+        }
+
         this.name = name;
 
         try {
@@ -60,4 +72,5 @@ public class Player {
             e.printStackTrace(System.out);
         }
     }
+
 }
