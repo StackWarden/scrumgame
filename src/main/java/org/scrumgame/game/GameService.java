@@ -344,7 +344,10 @@ public class GameService {
 
             roomLevel = reloadedRoom;
 
-            System.out.println("Correct! You've answered the question successfully.");
+            if (!skip) {
+                System.out.println("Correct! You've answered the question successfully.");
+            }
+
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
             } else {
@@ -484,7 +487,7 @@ public class GameService {
             if (currentRoom.isCompleted()) {
                 return goToNextRoom();
             } else {
-                return "Question skipped. Next question: " + currentRoom.getPrompt();
+                return "\nNext question:\n" + currentRoom.getPrompt();
             }
         } catch (IllegalStateException e) {
             return goToNextRoom();
