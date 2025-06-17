@@ -11,12 +11,15 @@ import org.scrumgame.classes.Achievements;
 import org.scrumgame.database.DatabaseConnection;
 
 public class AchievementList {
+
     public static List<Achievements> getAllAchievements() {
         List<Achievements> achievements = new ArrayList<>();
         String query = "SELECT * FROM achievements";
+
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
+
             while (rs.next()) {
                 Achievements achievement = new Achievements(
                         rs.getInt("id"),
@@ -26,10 +29,12 @@ public class AchievementList {
                 );
                 achievements.add(achievement);
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Consider using a logger in production
         }
-            return achievements;
-        }
+
+        return achievements;
     }
+}
     

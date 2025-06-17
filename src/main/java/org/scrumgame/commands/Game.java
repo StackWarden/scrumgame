@@ -1,10 +1,14 @@
 package org.scrumgame.commands;
 
+import org.scrumgame.classes.Achievements;
+import org.scrumgame.database.models.AchievementList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.scrumgame.game.GameService;
+
+import java.util.List;
 
 @ShellComponent
 public class Game {
@@ -102,19 +106,24 @@ public class Game {
         gameService.dropItem(itemId);
     }
 
-    @ShellMethod(key = "hint", value = "Get a hint for the current question.")
-    public String getHint() {
-        if (!isInGame()) return notInGameMessage();
-        return gameService.getHint();
-    }
-
-    @ShellMethod(key = "achievements" , value = "shows current players achievements.")
+    @ShellMethod(key = "achievements", value = "Shows current player's achievements.")
     public String achievements() {
         if (!isLoggedIn()) {
             return "There is no player logged in, please log in with a player to see achievements.";
+        } else {
+            List<Achievements> achievements = AchievementList.getAllAchievements();
+            if (achievements.isEmpty()) {
+                return "No achievements found.";
+            }
+
+            StringBuilder sb = new StringBuilder("Player Achievements:\n");
+            for (Achievements a : achievements) {
+                sb.append("- ").append(a.getName())
+                        .append(": ").append(a.getDescription())
+                        .append(" [").append(a.isUnlocked() ? "Unlocked" : "Locked").append("]\n");
+            }
+            return sb.toString();
         }
-        System.out.println("this is just a WIP, There are no achievements added yet. Stay tuned for future updates.");
-        return null;
     }
 
     @ShellMethod(key = "help", value = "List available game and account commands.")
