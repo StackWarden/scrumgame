@@ -344,7 +344,10 @@ public class GameService {
 
             roomLevel = reloadedRoom;
 
-            System.out.println("Correct! You've answered the question successfully.");
+            if (!skip) {
+                System.out.println("Correct! You've answered the question successfully.");
+            }
+
             if (roomLevel.isCompleted()) {
                 System.out.println("All questions in this room are answered.");
             } else {
