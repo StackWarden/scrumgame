@@ -1,10 +1,10 @@
-package org.scrumgame.observers.achievements;
+package org.scrumgame.observers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
-import org.scrumgame.interfaces.Achievements.GameCompletedObserver;
+import org.scrumgame.interfaces.GameCompletedObserver;
 
 public class GameCompletedAchievementObserver implements GameCompletedObserver {
     @Override

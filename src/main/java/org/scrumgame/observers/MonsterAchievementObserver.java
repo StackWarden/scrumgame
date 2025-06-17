@@ -1,10 +1,10 @@
-package org.scrumgame.observers.achievements;
+package org.scrumgame.observers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
-import org.scrumgame.interfaces.Achievements.MonsterObserver;
+import org.scrumgame.interfaces.MonsterObserver;
 
 public class MonsterAchievementObserver implements MonsterObserver {
     @Override

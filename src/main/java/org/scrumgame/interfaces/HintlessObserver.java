@@ -1,4 +1,4 @@
-package org.scrumgame.interfaces.Achievements;
+package org.scrumgame.interfaces;
 
 public interface HintlessObserver {
 }
