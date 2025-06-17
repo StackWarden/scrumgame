@@ -484,7 +484,7 @@ public class GameService {
             if (currentRoom.isCompleted()) {
                 return goToNextRoom();
             } else {
-                return "Question skipped. Next question: " + currentRoom.getPrompt();
+                return "\nNext question:\n" + currentRoom.getPrompt();
             }
         } catch (IllegalStateException e) {
             return goToNextRoom();

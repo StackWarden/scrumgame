@@ -21,7 +21,7 @@ public class GameServiceMock extends GameService {
     @Override
     public String skipQuestion() {
         skipQuestionCalled = true;
-        return "Question skipped";
+        return "\nQuestion skipped";
     }
 
     public boolean wasDefeatCurrentMonsterCalled() {
