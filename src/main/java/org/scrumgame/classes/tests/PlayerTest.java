@@ -38,4 +38,3 @@ class PlayerTest {
         assertThrows(NullPointerException.class, () -> player.setName(null), "Een null waarde geeft NullPointerException.");
     }
 }
-
