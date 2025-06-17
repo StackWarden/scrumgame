@@ -16,7 +16,7 @@ public class JokerCommand {
     }
 
     @ShellMethod(key = "use-joker", value = "Use a joker by ID (e.g., joker1, joker2).")
-    public String useJoker(@ShellOption(help = "The joker ID to use") String jokerId) {
+    public String useJoker(@ShellOption(help = "The joker ID to use", value = "jokerId") String jokerId) {
         return jokerService.useJoker(jokerId);
     }
 }
