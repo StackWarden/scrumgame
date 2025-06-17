@@ -11,7 +11,7 @@ class PlayerTest {
     void testSetNameBoundaryCases() {
         // Speler aanmaken
         Player player = new Player();
-        player.setId(1); // Speler ID zetten voor Database verwerking
+        player.setId(1); // Speler ID zetten voor Mock
 
         // Test een naam
         assertDoesNotThrow(() -> player.setName("John"), "Een naam zou geen foutmelding moeten geven.");
@@ -26,7 +26,7 @@ class PlayerTest {
         assertEquals("   ", player.getName(), "De spelers naam zou er nu staan als alleen spaties.");
 
         // Test een naam die maximale karakters gebruikt (255 characters)
-        String boundaryName = "a".repeat(255); // Java 11 String repetition
+        String boundaryName = "a".repeat(255);
         assertDoesNotThrow(() -> player.setName(boundaryName), "Een naam van precies 255 karakters zou geen fout melding moeten geven.");
         assertEquals(boundaryName, player.getName(), "Een speler naam die op het randje zit zou moeten werken.");
 
