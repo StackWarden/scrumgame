@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS monster_log;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS player;
-DROP TABLE IF EXISTS `achievements`;
 
 -- 1. Player table
 CREATE TABLE player (
@@ -80,6 +79,14 @@ CREATE TABLE question_log (
                               FOREIGN KEY (question_id) REFERENCES question(id)
 );
 
+DROP TABLE IF EXISTS `achievements`;
+CREATE TABLE `achievements` (
+                            `Achievement_id` int AUTO_INCREMENT PRIMARY KEY,
+                            `naam` VARCHAR(255) NOT NULL,
+                            `beschrijving` TEXT,
+                            `unlocked` BOOLEAN DEFAULT FALSE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- 8. Monster log questions
 CREATE TABLE monster_log_questions (
                                        id INT NOT NULL AUTO_INCREMENT,
@@ -103,13 +110,6 @@ CREATE TABLE item (
                       FOREIGN KEY (player_id) REFERENCES player(id) ON DELETE SET NULL,
                       FOREIGN KEY (session_id) REFERENCES session(id) ON DELETE SET NULL
 );
-
-CREATE TABLE `achievements` (
-                                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                                `naam` VARCHAR(255) NOT NULL,
-                                `beschrijving` TEXT,
-                                `unlocked` BOOLEAN DEFAULT FALSE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Players
 INSERT INTO player (name) VALUES
